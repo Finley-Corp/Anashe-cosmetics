@@ -14,7 +14,7 @@ export function Footer() {
             <div className="flex flex-col lg:flex-row items-start justify-between gap-10">
               <div className="max-w-md">
                 <Link href="#" className="inline-flex items-center">
-                  <span className="text-2xl font-bricolage font-semibold tracking-tighter text-white">LUMINA</span>
+                  <span className="text-2xl font-bricolage font-semibold tracking-tighter text-white">ANASHE</span>
                 </Link>
                 <p className="mt-4 text-sm text-slate-300 leading-relaxed font-sans">Join the inner circle for exclusive access to new formulations, expert skin advice, and community events.</p>
 
@@ -34,15 +34,15 @@ export function Footer() {
                 <div>
                   <p className="text-sm font-medium text-slate-200 tracking-tight font-sans">Shop</p>
                   <ul className="mt-3 space-y-2 text-sm text-slate-400">
-                    <li><Link href="#features" className="hover:text-white transition font-sans">All Products</Link></li>
-                    <li><Link href="#how-it-works" className="hover:text-white transition font-sans">Best Sellers</Link></li>
-                    <li><Link href="#pricing" className="hover:text-white transition font-sans">Sets &amp; Kits</Link></li>
+                    <li><Link href="/shop" className="hover:text-white transition font-sans">All Products</Link></li>
+                    <li><Link href="/shop" className="hover:text-white transition font-sans">Best Sellers</Link></li>
+                    <li><Link href="/shop" className="hover:text-white transition font-sans">Sets &amp; Kits</Link></li>
                   </ul>
                 </div>
                 <div>
                   <p className="text-sm font-medium text-slate-200 tracking-tight font-sans">Company</p>
                   <ul className="mt-3 space-y-2 text-sm text-slate-400">
-                    <li><Link href="#" className="hover:text-white transition font-sans">Our Story</Link></li>
+                    <li><Link href="/about" className="hover:text-white transition font-sans">Our Story</Link></li>
                     <li><Link href="#" className="hover:text-white transition font-sans">Ingredients</Link></li>
                     <li><Link href="#" className="hover:text-white transition font-sans">Sustainability</Link></li>
                   </ul>
@@ -59,7 +59,7 @@ export function Footer() {
             </div>
 
             <div className="mt-10 pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
-              <p className="text-xs text-slate-500 font-sans">© 2026 Lumina Beauty. All rights reserved.</p>
+              <p className="text-xs text-slate-500 font-sans">© 2026 anashe Beauty. All rights reserved.</p>
               <div className="flex items-center gap-2">
                 <Link href="#" className="inline-flex h-8 w-8 items-center justify-center rounded-2xl bg-white/5 border-gradient before:rounded-2xl hover:bg-white/10 transition" style={{ backdropFilter: "blur(4px) saturate(1.25)" }}>
                   <Facebook className="h-4 w-4 text-slate-300" />

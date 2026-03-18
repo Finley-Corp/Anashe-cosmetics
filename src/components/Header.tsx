@@ -2,9 +2,16 @@
 
 import { Search, ShoppingBag, Menu } from "lucide-react";
 import Link from "next/link";
-import { cn } from "@/lib/utils";
 
 export function Header() {
+  const navItems = [
+    { label: "Shop", href: "/shop" },
+    { label: "Rituals", href: "#" },
+    { label: "Ingredients", href: "#" },
+    { label: "About", href: "/about" },
+    { label: "Journal", href: "#" },
+  ];
+
   return (
     <header className="z-20 relative">
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
@@ -24,13 +31,13 @@ export function Header() {
                   <path d="M8 16L9.5 14.5"></path>
               </svg>
             </div>
-            <span className="text-xl font-semibold tracking-tighter text-white font-bricolage drop-shadow-sm">LUMINA</span>
+            <span className="text-xl font-semibold tracking-tighter text-white font-bricolage drop-shadow-sm">ANASHE</span>
           </Link>
 
           <nav className="hidden md:flex items-center gap-8 text-sm text-white/80">
-            {['Shop', 'Rituals', 'Ingredients', 'About', 'Journal'].map((item) => (
-              <Link key={item} href="#" className="hover:text-white transition font-sans">
-                {item}
+            {navItems.map((item) => (
+              <Link key={item.label} href={item.href} className="hover:text-white transition font-sans">
+                {item.label}
               </Link>
             ))}
           </nav>
@@ -44,7 +51,7 @@ export function Header() {
               Search
             </button>
             <Link 
-              href="#" 
+              href="/shop" 
               className="inline-flex items-center gap-2 rounded-2xl bg-white text-neutral-900 px-4 py-2.5 text-sm font-medium hover:bg-white/90 transition font-sans"
             >
               Bag (0)
