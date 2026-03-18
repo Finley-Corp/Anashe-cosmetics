@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Minus, Plus, ShoppingBag, Sparkles, ArrowRight } from "lucide-react";
+import { Minus, Plus, ShoppingBag, Sparkles } from "lucide-react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { addToCart } from "@/lib/cart";
@@ -131,6 +131,10 @@ export default function ShopPage() {
     window.setTimeout(() => setAddedMessage(""), 1800);
   };
 
+  const goToProduct = (slug: string) => {
+    router.push(`/shop/${slug}`);
+  };
+
   return (
     <main className="min-h-screen relative overflow-hidden bg-neutral-950 text-white">
       <div className="absolute inset-0 -z-10 pointer-events-none">
@@ -160,8 +164,17 @@ export default function ShopPage() {
               return (
                 <article
                   key={product.id}
-                  className="border-gradient before:rounded-3xl rounded-3xl bg-white/[0.03] overflow-hidden"
+                  className="border-gradient before:rounded-3xl rounded-3xl bg-white/[0.03] overflow-hidden cursor-pointer"
                   style={{ backdropFilter: "blur(6px) saturate(1.1)" }}
+                  role="link"
+                  tabIndex={0}
+                  onClick={() => goToProduct(product.slug)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault();
+                      goToProduct(product.slug);
+                    }
+                  }}
                 >
                   <div className="relative h-52 overflow-hidden border-b border-white/10">
                     <img src={product.image} alt={product.name} className="h-full w-full object-cover" />
@@ -181,7 +194,10 @@ export default function ShopPage() {
                     <div className="mt-5 flex items-center justify-between gap-4">
                       <div className="inline-flex items-center rounded-2xl bg-white/5 border-gradient before:rounded-2xl">
                         <button
-                          onClick={() => updateQuantity(product.id, qty - 1)}
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            updateQuantity(product.id, qty - 1);
+                          }}
                           className="h-10 w-10 inline-flex items-center justify-center text-white/80 hover:text-white transition"
                           aria-label={`Decrease quantity for ${product.name}`}
                         >
@@ -189,7 +205,10 @@ export default function ShopPage() {
                         </button>
                         <span className="w-10 text-center text-sm font-medium text-white">{qty}</span>
                         <button
-                          onClick={() => updateQuantity(product.id, qty + 1)}
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            updateQuantity(product.id, qty + 1);
+                          }}
                           className="h-10 w-10 inline-flex items-center justify-center text-white/80 hover:text-white transition"
                           aria-label={`Increase quantity for ${product.name}`}
                         >
@@ -198,21 +217,16 @@ export default function ShopPage() {
                       </div>
 
                       <button
-                        onClick={() => handleAddToBag(product, qty)}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          handleAddToBag(product, qty);
+                        }}
                         className="inline-flex items-center gap-2 rounded-2xl bg-white text-neutral-900 px-4 py-2.5 text-sm font-medium hover:bg-white/90 transition font-sans"
                       >
                         <ShoppingBag className="h-4 w-4" />
                         {qty > 0 ? "In Cart" : "Add to Bag"}
                       </button>
                     </div>
-
-                    <Link
-                      href={`/shop/${product.slug}`}
-                      className="mt-3 inline-flex items-center gap-2 text-sm text-white/80 hover:text-white transition font-sans"
-                    >
-                      View product details
-                      <ArrowRight className="h-4 w-4" />
-                    </Link>
                   </div>
                 </article>
               );

@@ -8,18 +8,17 @@ import {
   CheckCircle2,
   Heart,
   Leaf,
-  Search,
   ShoppingBag,
   Sprout,
   Star,
   Truck,
   Award,
   MapPin,
-  Menu,
   ChevronDown,
 } from "lucide-react";
 import { Footer } from "@/components/Footer";
 import { addToCart, CART_UPDATED_EVENT, getCartCount } from "@/lib/cart";
+import { Header } from "@/components/Header";
 
 type ProductPageData = {
   slug: string;
@@ -252,44 +251,9 @@ export default function ProductPage() {
 
   return (
     <main className="bg-neutral-950 text-white antialiased selection:bg-white/20 min-h-screen">
-      <nav className="sticky top-0 z-50 bg-neutral-950/90 backdrop-blur-md border-b border-white/10">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <button className="md:hidden text-white/80" aria-label="Open mobile navigation">
-              <Menu className="w-5 h-5" />
-            </button>
-            <Link href="/" className="text-xl font-medium tracking-tight font-bricolage text-white">
-              ANASHE
-            </Link>
-          </div>
-
-          <div className="hidden md:flex gap-8 text-sm font-normal text-white/70">
-            <Link href="/about" className="hover:text-white transition-colors">
-              Our Origins
-            </Link>
-            <Link href="/shop" className="hover:text-white transition-colors">
-              Shop Rituals
-            </Link>
-            <Link href="#reviews" className="hover:text-white transition-colors">
-              Reviews
-            </Link>
-          </div>
-
-          <div className="flex items-center gap-5">
-            <Search className="w-5 h-5 text-white/70 stroke-[1.5]" />
-            <Link href="/cart" className="relative" aria-label="Open cart page">
-              <ShoppingBag className="w-5 h-5 text-white/70 stroke-[1.5]" />
-              {bagCount > 0 ? (
-                <span className="absolute -top-2 -right-2 min-w-4 h-4 px-1 rounded-full bg-emerald-300 text-[10px] leading-4 text-neutral-900 text-center font-medium">
-                  {bagCount}
-                </span>
-              ) : (
-                <span className="absolute -top-1 -right-1 w-2 h-2 bg-emerald-300 rounded-full"></span>
-              )}
-            </Link>
-          </div>
-        </div>
-      </nav>
+      <section className="relative border-b border-white/10">
+        <Header />
+      </section>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 pt-8 pb-16 lg:pt-12">
         <div className="lg:grid lg:grid-cols-12 lg:gap-12 xl:gap-16">
