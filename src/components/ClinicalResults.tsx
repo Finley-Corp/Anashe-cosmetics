@@ -79,7 +79,7 @@ export function ClinicalResults() {
             <Star className="w-3 h-3 fill-current" />
             <Star className="w-3 h-3 fill-current" />
           </div>
-          <p className="leading-relaxed relative z-10 text-base font-sans">&quot;I recommend Lumina to all my clients. The ingredient deck is impeccable—clean, effective, and safe for sensitive skin types.&quot;</p>
+          <p className="leading-relaxed relative z-10 text-base font-sans">&quot;I recommend anashe to all my clients. The ingredient deck is impeccable—clean, effective, and safe for sensitive skin types.&quot;</p>
         </div>
 
         <div className="relative overflow-hidden text-white bg-black pt-6 pr-6 pb-6 pl-6">

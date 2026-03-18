@@ -15,7 +15,7 @@ export function Hero() {
               Unlock the secret to ageless luminosity.
             </h1>
             <p className="sm:text-lg text-base text-white/80 max-w-2xl mt-5 font-sans">
-              LUMINA fuses rare botanicals with clinical precision to restore your skin&apos;s natural radiance. Experience the ritual of transformation.
+              ANASHE fuses rare botanicals with clinical precision to restore your skin&apos;s natural radiance. Experience the ritual of transformation.
             </p>
 
             <div className="mt-8 flex flex-col sm:flex-row gap-4">
@@ -80,7 +80,7 @@ export function Hero() {
         <AnimatedSection className="mt-12 sm:mt-16 max-w-md" delay={0.5}>
           <div className="border-gradient before:rounded-3xl bg-white/5 rounded-3xl pt-5 pr-5 pb-5 pl-5 backdrop-blur-xl">
             <p className="text-sm text-white/85 font-sans">
-              "I've tried every luxury brand, but Lumina is the only one that actually changed my skin texture. It's not just skincare, it's a daily moment of peace."
+              "I've tried every luxury brand, but anashe is the only one that actually changed my skin texture. It's not just skincare, it's a daily moment of peace."
             </p>
             <div className="mt-4 flex items-center justify-between">
               <div className="flex items-center gap-3">

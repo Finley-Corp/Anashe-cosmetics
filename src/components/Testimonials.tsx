@@ -146,7 +146,7 @@ export function Testimonials() {
                     <div className="inline-flex items-center justify-center h-8 w-8 rounded-2xl bg-neutral-100 ring-1 ring-neutral-200 mb-4">
                       <Quote className="h-4 w-4 text-neutral-700" />
                     </div>
-                    <p className="text-sm leading-relaxed text-neutral-900 mb-4 font-sans">&quot;Finally, skincare that respects the microbiome. My skin barrier has never been stronger. Lumina is a staple.&quot;</p>
+                    <p className="text-sm leading-relaxed text-neutral-900 mb-4 font-sans">&quot;Finally, skincare that respects the microbiome. My skin barrier has never been stronger. anashe is a staple.&quot;</p>
                   </div>
                   <div className="pt-3 border-t border-neutral-200 flex items-center justify-between">
                     <div className="flex items-center gap-2">

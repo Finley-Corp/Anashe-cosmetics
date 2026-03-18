@@ -28,8 +28,8 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "LUMINA — Advanced Botanical Skincare",
-  description: "Unlock the secret to ageless luminosity. LUMINA fuses rare botanicals with clinical precision to restore your skin's natural radiance.",
+  title: "ANASHE — Advanced Botanical Skincare",
+  description: "Unlock the secret to ageless luminosity. ANASHE fuses rare botanicals with clinical precision to restore your skin's natural radiance.",
 };
 
 export default function RootLayout({
