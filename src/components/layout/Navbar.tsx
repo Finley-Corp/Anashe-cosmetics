@@ -23,13 +23,18 @@ export const Navbar = ({ onAuthClick }: { onAuthClick?: () => void }) => {
       isScrolled ? "bg-anashe-bg/80 backdrop-blur-xl border-b border-white/10 shadow-2xl" : "bg-[#212322]/80 backdrop-blur-xl border-b border-white/10"
     )}>
       <div className="hidden lg:flex gap-8 items-center">
-        {['Face', 'Body', 'Hair', 'Brands'].map((item) => (
+        {[
+          { label: 'Face', href: '/face' },
+          { label: 'Body', href: '/body' },
+          { label: 'Services', href: '/services' },
+          { label: 'Brands', href: '/brands' }
+        ].map((item) => (
           <Link 
-            key={item} 
-            href={item === 'Brands' ? '/brands' : '/'} 
+            key={item.label} 
+            href={item.href} 
             className="text-xs font-normal tracking-widest uppercase text-anashe-fg/60 hover:text-anashe-fg transition-colors relative group py-1"
           >
-            {item}
+            {item.label}
             <span className="absolute bottom-0 left-0 w-0 h-px bg-anashe-lila transition-all group-hover:w-full"></span>
           </Link>
         ))}
@@ -74,14 +79,20 @@ export const Navbar = ({ onAuthClick }: { onAuthClick?: () => void }) => {
         "fixed inset-0 bg-anashe-bg z-[490] flex flex-col items-center justify-center gap-8 transition-all duration-500 lg:hidden",
         isMobileMenuOpen ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"
       )}>
-        {['Face', 'Body', 'Hair', 'Brands', 'My Account'].map((item) => (
+        {[
+          { label: 'Face', href: '/face' },
+          { label: 'Body', href: '/body' },
+          { label: 'Services', href: '/services' },
+          { label: 'Brands', href: '/brands' },
+          { label: 'My Account', href: '#' }
+        ].map((item) => (
           <Link 
-            key={item} 
-            href={item === 'Brands' ? '/brands' : '/'} 
+            key={item.label} 
+            href={item.href} 
             className="text-xl tracking-widest uppercase font-light" 
             onClick={() => setIsMobileMenuOpen(false)}
           >
-            {item}
+            {item.label}
           </Link>
         ))}
       </div>
