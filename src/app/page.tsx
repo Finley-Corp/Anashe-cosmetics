@@ -1,36 +1,58 @@
-import { Header } from "@/components/Header";
-import { Hero } from "@/components/Hero";
-import { Collection } from "@/components/Collection";
-import { Philosophy } from "@/components/Philosophy";
-import { Testimonials } from "@/components/Testimonials";
-import { ClinicalResults } from "@/components/ClinicalResults";
-import { Footer } from "@/components/Footer";
+"use client";
 
-export default function Home() {
+import React, { useState } from 'react';
+import { Navbar } from '@/components/layout/Navbar';
+import { Hero } from '@/components/sections/Hero';
+import { BrandsMarquee } from '@/components/sections/BrandsMarquee';
+import { Categories } from '@/components/sections/Categories';
+import { ProductsGrid } from '@/components/sections/ProductsGrid';
+import { RitualSection } from '@/components/sections/RitualSection';
+import { QuizSection } from '@/components/sections/QuizSection';
+import { KitBuilder } from '@/components/sections/KitBuilder';
+import { Newsletter } from '@/components/sections/Newsletter';
+import { Footer } from '@/components/layout/Footer';
+import { CartProgressBar } from '@/components/ui/CartProgressBar';
+import { QuickViewProvider } from '@/components/ui/QuickViewModal';
+import { AuthModal } from '@/components/ui/AuthModal';
+
+import { Icon } from '@iconify/react';
+
+export default function AnasheLandingPage() {
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
+
   return (
-    <main className="min-h-screen relative overflow-hidden">
-      {/* Enhanced Hero Background */}
-      <div className="absolute top-0 inset-x-0 h-[110vh] -z-10 overflow-hidden pointer-events-none">
-        <div className="absolute inset-0 bg-neutral-950/20 z-10"></div>
-        <img 
-          src="https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/02a526d3-7d39-4227-9509-97fb6468a9a3_3840w.jpg" 
-          alt="Background" 
-          className="w-full h-full object-cover opacity-70 animate-pulse-slow object-center" 
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-neutral-950/10 via-neutral-950/40 to-neutral-950 z-20"></div>
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-500/10 via-neutral-950/0 to-transparent z-20"></div>
-      </div>
-
-      <section className="min-h-[92vh] overflow-hidden text-white relative">
-        <Header />
+    <QuickViewProvider>
+      <main className="min-h-screen">
+        <Navbar onAuthClick={() => setIsAuthOpen(true)} />
+        
         <Hero />
-      </section>
-
-      <Collection />
-      <Philosophy />
-      <Testimonials />
-      <ClinicalResults />
-      <Footer />
-    </main>
+        <BrandsMarquee />
+        <Categories />
+        <ProductsGrid />
+        <RitualSection />
+        <QuizSection />
+        <KitBuilder />
+        <Newsletter />
+        
+        <Footer />
+        
+        {/* Overlays */}
+        <CartProgressBar />
+        <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
+        
+        {/* WhatsApp support button */}
+        <div className="fixed bottom-8 right-8 z-[400] flex flex-col items-end gap-3 group">
+          <div className="bg-[#252726]/90 backdrop-blur-md border border-white/10 rounded-lg px-3 py-2 text-xs font-normal text-white opacity-0 translate-x-2 transition-all duration-200 pointer-events-none group-hover:opacity-100 group-hover:translate-x-0">
+            Apoio ao Cliente
+          </div>
+          <button 
+            className="w-14 h-14 rounded-full bg-[#252726]/90 backdrop-blur-md border border-anashe-mint/30 shadow-2xl flex items-center justify-center text-anashe-mint hover:bg-anashe-mint/10 hover:border-anashe-mint/60 hover:scale-110 transition-all duration-300"
+            onClick={() => window.open('https://wa.me/244900000000', '_blank')}
+          >
+            <Icon icon="solar:chat-round-dots-linear" width={24} />
+          </button>
+        </div>
+      </main>
+    </QuickViewProvider>
   );
 }
