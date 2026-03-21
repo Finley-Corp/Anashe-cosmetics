@@ -18,7 +18,7 @@ export const CartProgressBar = () => {
         {isFreeShipping ? (
           <strong className="text-white font-normal text-anashe-mint uppercase tracking-widest">🎉 Free shipping unlocked!</strong>
         ) : (
-          <>Only <strong className="text-white font-normal uppercase tracking-widest">{(50000 - cartTotal).toLocaleString()} Kz</strong> for free shipping</>
+          <>Only <strong className="text-white font-normal uppercase tracking-widest">{(5000 - cartTotal).toLocaleString()} KSH</strong> for free shipping</>
         )}
       </div>
       <div className="flex-1 h-1 bg-white/10 rounded-full overflow-hidden">
@@ -28,7 +28,7 @@ export const CartProgressBar = () => {
         />
       </div>
       <div className="text-[10px] text-anashe-mint font-normal whitespace-nowrap hidden sm:block uppercase tracking-widest">
-        Free shipping at 50,000 Kz
+        Free shipping at 5,000 KSH
       </div>
     </div>
   );

@@ -129,9 +129,9 @@ export default function FacePage() {
 
                     <div className="mt-auto flex items-center justify-between">
                       <div>
-                        {p.oldPrice && <div className="text-[10px] text-white/20 line-through mb-0.5">{p.oldPrice.toLocaleString()} Kz</div>}
+                        {p.oldPrice && <div className="text-[10px] text-white/20 line-through mb-0.5">{p.oldPrice.toLocaleString()} KSH</div>}
                         <div className="text-lg font-light text-white">
-                          {p.price.toLocaleString()} <span className="text-xs text-white/30">Kz</span>
+                          {p.price.toLocaleString()} <span className="text-xs text-white/30">KSH</span>
                         </div>
                       </div>
                       <button 

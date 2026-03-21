@@ -145,7 +145,7 @@ export const KitBuilder = () => {
                       <img src={p.img} alt={p.name} className="aspect-square w-full object-cover rounded-lg mb-3" />
                       <div className="text-[9px] tracking-widest uppercase text-anashe-lila font-normal mb-1">{p.brand}</div>
                       <div className="text-xs font-light text-white line-clamp-1 mb-1">{p.name}</div>
-                      <div className="text-xs text-white/50">{p.price.toLocaleString()} Kz</div>
+                      <div className="text-xs text-white/50">{p.price.toLocaleString()} KSH</div>
                     </div>
                   ))}
                 </div>
@@ -161,10 +161,10 @@ export const KitBuilder = () => {
                 <div className="flex-1 w-full md:w-auto">
                   <div className="text-[10px] tracking-widest uppercase text-white/50 mb-2">{filledCount} of 5 products</div>
                   <div className="text-3xl font-extralight text-white mb-1">
-                    {Math.round(finalTotal).toLocaleString()} <span className="text-sm">Kz</span>
+                    {Math.round(finalTotal).toLocaleString()} <span className="text-sm">KSH</span>
                   </div>
                   {discount > 0 ? (
-                    <div className="text-xs text-anashe-mint font-normal">Discount applied: -{Math.round(subtotal - finalTotal).toLocaleString()} Kz ({discount}%)</div>
+                    <div className="text-xs text-anashe-mint font-normal">Discount applied: -{Math.round(subtotal - finalTotal).toLocaleString()} KSH ({discount}%)</div>
                   ) : (
                     <div className="text-xs text-white/30">Add {3 - filledCount} more for 8% off.</div>
                   )}

@@ -66,8 +66,8 @@ export const QuickViewProvider: React.FC<{ children: React.ReactNode }> = ({ chi
                 
                 <div className="flex items-end justify-between mt-auto pt-6 border-t border-white/10">
                   <div>
-                    {product.oldPrice && <div className="text-xs text-white/30 line-through mb-1">{product.oldPrice.toLocaleString()} Kz</div>}
-                    <div className="text-3xl font-extralight text-white">{product.price.toLocaleString()} <span className="text-sm text-white/50">Kz</span></div>
+                    {product.oldPrice && <div className="text-xs text-white/30 line-through mb-1">{product.oldPrice.toLocaleString()} KSH</div>}
+                    <div className="text-3xl font-extralight text-white">{product.price.toLocaleString()} <span className="text-sm text-white/50">KSH</span></div>
                   </div>
                   <div className="flex gap-2">
                     <button className="w-12 h-12 rounded-lg border border-white/20 flex items-center justify-center text-white/50 hover:border-anashe-pink hover:text-anashe-pink transition-colors">
