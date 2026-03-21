@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { Icon } from '@iconify/react';
 import { useCart } from '@/context/CartContext';
 import { cn } from '@/lib/utils';
@@ -23,16 +24,20 @@ export const Navbar = ({ onAuthClick }: { onAuthClick?: () => void }) => {
     )}>
       <div className="hidden lg:flex gap-8 items-center">
         {['Face', 'Body', 'Hair', 'Brands'].map((item) => (
-          <a key={item} href="#" className="text-xs font-normal tracking-widest uppercase text-anashe-fg/60 hover:text-anashe-fg transition-colors relative group py-1">
+          <Link 
+            key={item} 
+            href={item === 'Brands' ? '/brands' : '/'} 
+            className="text-xs font-normal tracking-widest uppercase text-anashe-fg/60 hover:text-anashe-fg transition-colors relative group py-1"
+          >
             {item}
             <span className="absolute bottom-0 left-0 w-0 h-px bg-anashe-lila transition-all group-hover:w-full"></span>
-          </a>
+          </Link>
         ))}
       </div>
       
-      <a href="#" className="flex items-center lg:justify-center hover:opacity-70 transition-opacity">
+      <Link href="/" className="flex items-center lg:justify-center hover:opacity-70 transition-opacity">
         <h1 className="text-xl lg:text-2xl tracking-[0.2em] font-extralight text-anashe-fg">ANASHE</h1>
-      </a>
+      </Link>
       
       <div className="flex gap-4 items-center justify-end">
         <button className="hidden lg:flex w-9 h-9 items-center justify-center text-anashe-fg/60 hover:text-anashe-fg hover:bg-white/5 rounded-full transition-colors">
@@ -70,9 +75,14 @@ export const Navbar = ({ onAuthClick }: { onAuthClick?: () => void }) => {
         isMobileMenuOpen ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"
       )}>
         {['Face', 'Body', 'Hair', 'Brands', 'My Account'].map((item) => (
-          <a key={item} href="#" className="text-xl tracking-widest uppercase font-light" onClick={() => setIsMobileMenuOpen(false)}>
+          <Link 
+            key={item} 
+            href={item === 'Brands' ? '/brands' : '/'} 
+            className="text-xl tracking-widest uppercase font-light" 
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
             {item}
-          </a>
+          </Link>
         ))}
       </div>
     </nav>
