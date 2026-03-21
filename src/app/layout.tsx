@@ -4,7 +4,6 @@ import "./globals.css";
 import { CartProvider } from "@/context/CartContext";
 import { ToastProvider } from "@/components/ui/Toast";
 import { QuickViewProvider } from "@/components/ui/QuickViewModal";
-import { CustomCursor } from "@/components/ui/CustomCursor";
 import { GlobalLoader } from "@/components/ui/GlobalLoader";
 
 const poppins = Poppins({
