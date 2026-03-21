@@ -1,198 +1,130 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import Link from "next/link";
-import { ArrowRight, Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
-import {
-  CART_UPDATED_EVENT,
-  CartItem,
-  readCart,
-  removeCartItem,
-  updateCartItemQuantity,
-} from "@/lib/cart";
-
-function formatKsh(amount: number) {
-  return new Intl.NumberFormat("en-KE", {
-    style: "currency",
-    currency: "KES",
-    maximumFractionDigits: 0,
-  }).format(amount);
-}
+import React from 'react';
+import Link from 'next/link';
+import { Icon } from '@iconify/react';
+import { motion } from 'framer-motion';
+import { Navbar } from '@/components/layout/Navbar';
+import { Footer } from '@/components/layout/Footer';
+import { useCart } from '@/context/CartContext';
+import { cn } from '@/lib/utils';
 
 export default function CartPage() {
-  const [items, setItems] = useState<CartItem[]>([]);
-
-  useEffect(() => {
-    const syncCart = () => setItems(readCart());
-    syncCart();
-
-    window.addEventListener("storage", syncCart);
-    window.addEventListener(CART_UPDATED_EVENT, syncCart);
-
-    return () => {
-      window.removeEventListener("storage", syncCart);
-      window.removeEventListener(CART_UPDATED_EVENT, syncCart);
-    };
-  }, []);
-
-  const subtotal = useMemo(
-    () => items.reduce((sum, item) => sum + item.price * item.quantity, 0),
-    [items],
-  );
-  const shippingFee = items.length > 0 ? 900 : 0;
-  const total = subtotal + shippingFee;
-
-  const changeQuantity = (item: CartItem, nextQty: number) => {
-    updateCartItemQuantity(item.slug, item.size, Math.max(0, Math.min(10, nextQty)));
-    setItems(readCart());
-  };
-
-  const removeItem = (item: CartItem) => {
-    removeCartItem(item.slug, item.size);
-    setItems(readCart());
-  };
+  const { items, cartTotal, updateQuantity, removeFromCart, isFreeShipping } = useCart();
 
   return (
-    <main className="min-h-screen relative overflow-hidden bg-neutral-950 text-white">
-      <div className="absolute inset-0 -z-10 pointer-events-none">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-emerald-400/10 via-neutral-950/0 to-transparent" />
-      </div>
-
-      <section className="relative border-b border-white/10">
-        <Header />
-        <div className="mx-auto max-w-7xl px-6 lg:px-10 pb-12 pt-6 sm:pb-16 sm:pt-10">
-          <p className="uppercase tracking-[0.18em] text-xs text-white/60 font-sans">Your Bag</p>
-          <h1 className="mt-4 text-4xl sm:text-5xl lg:text-6xl font-bricolage font-semibold tracking-tighter leading-[1.05] max-w-3xl">
-            Cart
-          </h1>
-          <p className="mt-4 max-w-2xl text-white/80 font-sans text-base sm:text-lg">
-            Review your selected rituals before checkout.
-          </p>
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-7xl px-6 lg:px-10 py-12 sm:py-16">
-        {items.length === 0 ? (
-          <div
-            className="border-gradient before:rounded-3xl rounded-3xl bg-white/[0.03] p-6 sm:p-8 lg:p-10"
-            style={{ backdropFilter: "blur(6px) saturate(1.1)" }}
+    <main className="min-h-screen bg-anashe-bg font-poppins selection:bg-anashe-lila selection:text-anashe-bg overflow-x-hidden">
+      <Navbar />
+      
+      <section className="pt-32 pb-24 px-6 lg:px-20">
+        <div className="max-w-[1200px] mx-auto">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-12"
           >
-            <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-white/5 border-gradient before:rounded-2xl">
-              <ShoppingBag className="h-5 w-5 text-white" />
+            <h1 className="text-4xl md:text-5xl font-extralight text-white tracking-tight mb-4">Your <em className="text-anashe-lila not-italic italic font-light">Selection</em></h1>
+            <p className="text-white/40 font-light text-sm italic">Review your curated ritual before proceeding to checkout.</p>
+          </motion.div>
+
+          {items.length === 0 ? (
+            <div className="py-20 text-center border border-dashed border-white/10 rounded-2xl bg-[#252726]/30">
+              <Icon icon="solar:bag-2-linear" className="text-6xl text-white/10 mx-auto mb-6" />
+              <p className="text-white/50 font-light mb-8">Your bag is currently empty.</p>
+              <Link 
+                href="/face" 
+                className="inline-flex items-center gap-2 px-8 py-4 bg-white text-anashe-bg text-xs font-normal tracking-widest uppercase rounded hover:bg-anashe-lila transition-all"
+              >
+                Discover Products
+              </Link>
             </div>
-            <h2 className="mt-5 text-2xl sm:text-3xl font-bricolage font-semibold tracking-tight">Your cart is empty</h2>
-            <p className="mt-3 text-sm sm:text-base text-white/75 font-sans max-w-xl">
-              Browse our collection and add your favorite rituals.
-            </p>
-
-            <Link
-              href="/shop"
-              className="mt-6 inline-flex items-center gap-2 rounded-2xl bg-white text-neutral-900 px-5 py-3 text-sm font-medium hover:bg-white/90 transition font-sans"
-            >
-              Go to Shop
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2 space-y-4">
-              {items.map((item) => (
-                <article
-                  key={`${item.slug}-${item.size}`}
-                  className="border-gradient before:rounded-3xl rounded-3xl bg-white/[0.03] p-4 sm:p-5"
-                  style={{ backdropFilter: "blur(6px) saturate(1.1)" }}
-                >
-                  <div className="flex gap-4">
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      className="h-24 w-24 rounded-2xl object-cover border border-white/10"
-                    />
-
-                    <div className="flex-1">
-                      <div className="flex items-start justify-between gap-3">
-                        <div>
-                          <h3 className="text-lg font-bricolage font-semibold tracking-tight">{item.name}</h3>
-                          <p className="text-xs text-white/60 font-sans mt-1">Size: {item.size}</p>
-                        </div>
-                        <p className="text-base font-medium text-white">{formatKsh(item.price * item.quantity)}</p>
+          ) : (
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+              <div className="lg:col-span-2 flex flex-col gap-6">
+                {items.map((item) => (
+                  <div key={item.id} className="flex gap-6 p-6 bg-[#252726]/40 backdrop-blur-md border border-white/5 rounded-2xl group">
+                    <div className="w-24 h-24 lg:w-32 lg:h-32 rounded-xl overflow-hidden bg-[#1a1b1a] shrink-0">
+                      <img src={item.img} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    </div>
+                    
+                    <div className="flex-1 flex flex-col justify-between py-1">
+                      <div>
+                        <div className="text-[10px] tracking-widest uppercase text-anashe-lila mb-1">{item.brand}</div>
+                        <h3 className="text-base lg:text-lg font-light text-white leading-tight mb-2">{item.name}</h3>
                       </div>
-
-                      <div className="mt-4 flex items-center justify-between gap-4">
-                        <div className="inline-flex items-center rounded-2xl bg-white/5 border-gradient before:rounded-2xl">
-                          <button
-                            onClick={() => changeQuantity(item, item.quantity - 1)}
-                            className="h-9 w-9 inline-flex items-center justify-center text-white/80 hover:text-white transition"
-                            aria-label={`Decrease quantity for ${item.name}`}
+                      
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-4 bg-white/5 rounded-full px-4 py-1.5 border border-white/10">
+                          <button onClick={() => updateQuantity(item.id, -1)} className="text-white/40 hover:text-white transition-colors">-</button>
+                          <span className="text-xs text-white min-w-[20px] text-center">{item.quantity}</span>
+                          <button onClick={() => updateQuantity(item.id, 1)} className="text-white/40 hover:text-white transition-colors">+</button>
+                        </div>
+                        
+                        <div className="text-right">
+                          <div className="text-sm lg:text-base font-light text-white">{(item.price * item.quantity).toLocaleString()} KSH</div>
+                          <button 
+                            onClick={() => removeFromCart(item.id)}
+                            className="text-[10px] text-white/20 hover:text-anashe-pink uppercase tracking-widest mt-1 transition-colors"
                           >
-                            <Minus className="h-4 w-4" />
-                          </button>
-                          <span className="w-10 text-center text-sm font-medium text-white">{item.quantity}</span>
-                          <button
-                            onClick={() => changeQuantity(item, item.quantity + 1)}
-                            className="h-9 w-9 inline-flex items-center justify-center text-white/80 hover:text-white transition"
-                            aria-label={`Increase quantity for ${item.name}`}
-                          >
-                            <Plus className="h-4 w-4" />
+                            Remove
                           </button>
                         </div>
-
-                        <button
-                          onClick={() => removeItem(item)}
-                          className="inline-flex items-center gap-2 text-sm text-white/70 hover:text-white transition font-sans"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                          Remove
-                        </button>
                       </div>
                     </div>
                   </div>
-                </article>
-              ))}
-            </div>
+                ))}
 
-            <aside
-              className="h-fit lg:sticky lg:top-8 border-gradient before:rounded-3xl rounded-3xl bg-white/[0.03] p-6"
-              style={{ backdropFilter: "blur(6px) saturate(1.1)" }}
-            >
-              <h3 className="text-2xl font-bricolage font-semibold tracking-tight">Order Summary</h3>
-
-              <div className="mt-5 space-y-3 text-sm font-sans">
-                <div className="flex items-center justify-between text-white/80">
-                  <span>Subtotal</span>
-                  <span>{formatKsh(subtotal)}</span>
-                </div>
-                <div className="flex items-center justify-between text-white/80">
-                  <span>Shipping</span>
-                  <span>{formatKsh(shippingFee)}</span>
-                </div>
-                <div className="h-px bg-white/10" />
-                <div className="flex items-center justify-between text-base font-medium text-white">
-                  <span>Total</span>
-                  <span>{formatKsh(total)}</span>
-                </div>
+                {!isFreeShipping && (
+                  <div className="p-6 bg-anashe-lila/5 border border-anashe-lila/10 rounded-2xl flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-full bg-anashe-lila/10 flex items-center justify-center text-anashe-lila">
+                      <Icon icon="solar:delivery-linear" />
+                    </div>
+                    <p className="text-xs text-white/50 font-light">
+                      Add <strong className="text-anashe-lila font-normal">{(5000 - cartTotal).toLocaleString()} KSH</strong> more to unlock <span className="text-anashe-mint">FREE SHIPPING</span>.
+                    </p>
+                  </div>
+                )}
               </div>
 
-              <Link
-                href="/checkout"
-                className="mt-6 w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-white text-neutral-900 px-4 py-3 text-sm font-medium hover:bg-white/90 transition font-sans"
-              >
-                <ShoppingBag className="h-4 w-4" />
-                Proceed to Checkout
-              </Link>
+              <div className="flex flex-col gap-6">
+                <div className="p-8 bg-[#252726]/60 backdrop-blur-md border border-white/10 rounded-2xl shadow-2xl sticky top-32">
+                  <h3 className="text-lg font-light text-white mb-8 tracking-widest uppercase">Summary</h3>
+                  
+                  <div className="flex flex-col gap-4 mb-8">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-white/40 font-light">Subtotal</span>
+                      <span className="text-white font-light">{cartTotal.toLocaleString()} KSH</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-white/40 font-light">Shipping</span>
+                      <span className="text-white font-light">{isFreeShipping ? 'FREE' : '450 KSH'}</span>
+                    </div>
+                  </div>
+                  
+                  <div className="pt-6 border-t border-white/5 flex justify-between items-end mb-10">
+                    <span className="text-xs tracking-widest uppercase text-white/40">Total</span>
+                    <span className="text-3xl font-extralight text-anashe-peach">
+                      {(cartTotal + (isFreeShipping ? 0 : 450)).toLocaleString()} <span className="text-sm">KSH</span>
+                    </span>
+                  </div>
+                  
+                  <Link 
+                    href="/checkout"
+                    className="flex items-center justify-center gap-2 w-full py-5 bg-white text-anashe-bg text-xs font-normal tracking-widest uppercase rounded hover:bg-anashe-peach transition-all"
+                  >
+                    Proceed to Checkout <Icon icon="solar:arrow-right-linear" />
+                  </Link>
 
-              <Link
-                href="/shop"
-                className="mt-3 w-full inline-flex items-center justify-center rounded-2xl border-gradient before:rounded-2xl bg-white/5 px-4 py-3 text-sm font-medium text-white/90 hover:bg-white/10 transition font-sans"
-                style={{ backdropFilter: "blur(4px) saturate(1.25)" }}
-              >
-                Continue Shopping
-              </Link>
-            </aside>
-          </div>
-        )}
+                  <div className="mt-6 flex items-center justify-center gap-4 text-white/20">
+                    <Icon icon="logos:visa" width="30" />
+                    <Icon icon="logos:mastercard" width="30" />
+                    <Icon icon="simple-icons:mpesa" className="text-[#39df1b]" width="30" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       </section>
 
       <Footer />
