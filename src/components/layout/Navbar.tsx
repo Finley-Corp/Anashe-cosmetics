@@ -66,12 +66,12 @@ export const Navbar = ({ onAuthClick }: { onAuthClick?: () => void }) => {
         </button>
 
         <button 
-          className="lg:hidden flex flex-col justify-center gap-1.5 w-9 h-9 text-anashe-fg"
+          className="lg:hidden flex flex-col justify-center gap-1 w-9 h-9 text-anashe-fg relative z-[600]"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         >
-          <span className={cn("w-5 h-px bg-current transition-transform origin-center", isMobileMenuOpen && "rotate-45 translate-y-2")}></span>
-          <span className={cn("w-5 h-px bg-current transition-opacity", isMobileMenuOpen && "opacity-0")}></span>
-          <span className={cn("w-5 h-px bg-current transition-transform origin-center", isMobileMenuOpen && "-rotate-45 -translate-y-2")}></span>
+          <span className={cn("w-5 h-[1.5px] bg-current transition-all duration-300 origin-center absolute left-2", isMobileMenuOpen ? "rotate-45" : "-translate-y-1.5")}></span>
+          <span className={cn("w-5 h-[1.5px] bg-current transition-all duration-300 absolute left-2", isMobileMenuOpen && "opacity-0")}></span>
+          <span className={cn("w-5 h-[1.5px] bg-current transition-all duration-300 origin-center absolute left-2", isMobileMenuOpen ? "-rotate-45" : "translate-y-1.5")}></span>
         </button>
       </div>
 
