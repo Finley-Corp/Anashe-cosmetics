@@ -85,10 +85,13 @@ export const Navbar = ({ onAuthClick }: { onAuthClick?: () => void }) => {
       />
 
       {/* Mobile Sidebar */}
-      <div className={cn(
-        "fixed top-0 right-0 w-[300px] h-full bg-[#212322] z-[600] flex flex-col p-12 gap-8 transition-transform duration-500 ease-out lg:hidden border-l border-white/10 shadow-2xl",
-        isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
-      )}>
+      <div 
+        className={cn(
+          "fixed top-0 right-0 w-[300px] h-full z-[600] flex flex-col p-12 gap-8 transition-transform duration-500 ease-out lg:hidden border-l border-white/10 shadow-2xl",
+          isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
+        )}
+        style={{ backgroundColor: '#212322', opacity: 1 }}
+      >
         <button 
           className="absolute top-6 right-6 text-anashe-fg/40 hover:text-white transition-colors"
           onClick={() => setIsMobileMenuOpen(false)}
