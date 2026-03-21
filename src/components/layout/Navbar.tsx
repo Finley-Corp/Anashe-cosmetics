@@ -78,7 +78,7 @@ export const Navbar = ({ onAuthClick }: { onAuthClick?: () => void }) => {
       {/* Mobile Sidebar Overlay */}
       <div 
         className={cn(
-          "fixed inset-0 bg-black/60 backdrop-blur-sm z-[480] transition-opacity duration-500 lg:hidden",
+          "fixed inset-0 bg-black/60 backdrop-blur-sm z-[590] transition-opacity duration-500 lg:hidden",
           isMobileMenuOpen ? "opacity-100 visible" : "opacity-0 invisible pointer-events-none"
         )}
         onClick={() => setIsMobileMenuOpen(false)}
@@ -86,7 +86,7 @@ export const Navbar = ({ onAuthClick }: { onAuthClick?: () => void }) => {
 
       {/* Mobile Sidebar */}
       <div className={cn(
-        "fixed top-0 right-0 w-[300px] h-full bg-anashe-bg z-[490] flex flex-col p-12 gap-8 transition-transform duration-500 ease-out lg:hidden border-l border-white/10",
+        "fixed top-0 right-0 w-[300px] h-full bg-[#212322] z-[600] flex flex-col p-12 gap-8 transition-transform duration-500 ease-out lg:hidden border-l border-white/10 shadow-2xl",
         isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
       )}>
         <button 
