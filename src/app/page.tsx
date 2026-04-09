@@ -1,331 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import Icon from "@/components/Icon";
 
 export default function Home() {
-  const [isLoaderVisible, setIsLoaderVisible] = useState(true);
-  const [isSearchActive, setIsSearchActive] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
-
-  useEffect(() => {
-    // Loader logic
-    const loaderTimer = setTimeout(() => {
-        setIsLoaderVisible(false);
-    }, 800);
-
-    // Scroll logic for navbar
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
-    window.addEventListener("scroll", handleScroll);
-
-    // Escape for search
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && isSearchActive) {
-        setIsSearchActive(false);
-      }
-    };
-    document.addEventListener("keydown", handleKeyDown);
-
-    // Intersection Observer for scroll animations
-    const observerOptions = {
-        root: null,
-        rootMargin: '0px',
-        threshold: 0.1
-    };
-
-    const observer = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('active');
-                observer.unobserve(entry.target);
-            }
-        });
-    }, observerOptions);
-
-    document.querySelectorAll('.reveal').forEach(el => {
-        observer.observe(el);
-    });
-
-    return () => {
-      clearTimeout(loaderTimer);
-      window.removeEventListener("scroll", handleScroll);
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [isSearchActive]);
-
-  const toggleSearch = () => {
-      setIsSearchActive(!isSearchActive);
-  };
-
-  const toggleMenu = () => {
-      setIsMenuOpen(!isMenuOpen);
-  };
-
-  const closeMenu = () => {
-      setIsMenuOpen(false);
-  };
-
   return (
     <>
-      {/* Page Loader */}
-      {isLoaderVisible && (
-        <div id="loader" className="loader-overlay">
-          <div className="flex flex-col items-center gap-4">
-            <span className="text-xl font-medium tracking-tighter">LUMA</span>
-            <div className="h-0.5 w-24 bg-neutral-100 overflow-hidden relative rounded-full">
-              <div className="absolute inset-0 bg-neutral-900 w-full animate-[ping_1.5s_cubic-bezier(0,0,0.2,1)_infinite]"></div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Navigation */}
-      <nav
-        className={`fixed top-0 left-0 w-full z-50 bg-white/85 backdrop-blur-md border-b border-neutral-100 transition-all duration-300 ${
-          isScrolled ? "shadow-[0_4px_30px_-4px_rgba(0,0,0,0.03)]" : ""
-        }`}
-        id="navbar"
-      >
-        <div className="flex h-16 max-w-[1440px] mr-auto ml-auto pr-6 pl-6 relative items-center justify-between">
-          {/* Search Bar Overlay */}
-          <div
-            id="search-bar-container"
-            className={`absolute inset-0 bg-white z-[60] flex items-center px-6 transition-all duration-300 transform ${
-              isSearchActive
-                ? "opacity-100 visible translate-y-0"
-                : "opacity-0 invisible -translate-y-2"
-            }`}
-          >
-            <div className="max-w-[1440px] mx-auto w-full flex items-center gap-3">
-              <Icon icon="lucide:search" width="20" className="text-neutral-400"></Icon>
-              <input
-                type="text"
-                id="search-input"
-                placeholder="Search for products, collections, or articles..."
-                className="flex-1 h-10 bg-transparent border-none outline-none text-sm text-neutral-900 placeholder:text-neutral-400 font-medium"
-                ref={(input) => { if (input && isSearchActive) input.focus(); }}
-              />
-              <button
-                onClick={toggleSearch}
-                className="p-2 hover:bg-neutral-100 rounded-full text-neutral-500 hover:text-neutral-900 transition-colors"
-              >
-                <Icon icon="lucide:x" width="20"></Icon>
-              </button>
-            </div>
-          </div>
-
-          {/* Left Group: Mobile Menu & Logo */}
-          <div className="flex items-center gap-4 z-50">
-            <button
-              onClick={toggleMenu}
-              className="lg:hidden p-1 -ml-1 text-neutral-500 hover:text-black transition-colors focus:outline-none"
-            >
-              {isMenuOpen ? (
-                <Icon icon="lucide:x" width="24" stroke-width="1.5"></Icon>
-              ) : (
-                <Icon icon="lucide:menu" width="24" stroke-width="1.5"></Icon>
-              )}
-            </button>
-            <Link
-              href="/"
-              className="hover:opacity-70 transition-opacity text-xl font-medium tracking-tighter"
-            >
-              LUMA
-            </Link>
-          </div>
-
-          {/* Center Navigation (Desktop) - Absolutely Centered */}
-          <div className="hidden lg:flex items-center gap-8 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-            {/* Shop (Mega Menu) */}
-            <div className="nav-item group flex items-center justify-center relative h-16">
-              <Link
-                href="#shop"
-                className="hover:text-black transition-colors text-sm font-medium text-neutral-500"
-              >
-                Shop
-              </Link>
-              {/* Dropdown aligned left-0 */}
-              <div className="nav-dropdown absolute top-full left-0 w-[500px] bg-white border border-neutral-100 rounded-xl shadow-[0_16px_40px_-12px_rgba(0,0,0,0.1)] p-6 opacity-0 invisible transform translate-y-2 transition-all duration-200 ease-out cursor-default z-50">
-                <div className="grid grid-cols-2 gap-8">
-                  <div className="flex flex-col space-y-3">
-                    <span className="text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-1">
-                      Browse
-                    </span>
-                    <Link
-                      href="#shop"
-                      className="hover:text-neutral-500 transition-colors text-sm font-medium text-neutral-900"
-                    >
-                      All Products
-                    </Link>
-                    <Link
-                      href="#new"
-                      className="hover:text-neutral-500 transition-colors flex items-center justify-between text-sm font-medium text-neutral-900"
-                    >
-                      New Arrivals
-                      <span className="text-[10px] text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded font-bold">
-                        NEW
-                      </span>
-                    </Link>
-                    <Link
-                      href="#"
-                      className="hover:text-neutral-500 transition-colors text-sm font-medium text-neutral-900"
-                    >
-                      Best Sellers
-                    </Link>
-                    <Link
-                      href="#"
-                      className="text-sm font-medium text-red-600 hover:text-red-500 transition-colors"
-                    >
-                      Sale
-                    </Link>
-                  </div>
-                  <div className="flex flex-col space-y-3">
-                    <span className="text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-1">
-                      Categories
-                    </span>
-                    <Link
-                      href="#"
-                      className="text-sm text-neutral-600 hover:text-black transition-colors flex items-center gap-2"
-                    >
-                      <Icon icon="lucide:sofa" width="14"></Icon> Furniture
-                    </Link>
-                    <Link
-                      href="#"
-                      className="text-sm text-neutral-600 hover:text-black transition-colors flex items-center gap-2"
-                    >
-                      <Icon icon="lucide:lamp" width="14"></Icon> Lighting
-                    </Link>
-                    <Link
-                      href="#"
-                      className="text-sm text-neutral-600 hover:text-black transition-colors flex items-center gap-2"
-                    >
-                      <Icon icon="lucide:flower-2" width="14"></Icon> Accessories
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <Link
-              href="#about"
-              className="hover:text-black transition-colors text-sm font-medium text-neutral-500"
-            >
-              About
-            </Link>
-            <Link
-              href="#journal"
-              className="hover:text-black transition-colors text-sm font-medium text-neutral-500"
-            >
-              Journal
-            </Link>
-            <Link
-              href="#contact"
-              className="hover:text-black transition-colors text-sm font-medium text-neutral-500"
-            >
-              Contact
-            </Link>
-          </div>
-
-          {/* Right Icons */}
-          <div className="flex items-center gap-3 z-50">
-            <button
-              onClick={toggleSearch}
-              className="w-8 h-8 flex items-center justify-center text-neutral-500 hover:text-black transition-colors rounded-full hover:bg-neutral-100"
-              aria-label="Search"
-            >
-              <Icon icon="lucide:search" width="20" stroke-width="1.5"></Icon>
-            </button>
-
-            <Link
-              href="#"
-              className="flex items-center justify-center hover:text-black transition-colors hover:bg-neutral-100 text-neutral-500 w-8 h-8 rounded-full"
-              aria-label="Account"
-            >
-              <Icon icon="lucide:user" width="20" stroke-width="1.5"></Icon>
-            </Link>
-
-            <Link
-              href="#"
-              className="flex hover:text-black transition-colors hover:bg-neutral-100 text-neutral-500 w-8 h-8 rounded-full relative items-center justify-center"
-              aria-label="Cart"
-              role="button"
-            >
-              <Icon icon="lucide:shopping-bag" width="20" stroke-width="1.5"></Icon>
-              <span className="absolute top-1 right-0.5 w-3 h-3 bg-neutral-900 text-white text-[8px] font-bold flex items-center justify-center rounded-full ring-2 ring-white">
-                2
-              </span>
-            </Link>
-          </div>
-        </div>
-
-        {/* Mobile Menu (Full Width) */}
-        <div
-          id="mobile-menu"
-          className={`absolute top-16 left-0 w-full bg-white border-b border-neutral-100 px-6 py-8 lg:hidden shadow-xl h-[calc(100vh-64px)] overflow-y-auto ${
-            isMenuOpen ? "open" : ""
-          }`}
-        >
-          <div className="flex flex-col space-y-6 max-w-[1440px] mx-auto">
-            <div className="space-y-3">
-              <Link
-                href="#shop"
-                onClick={closeMenu}
-                className="text-2xl font-medium text-neutral-900 block tracking-tight"
-              >
-                Shop
-              </Link>
-              <div className="pl-4 space-y-3 border-l-2 border-neutral-100">
-                <Link href="#" className="block text-sm text-neutral-500">
-                  New Arrivals
-                </Link>
-                <Link href="#" className="block text-sm text-neutral-500">
-                  Categories
-                </Link>
-                <Link href="#" className="block text-sm text-red-500">
-                  Sale
-                </Link>
-              </div>
-            </div>
-            <div className="space-y-3">
-              <Link
-                href="#collections"
-                onClick={closeMenu}
-                className="text-2xl font-medium text-neutral-900 block tracking-tight"
-              >
-                Collections
-              </Link>
-              <div className="pl-4 space-y-3 border-l-2 border-neutral-100">
-                <Link href="#" className="block text-sm text-neutral-500">
-                  Seasonal
-                </Link>
-                <Link href="#" className="block text-sm text-neutral-500">
-                  Rooms
-                </Link>
-              </div>
-            </div>
-            <Link
-              href="#about"
-              onClick={closeMenu}
-              className="text-2xl font-medium text-neutral-900 block tracking-tight"
-            >
-              About
-            </Link>
-            <Link
-              href="#journal"
-              onClick={closeMenu}
-              className="text-2xl font-medium text-neutral-900 block tracking-tight"
-            >
-              Journal
-            </Link>
-          </div>
-        </div>
-      </nav>
-
       {/* HERO SECTION */}
       <header
         className="relative w-full min-h-[100dvh] lg:h-screen flex items-center bg-white overflow-hidden isolate pt-32 lg:pt-0"
@@ -388,13 +68,13 @@ export default function Home() {
               {/* Buttons */}
               <div className="flex flex-col sm:flex-row w-full sm:w-auto gap-3 animate-fade-in-up opacity-0 delay-300">
                 <Link
-                  href="#shop"
+                  href="/product-listing-page"
                   className="inline-flex items-center justify-center h-12 px-8 bg-neutral-900 text-white text-sm font-semibold rounded-full hover:bg-neutral-800 hover:shadow-lg hover:shadow-neutral-500/10 hover:-translate-y-0.5 transition-all duration-300"
                 >
                   Shop Collection
                 </Link>
                 <Link
-                  href="#new"
+                  href="/product-detail-page"
                   className="inline-flex items-center justify-center h-12 px-8 bg-white border border-neutral-200 text-neutral-900 text-sm font-semibold rounded-full hover:bg-neutral-50 hover:border-neutral-300 transition-all group"
                 >
                   <span>View Lookbook</span>
@@ -418,53 +98,56 @@ export default function Home() {
             </div>
 
             {/* Right: Product Showcase (Col Span 7) */}
-            <div className="lg:col-span-7 relative h-[500px] lg:h-[70vh] min-h-[400px] w-full animate-fade-in-up opacity-0 delay-200">
+            <div className="lg:col-span-7 relative h-[550px] lg:h-[75vh] min-h-[500px] w-full animate-fade-in-up opacity-0 delay-200">
               {/* Main Product Image */}
-              <div className="absolute inset-0 rounded-2xl overflow-hidden shadow-2xl bg-neutral-100 group">
-                <img
-                  src="https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?q=80&w=2587&auto=format&fit=crop"
-                  alt="Lounge Chair"
-                  className="object-center transition-transform duration-[1.5s] ease-in-out group-hover:scale-105 w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none"></div>
+              <div className="absolute inset-0 rounded-[32px] overflow-hidden shadow-2xl bg-[#F8F8F8] group">
+                <Link href="/product-detail-page" className="block w-full h-full cursor-pointer relative z-10">
+                  <img
+                    src="https://images.unsplash.com/photo-1567016376408-0226e4d0c1ea?q=80&w=1780&auto=format&fit=crop"
+                    alt="Linen Lounge Chair"
+                    className="object-center transition-transform duration-[2s] group-hover:scale-105 w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                </Link>
               </div>
 
               {/* Floating Detail Card */}
-              <div className="absolute bottom-6 left-6 md:left-auto md:right-auto md:bottom-12 md:left-12 w-64 glass-panel p-4 rounded-xl shadow-[0_20px_40px_-12px_rgba(0,0,0,0.15)] border border-white/60 z-20 hover:-translate-y-1 transition-transform duration-300">
-                <div className="flex items-start justify-between mb-3">
-                  <div>
-                    <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wide mb-0.5">
+              <div className="absolute bottom-6 left-6 md:bottom-10 md:left-10 w-72 bg-white p-7 rounded-[28px] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.12)] z-30 hover:-translate-y-1 transition-transform duration-300">
+                <div className="flex items-start justify-between mb-4">
+                  <div className="space-y-1">
+                    <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">
                       Best Seller
                     </p>
-                    <h3 className="text-sm font-semibold text-neutral-900 leading-tight">
+                    <h3 className="text-[17px] font-bold text-neutral-900 tracking-tight">
                       Linen Lounge Chair
                     </h3>
                   </div>
-                  <span className="bg-neutral-900 text-white text-[10px] font-bold px-1.5 py-0.5 rounded ml-2">
-                    $890
+                  <span className="bg-neutral-900 text-white text-[11px] font-bold px-2 py-1 rounded-md">
+                    KSh 890
                   </span>
                 </div>
 
-                {/* Color Selection */}
-                <div className="space-y-3">
-                  <div className="flex gap-2">
-                    <button className="w-5 h-5 rounded-full bg-[#E5E0D5] ring-1 ring-offset-2 ring-neutral-900 cursor-pointer"></button>
-                    <button className="w-5 h-5 rounded-full bg-[#3F3F3F] ring-1 ring-transparent hover:ring-offset-2 hover:ring-neutral-300 transition-all cursor-pointer"></button>
-                    <button className="w-5 h-5 rounded-full bg-[#8C7E72] ring-1 ring-transparent hover:ring-offset-2 hover:ring-neutral-300 transition-all cursor-pointer"></button>
+                <div className="space-y-6">
+                  {/* Color Selection */}
+                  <div className="flex gap-2.5">
+                    <button className="w-6 h-6 rounded-full bg-[#E5E0D5] ring-2 ring-offset-2 ring-black cursor-pointer transition-all"></button>
+                    <button className="w-6 h-6 rounded-full bg-[#3F3F3F] ring-2 ring-transparent hover:ring-offset-2 hover:ring-neutral-200 cursor-pointer transition-all"></button>
+                    <button className="w-6 h-6 rounded-full bg-[#8C7E72] ring-2 ring-transparent hover:ring-offset-2 hover:ring-neutral-200 cursor-pointer transition-all"></button>
                   </div>
-                  <button className="w-full h-9 bg-neutral-900 hover:bg-neutral-800 text-white text-[10px] font-semibold rounded-lg transition-colors flex items-center justify-center gap-2">
-                    <Icon icon="lucide:shopping-bag" width="14"></Icon>
+                  
+                  <button className="w-full h-12 bg-neutral-900 hover:bg-black text-white text-[11px] font-bold rounded-xl transition-all flex items-center justify-center gap-2 uppercase tracking-widest shadow-lg shadow-black/10">
+                    <Icon icon="lucide:shopping-bag" width="16"></Icon>
                     Add to Cart
                   </button>
                 </div>
               </div>
 
-              {/* Secondary Image */}
-              <div className="hidden lg:block absolute -right-8 top-12 w-48 aspect-[3/4] rounded-lg overflow-hidden border-4 border-white shadow-xl animate-fade-in-up opacity-0 delay-300 hover:scale-105 transition-transform duration-500">
+              {/* Secondary Image (Context) */}
+              <div className="hidden lg:block absolute -right-6 top-10 w-52 aspect-[3/4] rounded-2xl overflow-hidden border-[6px] border-white shadow-2xl animate-fade-in-up opacity-0 delay-300 hover:scale-[1.03] transition-transform duration-700 z-20">
                 <img
-                  src="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=800&q=80"
+                  src="https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?q=80&w=2070&auto=format&fit=crop"
                   className="w-full h-full object-cover"
-                  alt="Detail view"
+                  alt="Furniture Context"
                 />
               </div>
             </div>
@@ -501,7 +184,7 @@ export default function Home() {
               New Arrivals
             </h2>
             <Link
-              href="#shop"
+              href="/product-listing-page"
               className="text-sm font-medium text-neutral-500 hover:text-black transition-colors flex items-center gap-1 group pb-1 border-b border-transparent hover:border-black"
             >
               Browse All
@@ -516,12 +199,14 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 h-auto md:h-[600px]">
             {/* Large Item */}
             <div className="h-96 md:h-auto md:col-span-2 relative group overflow-hidden rounded-xl bg-neutral-100 reveal cursor-pointer">
-              <img
-                src="https://images.unsplash.com/photo-1622653533660-a1538fe8424c?w=2560&q=80"
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                alt="Lighting"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-80 transition-opacity duration-500"></div>
+              <Link href="/product-detail-page" className="block w-full h-full cursor-pointer relative z-10">
+                <img
+                  src="https://images.unsplash.com/photo-1622653533660-a1538fe8424c?w=2560&q=80"
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  alt="Lighting"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-80 transition-opacity duration-500"></div>
+              </Link>
               <div className="absolute bottom-8 left-8 text-white z-10">
                 <span className="text-xs font-bold uppercase tracking-wider mb-2 block opacity-80">
                   Collection 01
@@ -541,23 +226,27 @@ export default function Home() {
             {/* Stacked Items */}
             <div className="grid grid-rows-2 gap-6 h-96 md:h-auto">
               <div className="relative group overflow-hidden rounded-xl bg-neutral-100 reveal delay-100 cursor-pointer">
-                <img
-                  src="https://images.unsplash.com/photo-1594026112284-02bb6f3352fe?q=80&w=2070&auto=format&fit=crop"
-                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  alt="Ceramics"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-80"></div>
+                <Link href="/product-detail-page" className="block w-full h-full cursor-pointer relative z-10">
+                  <img
+                    src="https://images.unsplash.com/photo-1594026112284-02bb6f3352fe?q=80&w=2070&auto=format&fit=crop"
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    alt="Ceramics"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-80"></div>
+                </Link>
                 <div className="absolute bottom-6 left-6 text-white z-10">
                   <h3 className="text-xl font-medium tracking-tight">Ceramics</h3>
                 </div>
               </div>
               <div className="relative group overflow-hidden rounded-xl bg-neutral-100 reveal delay-200 cursor-pointer">
-                <img
-                  src="https://images.unsplash.com/photo-1567016432779-094069958ea5?q=80&w=1780&auto=format&fit=crop"
-                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  alt="Furniture"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-80"></div>
+                <Link href="/product-detail-page" className="block w-full h-full cursor-pointer relative z-10">
+                  <img
+                    src="https://images.unsplash.com/photo-1567016432779-094069958ea5?q=80&w=1780&auto=format&fit=crop"
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    alt="Furniture"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-80"></div>
+                </Link>
                 <div className="absolute bottom-6 left-6 text-white z-10">
                   <h3 className="text-xl font-medium tracking-tight">Seating</h3>
                 </div>
@@ -600,16 +289,18 @@ export default function Home() {
             {/* Product 1 */}
             <div className="group relative reveal">
               <div className="aspect-square bg-white rounded-lg overflow-hidden mb-4 relative border border-neutral-100">
-                <img
-                  src="https://images.unsplash.com/photo-1604610728890-6f4b631ed081?w=800&q=80"
-                  alt="Lamp"
-                  className="w-full h-full object-cover group-hover:opacity-0 transition-opacity absolute inset-0 z-10"
-                />
-                <img
-                  src="https://images.unsplash.com/photo-1603801705819-e3b27f8bb8cc?w=800&q=80"
-                  alt="Lamp Context"
-                  className="w-full h-full object-cover absolute inset-0 scale-105"
-                />
+                <Link href="/product-detail-page" className="block w-full h-full cursor-pointer relative z-10">
+                  <img
+                    src="https://images.unsplash.com/photo-1604610728890-6f4b631ed081?w=800&q=80"
+                    alt="Lamp"
+                    className="w-full h-full object-cover group-hover:opacity-0 transition-opacity absolute inset-0 z-10"
+                  />
+                  <img
+                    src="https://images.unsplash.com/photo-1603801705819-e3b27f8bb8cc?w=800&q=80"
+                    alt="Lamp Context"
+                    className="w-full h-full object-cover absolute inset-0 scale-105"
+                  />
+                </Link>
 
                 <div className="absolute bottom-4 left-4 right-4 z-20 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
                   <button className="w-full h-10 bg-white/95 backdrop-blur text-neutral-900 text-xs font-bold rounded shadow-lg hover:bg-neutral-900 hover:text-white transition-colors flex items-center justify-center gap-2">
@@ -623,29 +314,31 @@ export default function Home() {
                 </div>
               </div>
               <div className="flex justify-between items-start">
-                <div>
+                <div className="cursor-pointer" onClick={() => window.location.href='/product-detail-page'}>
                   <h3 className="text-sm font-semibold text-neutral-900 tracking-tight">
                     Orbital Lamp
                   </h3>
                   <p className="text-xs text-neutral-500 mt-1">Matte Black Steel</p>
                 </div>
-                <span className="text-sm font-semibold text-neutral-900">$320</span>
+                <span className="text-sm font-semibold text-neutral-900">KSh 320</span>
               </div>
             </div>
 
             {/* Product 2 */}
             <div className="group relative reveal delay-75">
               <div className="aspect-square bg-white rounded-lg overflow-hidden mb-4 relative border border-neutral-100">
-                <img
-                  src="https://images.unsplash.com/photo-1592078615290-033ee584e267?q=80&w=1964&auto=format&fit=crop"
-                  alt="Chair"
-                  className="w-full h-full object-cover group-hover:opacity-0 transition-opacity absolute inset-0 z-10"
-                />
-                <img
-                  src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800&q=80"
-                  alt="Chair Context"
-                  className="w-full h-full object-cover absolute inset-0 scale-105"
-                />
+                <Link href="/product-detail-page" className="block w-full h-full cursor-pointer relative z-10">
+                  <img
+                    src="https://images.unsplash.com/photo-1592078615290-033ee584e267?q=80&w=1964&auto=format&fit=crop"
+                    alt="Chair"
+                    className="w-full h-full object-cover group-hover:opacity-0 transition-opacity absolute inset-0 z-10"
+                  />
+                  <img
+                    src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800&q=80"
+                    alt="Chair Context"
+                    className="w-full h-full object-cover absolute inset-0 scale-105"
+                  />
+                </Link>
                 <div className="absolute top-3 left-3 z-20 bg-neutral-900 text-white text-[10px] uppercase font-bold px-2 py-1 rounded-sm">
                   New
                 </div>
@@ -661,29 +354,31 @@ export default function Home() {
                 </div>
               </div>
               <div className="flex justify-between items-start">
-                <div>
+                <div className="cursor-pointer" onClick={() => window.location.href='/product-detail-page'}>
                   <h3 className="text-sm font-semibold text-neutral-900 tracking-tight">
                     Linen Lounge
                   </h3>
                   <p className="text-xs text-neutral-500 mt-1">Natural Oak</p>
                 </div>
-                <span className="text-sm font-semibold text-neutral-900">$890</span>
+                <span className="text-sm font-semibold text-neutral-900">KSh 890</span>
               </div>
             </div>
 
             {/* Product 3 */}
             <div className="group relative reveal delay-100">
               <div className="aspect-square bg-white rounded-lg overflow-hidden mb-4 relative border border-neutral-100">
-                <img
-                  src="https://images.unsplash.com/photo-1597696929736-6d13bed8e6a8?w=800&q=80"
-                  alt="Vase"
-                  className="w-full h-full object-cover group-hover:opacity-0 transition-opacity absolute inset-0 z-10"
-                />
-                <img
-                  src="https://images.unsplash.com/photo-1608111115633-872fa895d40d?w=800&q=80"
-                  alt="Vase Context"
-                  className="w-full h-full object-cover absolute inset-0 scale-105"
-                />
+                <Link href="/product-detail-page" className="block w-full h-full cursor-pointer relative z-10">
+                  <img
+                    src="https://images.unsplash.com/photo-1597696929736-6d13bed8e6a8?w=800&q=80"
+                    alt="Vase"
+                    className="w-full h-full object-cover group-hover:opacity-0 transition-opacity absolute inset-0 z-10"
+                  />
+                  <img
+                    src="https://images.unsplash.com/photo-1608111115633-872fa895d40d?w=800&q=80"
+                    alt="Vase Context"
+                    className="w-full h-full object-cover absolute inset-0 scale-105"
+                  />
+                </Link>
                 <div className="absolute bottom-4 left-4 right-4 z-20 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
                   <button className="w-full h-10 bg-white/95 backdrop-blur text-neutral-900 text-xs font-bold rounded shadow-lg hover:bg-neutral-900 hover:text-white transition-colors flex items-center justify-center gap-2">
                     <Icon icon="lucide:plus" width="14"></Icon> Quick Add
@@ -696,29 +391,31 @@ export default function Home() {
                 </div>
               </div>
               <div className="flex justify-between items-start">
-                <div>
+                <div className="cursor-pointer" onClick={() => window.location.href='/product-detail-page'}>
                   <h3 className="text-sm font-semibold text-neutral-900 tracking-tight">
                     Sculpt Vase 02
                   </h3>
                   <p className="text-xs text-neutral-500 mt-1">Raw Clay</p>
                 </div>
-                <span className="text-sm font-semibold text-neutral-900">$140</span>
+                <span className="text-sm font-semibold text-neutral-900">KSh 140</span>
               </div>
             </div>
 
             {/* Product 4 */}
             <div className="group relative reveal delay-150">
               <div className="aspect-square bg-white rounded-lg overflow-hidden mb-4 relative border border-neutral-100">
-                <img
-                  src="https://images.unsplash.com/photo-1533090481720-856c6e3c1fdc?q=80&w=1888&auto=format&fit=crop"
-                  alt="Table"
-                  className="w-full h-full object-cover group-hover:opacity-0 transition-opacity absolute inset-0 z-10"
-                />
-                <img
-                  src="https://images.unsplash.com/photo-1605239435870-67df4c54a0b3?w=800&q=80"
-                  alt="Table Context"
-                  className="w-full h-full object-cover absolute inset-0 scale-105"
-                />
+                <Link href="/product-detail-page" className="block w-full h-full cursor-pointer relative z-10">
+                  <img
+                    src="https://images.unsplash.com/photo-1533090481720-856c6e3c1fdc?q=80&w=1888&auto=format&fit=crop"
+                    alt="Table"
+                    className="w-full h-full object-cover group-hover:opacity-0 transition-opacity absolute inset-0 z-10"
+                  />
+                  <img
+                    src="https://images.unsplash.com/photo-1605239435870-67df4c54a0b3?w=800&q=80"
+                    alt="Table Context"
+                    className="w-full h-full object-cover absolute inset-0 scale-105"
+                  />
+                </Link>
                 <div className="absolute bottom-4 left-4 right-4 z-20 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
                   <button className="w-full h-10 bg-white/95 backdrop-blur text-neutral-900 text-xs font-bold rounded shadow-lg hover:bg-neutral-900 hover:text-white transition-colors flex items-center justify-center gap-2">
                     <Icon icon="lucide:plus" width="14"></Icon> Quick Add
@@ -731,20 +428,20 @@ export default function Home() {
                 </div>
               </div>
               <div className="flex justify-between items-start">
-                <div>
+                <div className="cursor-pointer" onClick={() => window.location.href='/product-detail-page'}>
                   <h3 className="text-sm font-semibold text-neutral-900 tracking-tight">
                     Side Table
                   </h3>
                   <p className="text-xs text-neutral-500 mt-1">Walnut Finish</p>
                 </div>
-                <span className="text-sm font-semibold text-neutral-900">$450</span>
+                <span className="text-sm font-semibold text-neutral-900">KSh 450</span>
               </div>
             </div>
           </div>
 
           <div className="mt-16 text-center">
             <Link
-              href="#"
+              href="/product-listing-page"
               className="inline-block border-b border-black pb-0.5 text-sm font-semibold hover:text-neutral-600 hover:border-neutral-600 transition-all"
             >
               View All Products
@@ -801,7 +498,7 @@ export default function Home() {
             </ul>
 
             <Link
-              href="#about"
+              href="/about-us"
               className="inline-flex items-center text-sm font-semibold border border-neutral-200 px-6 py-3.5 rounded hover:bg-neutral-50 transition-colors"
             >
               Read our story
@@ -919,119 +616,6 @@ export default function Home() {
           </form>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="w-full bg-white pt-20 pb-10 border-t border-neutral-100">
-        <div className="max-w-[1440px] mx-auto px-6">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
-            <div>
-              <h4 className="font-semibold text-sm tracking-wide mb-5 text-neutral-900">
-                Shop
-              </h4>
-              <ul className="space-y-3 text-sm text-neutral-500">
-                <li>
-                  <Link href="#" className="hover:text-black transition-colors">
-                    New Arrivals
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="hover:text-black transition-colors">
-                    Best Sellers
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="hover:text-black transition-colors">
-                    Furniture
-                  </Link>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold text-sm tracking-wide mb-5 text-neutral-900">
-                Support
-              </h4>
-              <ul className="space-y-3 text-sm text-neutral-500">
-                <li>
-                  <Link href="#" className="hover:text-black transition-colors">
-                    Help Center
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="hover:text-black transition-colors">
-                    Shipping & Returns
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="hover:text-black transition-colors">
-                    Size Guide
-                  </Link>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold text-sm tracking-wide mb-5 text-neutral-900">
-                Company
-              </h4>
-              <ul className="space-y-3 text-sm text-neutral-500">
-                <li>
-                  <Link href="#" className="hover:text-black transition-colors">
-                    Our Story
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="hover:text-black transition-colors">
-                    Sustainability
-                  </Link>
-                </li>
-                <li>
-                  <Link href="#" className="hover:text-black transition-colors">
-                    Careers
-                  </Link>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold text-sm tracking-wide mb-5 text-neutral-900">
-                Follow Us
-              </h4>
-              <div className="flex gap-4 text-neutral-500">
-                <Link
-                  href="#"
-                  className="hover:text-black transition-colors p-2 bg-neutral-50 rounded-full"
-                >
-                  <Icon icon="lucide:instagram" width="18"></Icon>
-                </Link>
-                <Link
-                  href="#"
-                  className="hover:text-black transition-colors p-2 bg-neutral-50 rounded-full"
-                >
-                  <Icon icon="lucide:twitter" width="18"></Icon>
-                </Link>
-                <Link
-                  href="#"
-                  className="hover:text-black transition-colors p-2 bg-neutral-50 rounded-full"
-                >
-                  <Icon icon="lucide:facebook" width="18"></Icon>
-                </Link>
-              </div>
-            </div>
-          </div>
-          <div className="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-neutral-100 gap-4">
-            <div className="text-xl font-bold tracking-tighter">LUMA</div>
-            <div className="text-[11px] text-neutral-400 font-medium">
-              © 2023 LUMA Inc. All rights reserved.
-            </div>
-            <div className="flex gap-3">
-              <div className="h-6 px-2 bg-neutral-50 rounded border border-neutral-100 flex items-center justify-center text-neutral-400">
-                <Icon icon="lucide:credit-card" width="14"></Icon>
-              </div>
-              <div className="h-6 px-2 bg-neutral-50 rounded border border-neutral-100 flex items-center justify-center text-neutral-400">
-                <Icon icon="lucide:wallet" width="14"></Icon>
-              </div>
-            </div>
-          </div>
-        </div>
-      </footer>
     </>
   );
 }
