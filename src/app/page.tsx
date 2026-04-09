@@ -1,0 +1,1037 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import Icon from "@/components/Icon";
+
+export default function Home() {
+  const [isLoaderVisible, setIsLoaderVisible] = useState(true);
+  const [isSearchActive, setIsSearchActive] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    // Loader logic
+    const loaderTimer = setTimeout(() => {
+        setIsLoaderVisible(false);
+    }, 800);
+
+    // Scroll logic for navbar
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll);
+
+    // Escape for search
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isSearchActive) {
+        setIsSearchActive(false);
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
+
+    // Intersection Observer for scroll animations
+    const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.1
+    };
+
+    const observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('active');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
+
+    document.querySelectorAll('.reveal').forEach(el => {
+        observer.observe(el);
+    });
+
+    return () => {
+      clearTimeout(loaderTimer);
+      window.removeEventListener("scroll", handleScroll);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isSearchActive]);
+
+  const toggleSearch = () => {
+      setIsSearchActive(!isSearchActive);
+  };
+
+  const toggleMenu = () => {
+      setIsMenuOpen(!isMenuOpen);
+  };
+
+  const closeMenu = () => {
+      setIsMenuOpen(false);
+  };
+
+  return (
+    <>
+      {/* Page Loader */}
+      {isLoaderVisible && (
+        <div id="loader" className="loader-overlay">
+          <div className="flex flex-col items-center gap-4">
+            <span className="text-xl font-medium tracking-tighter">LUMA</span>
+            <div className="h-0.5 w-24 bg-neutral-100 overflow-hidden relative rounded-full">
+              <div className="absolute inset-0 bg-neutral-900 w-full animate-[ping_1.5s_cubic-bezier(0,0,0.2,1)_infinite]"></div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Navigation */}
+      <nav
+        className={`fixed top-0 left-0 w-full z-50 bg-white/85 backdrop-blur-md border-b border-neutral-100 transition-all duration-300 ${
+          isScrolled ? "shadow-[0_4px_30px_-4px_rgba(0,0,0,0.03)]" : ""
+        }`}
+        id="navbar"
+      >
+        <div className="flex h-16 max-w-[1440px] mr-auto ml-auto pr-6 pl-6 relative items-center justify-between">
+          {/* Search Bar Overlay */}
+          <div
+            id="search-bar-container"
+            className={`absolute inset-0 bg-white z-[60] flex items-center px-6 transition-all duration-300 transform ${
+              isSearchActive
+                ? "opacity-100 visible translate-y-0"
+                : "opacity-0 invisible -translate-y-2"
+            }`}
+          >
+            <div className="max-w-[1440px] mx-auto w-full flex items-center gap-3">
+              <Icon icon="lucide:search" width="20" className="text-neutral-400"></Icon>
+              <input
+                type="text"
+                id="search-input"
+                placeholder="Search for products, collections, or articles..."
+                className="flex-1 h-10 bg-transparent border-none outline-none text-sm text-neutral-900 placeholder:text-neutral-400 font-medium"
+                ref={(input) => { if (input && isSearchActive) input.focus(); }}
+              />
+              <button
+                onClick={toggleSearch}
+                className="p-2 hover:bg-neutral-100 rounded-full text-neutral-500 hover:text-neutral-900 transition-colors"
+              >
+                <Icon icon="lucide:x" width="20"></Icon>
+              </button>
+            </div>
+          </div>
+
+          {/* Left Group: Mobile Menu & Logo */}
+          <div className="flex items-center gap-4 z-50">
+            <button
+              onClick={toggleMenu}
+              className="lg:hidden p-1 -ml-1 text-neutral-500 hover:text-black transition-colors focus:outline-none"
+            >
+              {isMenuOpen ? (
+                <Icon icon="lucide:x" width="24" stroke-width="1.5"></Icon>
+              ) : (
+                <Icon icon="lucide:menu" width="24" stroke-width="1.5"></Icon>
+              )}
+            </button>
+            <Link
+              href="/"
+              className="hover:opacity-70 transition-opacity text-xl font-medium tracking-tighter"
+            >
+              LUMA
+            </Link>
+          </div>
+
+          {/* Center Navigation (Desktop) - Absolutely Centered */}
+          <div className="hidden lg:flex items-center gap-8 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+            {/* Shop (Mega Menu) */}
+            <div className="nav-item group flex items-center justify-center relative h-16">
+              <Link
+                href="#shop"
+                className="hover:text-black transition-colors text-sm font-medium text-neutral-500"
+              >
+                Shop
+              </Link>
+              {/* Dropdown aligned left-0 */}
+              <div className="nav-dropdown absolute top-full left-0 w-[500px] bg-white border border-neutral-100 rounded-xl shadow-[0_16px_40px_-12px_rgba(0,0,0,0.1)] p-6 opacity-0 invisible transform translate-y-2 transition-all duration-200 ease-out cursor-default z-50">
+                <div className="grid grid-cols-2 gap-8">
+                  <div className="flex flex-col space-y-3">
+                    <span className="text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-1">
+                      Browse
+                    </span>
+                    <Link
+                      href="#shop"
+                      className="hover:text-neutral-500 transition-colors text-sm font-medium text-neutral-900"
+                    >
+                      All Products
+                    </Link>
+                    <Link
+                      href="#new"
+                      className="hover:text-neutral-500 transition-colors flex items-center justify-between text-sm font-medium text-neutral-900"
+                    >
+                      New Arrivals
+                      <span className="text-[10px] text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded font-bold">
+                        NEW
+                      </span>
+                    </Link>
+                    <Link
+                      href="#"
+                      className="hover:text-neutral-500 transition-colors text-sm font-medium text-neutral-900"
+                    >
+                      Best Sellers
+                    </Link>
+                    <Link
+                      href="#"
+                      className="text-sm font-medium text-red-600 hover:text-red-500 transition-colors"
+                    >
+                      Sale
+                    </Link>
+                  </div>
+                  <div className="flex flex-col space-y-3">
+                    <span className="text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-1">
+                      Categories
+                    </span>
+                    <Link
+                      href="#"
+                      className="text-sm text-neutral-600 hover:text-black transition-colors flex items-center gap-2"
+                    >
+                      <Icon icon="lucide:sofa" width="14"></Icon> Furniture
+                    </Link>
+                    <Link
+                      href="#"
+                      className="text-sm text-neutral-600 hover:text-black transition-colors flex items-center gap-2"
+                    >
+                      <Icon icon="lucide:lamp" width="14"></Icon> Lighting
+                    </Link>
+                    <Link
+                      href="#"
+                      className="text-sm text-neutral-600 hover:text-black transition-colors flex items-center gap-2"
+                    >
+                      <Icon icon="lucide:flower-2" width="14"></Icon> Accessories
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <Link
+              href="#about"
+              className="hover:text-black transition-colors text-sm font-medium text-neutral-500"
+            >
+              About
+            </Link>
+            <Link
+              href="#journal"
+              className="hover:text-black transition-colors text-sm font-medium text-neutral-500"
+            >
+              Journal
+            </Link>
+            <Link
+              href="#contact"
+              className="hover:text-black transition-colors text-sm font-medium text-neutral-500"
+            >
+              Contact
+            </Link>
+          </div>
+
+          {/* Right Icons */}
+          <div className="flex items-center gap-3 z-50">
+            <button
+              onClick={toggleSearch}
+              className="w-8 h-8 flex items-center justify-center text-neutral-500 hover:text-black transition-colors rounded-full hover:bg-neutral-100"
+              aria-label="Search"
+            >
+              <Icon icon="lucide:search" width="20" stroke-width="1.5"></Icon>
+            </button>
+
+            <Link
+              href="#"
+              className="flex items-center justify-center hover:text-black transition-colors hover:bg-neutral-100 text-neutral-500 w-8 h-8 rounded-full"
+              aria-label="Account"
+            >
+              <Icon icon="lucide:user" width="20" stroke-width="1.5"></Icon>
+            </Link>
+
+            <Link
+              href="#"
+              className="flex hover:text-black transition-colors hover:bg-neutral-100 text-neutral-500 w-8 h-8 rounded-full relative items-center justify-center"
+              aria-label="Cart"
+              role="button"
+            >
+              <Icon icon="lucide:shopping-bag" width="20" stroke-width="1.5"></Icon>
+              <span className="absolute top-1 right-0.5 w-3 h-3 bg-neutral-900 text-white text-[8px] font-bold flex items-center justify-center rounded-full ring-2 ring-white">
+                2
+              </span>
+            </Link>
+          </div>
+        </div>
+
+        {/* Mobile Menu (Full Width) */}
+        <div
+          id="mobile-menu"
+          className={`absolute top-16 left-0 w-full bg-white border-b border-neutral-100 px-6 py-8 lg:hidden shadow-xl h-[calc(100vh-64px)] overflow-y-auto ${
+            isMenuOpen ? "open" : ""
+          }`}
+        >
+          <div className="flex flex-col space-y-6 max-w-[1440px] mx-auto">
+            <div className="space-y-3">
+              <Link
+                href="#shop"
+                onClick={closeMenu}
+                className="text-2xl font-medium text-neutral-900 block tracking-tight"
+              >
+                Shop
+              </Link>
+              <div className="pl-4 space-y-3 border-l-2 border-neutral-100">
+                <Link href="#" className="block text-sm text-neutral-500">
+                  New Arrivals
+                </Link>
+                <Link href="#" className="block text-sm text-neutral-500">
+                  Categories
+                </Link>
+                <Link href="#" className="block text-sm text-red-500">
+                  Sale
+                </Link>
+              </div>
+            </div>
+            <div className="space-y-3">
+              <Link
+                href="#collections"
+                onClick={closeMenu}
+                className="text-2xl font-medium text-neutral-900 block tracking-tight"
+              >
+                Collections
+              </Link>
+              <div className="pl-4 space-y-3 border-l-2 border-neutral-100">
+                <Link href="#" className="block text-sm text-neutral-500">
+                  Seasonal
+                </Link>
+                <Link href="#" className="block text-sm text-neutral-500">
+                  Rooms
+                </Link>
+              </div>
+            </div>
+            <Link
+              href="#about"
+              onClick={closeMenu}
+              className="text-2xl font-medium text-neutral-900 block tracking-tight"
+            >
+              About
+            </Link>
+            <Link
+              href="#journal"
+              onClick={closeMenu}
+              className="text-2xl font-medium text-neutral-900 block tracking-tight"
+            >
+              Journal
+            </Link>
+          </div>
+        </div>
+      </nav>
+
+      {/* HERO SECTION */}
+      <header
+        className="relative w-full min-h-[100dvh] lg:h-screen flex items-center bg-white overflow-hidden isolate pt-32 lg:pt-0"
+        id="hero"
+      >
+        {/* Background Gradients */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1200px] h-[600px] bg-gradient-to-b from-neutral-50 via-neutral-100/50 to-transparent rounded-[100%] blur-3xl -z-10 opacity-70 pointer-events-none"></div>
+
+        {/* Inner Container */}
+        <div className="w-full max-w-[1440px] mx-auto px-6 h-full flex items-center">
+          <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-center w-full mt-8 lg:mt-0">
+            {/* Left: Copy (Col Span 5) */}
+            <div className="lg:col-span-5 flex flex-col items-start relative z-10">
+              {/* Social Proof */}
+              <div className="flex items-center gap-3 mb-8 animate-fade-in-up opacity-0 mt-8 lg:mt-0">
+                <div className="flex -space-x-2.5">
+                  <img
+                    className="h-9 w-9 rounded-full ring-2 ring-white object-cover"
+                    src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=64&q=80"
+                    alt=""
+                  />
+                  <img
+                    className="h-9 w-9 rounded-full ring-2 ring-white object-cover"
+                    src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=64&q=80"
+                    alt=""
+                  />
+                  <img
+                    className="h-9 w-9 rounded-full ring-2 ring-white object-cover"
+                    src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=64&q=80"
+                    alt=""
+                  />
+                  <div className="h-9 w-9 rounded-full ring-2 ring-white bg-neutral-100 flex items-center justify-center text-[10px] font-bold text-neutral-600">
+                    +2k
+                  </div>
+                </div>
+                <div className="flex flex-col justify-center">
+                  <div className="flex text-neutral-900 text-[10px] gap-0.5">
+                    <Icon icon="lucide:star" fill="currentColor"></Icon>
+                    <Icon icon="lucide:star" fill="currentColor"></Icon>
+                    <Icon icon="lucide:star" fill="currentColor"></Icon>
+                    <Icon icon="lucide:star" fill="currentColor"></Icon>
+                    <Icon icon="lucide:star" fill="currentColor"></Icon>
+                  </div>
+                  <span className="text-xs font-medium text-neutral-500 mt-0.5">
+                    Trusted by designers
+                  </span>
+                </div>
+              </div>
+
+              <h1 className="text-5xl lg:text-7xl font-medium tracking-tighter leading-[0.95] mb-6 text-neutral-900 animate-fade-in-up opacity-0 delay-100">
+                Timeless design, <br />
+                <span className="text-neutral-400">everyday living.</span>
+              </h1>
+
+              <p className="text-lg text-neutral-500 mb-10 leading-relaxed max-w-md animate-fade-in-up opacity-0 delay-200">
+                Premium furniture designed for the modern sanctuary. Hand-finished
+                materials meets ergonomic excellence.
+              </p>
+
+              {/* Buttons */}
+              <div className="flex flex-col sm:flex-row w-full sm:w-auto gap-3 animate-fade-in-up opacity-0 delay-300">
+                <Link
+                  href="#shop"
+                  className="inline-flex items-center justify-center h-12 px-8 bg-neutral-900 text-white text-sm font-semibold rounded-full hover:bg-neutral-800 hover:shadow-lg hover:shadow-neutral-500/10 hover:-translate-y-0.5 transition-all duration-300"
+                >
+                  Shop Collection
+                </Link>
+                <Link
+                  href="#new"
+                  className="inline-flex items-center justify-center h-12 px-8 bg-white border border-neutral-200 text-neutral-900 text-sm font-semibold rounded-full hover:bg-neutral-50 hover:border-neutral-300 transition-all group"
+                >
+                  <span>View Lookbook</span>
+                  <Icon
+                    icon="lucide:arrow-right"
+                    className="ml-2 transition-transform group-hover:translate-x-1"
+                    width="16"
+                  ></Icon>
+                </Link>
+              </div>
+
+              <div className="mt-10 flex flex-wrap gap-x-6 gap-y-2 text-xs font-medium text-neutral-400 animate-fade-in-up opacity-0 delay-300">
+                <div className="flex items-center gap-1.5">
+                  <Icon icon="lucide:truck" width="14"></Icon> Free Shipping
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Icon icon="lucide:shield-check" width="14"></Icon> 5-Year
+                  Warranty
+                </div>
+              </div>
+            </div>
+
+            {/* Right: Product Showcase (Col Span 7) */}
+            <div className="lg:col-span-7 relative h-[500px] lg:h-[70vh] min-h-[400px] w-full animate-fade-in-up opacity-0 delay-200">
+              {/* Main Product Image */}
+              <div className="absolute inset-0 rounded-2xl overflow-hidden shadow-2xl bg-neutral-100 group">
+                <img
+                  src="https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?q=80&w=2587&auto=format&fit=crop"
+                  alt="Lounge Chair"
+                  className="object-center transition-transform duration-[1.5s] ease-in-out group-hover:scale-105 w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none"></div>
+              </div>
+
+              {/* Floating Detail Card */}
+              <div className="absolute bottom-6 left-6 md:left-auto md:right-auto md:bottom-12 md:left-12 w-64 glass-panel p-4 rounded-xl shadow-[0_20px_40px_-12px_rgba(0,0,0,0.15)] border border-white/60 z-20 hover:-translate-y-1 transition-transform duration-300">
+                <div className="flex items-start justify-between mb-3">
+                  <div>
+                    <p className="text-[10px] font-bold text-neutral-500 uppercase tracking-wide mb-0.5">
+                      Best Seller
+                    </p>
+                    <h3 className="text-sm font-semibold text-neutral-900 leading-tight">
+                      Linen Lounge Chair
+                    </h3>
+                  </div>
+                  <span className="bg-neutral-900 text-white text-[10px] font-bold px-1.5 py-0.5 rounded ml-2">
+                    $890
+                  </span>
+                </div>
+
+                {/* Color Selection */}
+                <div className="space-y-3">
+                  <div className="flex gap-2">
+                    <button className="w-5 h-5 rounded-full bg-[#E5E0D5] ring-1 ring-offset-2 ring-neutral-900 cursor-pointer"></button>
+                    <button className="w-5 h-5 rounded-full bg-[#3F3F3F] ring-1 ring-transparent hover:ring-offset-2 hover:ring-neutral-300 transition-all cursor-pointer"></button>
+                    <button className="w-5 h-5 rounded-full bg-[#8C7E72] ring-1 ring-transparent hover:ring-offset-2 hover:ring-neutral-300 transition-all cursor-pointer"></button>
+                  </div>
+                  <button className="w-full h-9 bg-neutral-900 hover:bg-neutral-800 text-white text-[10px] font-semibold rounded-lg transition-colors flex items-center justify-center gap-2">
+                    <Icon icon="lucide:shopping-bag" width="14"></Icon>
+                    Add to Cart
+                  </button>
+                </div>
+              </div>
+
+              {/* Secondary Image */}
+              <div className="hidden lg:block absolute -right-8 top-12 w-48 aspect-[3/4] rounded-lg overflow-hidden border-4 border-white shadow-xl animate-fade-in-up opacity-0 delay-300 hover:scale-105 transition-transform duration-500">
+                <img
+                  src="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=800&q=80"
+                  className="w-full h-full object-cover"
+                  alt="Detail view"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Ticker Section */}
+      <div className="w-full border-y border-neutral-100 bg-neutral-50/60 py-5">
+        <div className="max-w-[1440px] mx-auto px-6">
+          <div className="flex flex-wrap justify-center gap-x-8 gap-y-4 text-xs font-semibold text-neutral-400 uppercase tracking-widest text-center">
+            <span className="flex items-center gap-2 hover:text-neutral-600 transition-colors cursor-default">
+              <Icon icon="lucide:check-circle" width="14"></Icon> Sustainably
+              Sourced
+            </span>
+            <span className="flex items-center gap-2 hover:text-neutral-600 transition-colors cursor-default">
+              <Icon icon="lucide:box" width="14"></Icon> Free Global Shipping
+            </span>
+            <span className="flex items-center gap-2 hover:text-neutral-600 transition-colors cursor-default">
+              <Icon icon="lucide:shield-check" width="14"></Icon> 5 Year Warranty
+            </span>
+            <span className="flex items-center gap-2 hidden sm:flex hover:text-neutral-600 transition-colors cursor-default">
+              <Icon icon="lucide:award" width="14"></Icon> Award Winning Design
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* NEW ARRIVALS */}
+      <section className="w-full py-20 lg:py-32 scroll-mt-20" id="new">
+        <div className="max-w-[1440px] mx-auto px-6">
+          <div className="flex justify-between items-end mb-10 reveal">
+            <h2 className="text-3xl lg:text-4xl font-medium tracking-tighter">
+              New Arrivals
+            </h2>
+            <Link
+              href="#shop"
+              className="text-sm font-medium text-neutral-500 hover:text-black transition-colors flex items-center gap-1 group pb-1 border-b border-transparent hover:border-black"
+            >
+              Browse All
+              <Icon
+                icon="lucide:arrow-up-right"
+                width="16"
+                className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+              ></Icon>
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 h-auto md:h-[600px]">
+            {/* Large Item */}
+            <div className="h-96 md:h-auto md:col-span-2 relative group overflow-hidden rounded-xl bg-neutral-100 reveal cursor-pointer">
+              <img
+                src="https://images.unsplash.com/photo-1622653533660-a1538fe8424c?w=2560&q=80"
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                alt="Lighting"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-80 transition-opacity duration-500"></div>
+              <div className="absolute bottom-8 left-8 text-white z-10">
+                <span className="text-xs font-bold uppercase tracking-wider mb-2 block opacity-80">
+                  Collection 01
+                </span>
+                <h3 className="text-3xl font-medium tracking-tight mb-2">
+                  Lighting Series
+                </h3>
+                <p className="text-white/80 text-sm max-w-sm">
+                  Illuminate your sanctuary with our hand-blown glass collection.
+                </p>
+              </div>
+              <button className="absolute top-6 right-6 w-12 h-12 bg-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-300 shadow-xl z-20 text-neutral-900">
+                <Icon icon="lucide:arrow-right" width="20"></Icon>
+              </button>
+            </div>
+
+            {/* Stacked Items */}
+            <div className="grid grid-rows-2 gap-6 h-96 md:h-auto">
+              <div className="relative group overflow-hidden rounded-xl bg-neutral-100 reveal delay-100 cursor-pointer">
+                <img
+                  src="https://images.unsplash.com/photo-1594026112284-02bb6f3352fe?q=80&w=2070&auto=format&fit=crop"
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  alt="Ceramics"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-80"></div>
+                <div className="absolute bottom-6 left-6 text-white z-10">
+                  <h3 className="text-xl font-medium tracking-tight">Ceramics</h3>
+                </div>
+              </div>
+              <div className="relative group overflow-hidden rounded-xl bg-neutral-100 reveal delay-200 cursor-pointer">
+                <img
+                  src="https://images.unsplash.com/photo-1567016432779-094069958ea5?q=80&w=1780&auto=format&fit=crop"
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  alt="Furniture"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-80"></div>
+                <div className="absolute bottom-6 left-6 text-white z-10">
+                  <h3 className="text-xl font-medium tracking-tight">Seating</h3>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* SHOP SECTION */}
+      <section
+        className="w-full py-20 bg-neutral-50 border-y border-neutral-200 scroll-mt-20"
+        id="shop"
+      >
+        <div className="max-w-[1440px] mx-auto px-6">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-12 gap-6 reveal">
+            <h2 className="text-3xl font-medium tracking-tighter text-neutral-900">
+              Essential Objects
+            </h2>
+
+            {/* Filter Tabs */}
+            <div className="flex flex-wrap gap-2">
+              <button className="px-5 py-2.5 rounded-full bg-neutral-900 text-white text-xs font-semibold shadow-lg shadow-neutral-900/10 transition-transform active:scale-95">
+                All
+              </button>
+              <button className="px-5 py-2.5 rounded-full bg-white border border-neutral-200 text-neutral-600 text-xs font-semibold hover:border-neutral-400 hover:text-neutral-900 transition-colors">
+                Lighting
+              </button>
+              <button className="px-5 py-2.5 rounded-full bg-white border border-neutral-200 text-neutral-600 text-xs font-semibold hover:border-neutral-400 hover:text-neutral-900 transition-colors">
+                Furniture
+              </button>
+              <button className="px-5 py-2.5 rounded-full bg-white border border-neutral-200 text-neutral-600 text-xs font-semibold hover:border-neutral-400 hover:text-neutral-900 transition-colors">
+                Accessories
+              </button>
+            </div>
+          </div>
+
+          {/* Product Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-y-12 gap-x-8">
+            {/* Product 1 */}
+            <div className="group relative reveal">
+              <div className="aspect-square bg-white rounded-lg overflow-hidden mb-4 relative border border-neutral-100">
+                <img
+                  src="https://images.unsplash.com/photo-1604610728890-6f4b631ed081?w=800&q=80"
+                  alt="Lamp"
+                  className="w-full h-full object-cover group-hover:opacity-0 transition-opacity absolute inset-0 z-10"
+                />
+                <img
+                  src="https://images.unsplash.com/photo-1603801705819-e3b27f8bb8cc?w=800&q=80"
+                  alt="Lamp Context"
+                  className="w-full h-full object-cover absolute inset-0 scale-105"
+                />
+
+                <div className="absolute bottom-4 left-4 right-4 z-20 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+                  <button className="w-full h-10 bg-white/95 backdrop-blur text-neutral-900 text-xs font-bold rounded shadow-lg hover:bg-neutral-900 hover:text-white transition-colors flex items-center justify-center gap-2">
+                    <Icon icon="lucide:plus" width="14"></Icon> Quick Add
+                  </button>
+                </div>
+                <div className="absolute top-3 right-3 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <button className="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center transition-all text-neutral-400 hover:text-red-500 hover:scale-110">
+                    <Icon icon="lucide:heart" width="16"></Icon>
+                  </button>
+                </div>
+              </div>
+              <div className="flex justify-between items-start">
+                <div>
+                  <h3 className="text-sm font-semibold text-neutral-900 tracking-tight">
+                    Orbital Lamp
+                  </h3>
+                  <p className="text-xs text-neutral-500 mt-1">Matte Black Steel</p>
+                </div>
+                <span className="text-sm font-semibold text-neutral-900">$320</span>
+              </div>
+            </div>
+
+            {/* Product 2 */}
+            <div className="group relative reveal delay-75">
+              <div className="aspect-square bg-white rounded-lg overflow-hidden mb-4 relative border border-neutral-100">
+                <img
+                  src="https://images.unsplash.com/photo-1592078615290-033ee584e267?q=80&w=1964&auto=format&fit=crop"
+                  alt="Chair"
+                  className="w-full h-full object-cover group-hover:opacity-0 transition-opacity absolute inset-0 z-10"
+                />
+                <img
+                  src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800&q=80"
+                  alt="Chair Context"
+                  className="w-full h-full object-cover absolute inset-0 scale-105"
+                />
+                <div className="absolute top-3 left-3 z-20 bg-neutral-900 text-white text-[10px] uppercase font-bold px-2 py-1 rounded-sm">
+                  New
+                </div>
+                <div className="absolute bottom-4 left-4 right-4 z-20 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+                  <button className="w-full h-10 bg-white/95 backdrop-blur text-neutral-900 text-xs font-bold rounded shadow-lg hover:bg-neutral-900 hover:text-white transition-colors flex items-center justify-center gap-2">
+                    <Icon icon="lucide:plus" width="14"></Icon> Quick Add
+                  </button>
+                </div>
+                <div className="absolute top-3 right-3 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <button className="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center transition-all text-neutral-400 hover:text-red-500 hover:scale-110">
+                    <Icon icon="lucide:heart" width="16"></Icon>
+                  </button>
+                </div>
+              </div>
+              <div className="flex justify-between items-start">
+                <div>
+                  <h3 className="text-sm font-semibold text-neutral-900 tracking-tight">
+                    Linen Lounge
+                  </h3>
+                  <p className="text-xs text-neutral-500 mt-1">Natural Oak</p>
+                </div>
+                <span className="text-sm font-semibold text-neutral-900">$890</span>
+              </div>
+            </div>
+
+            {/* Product 3 */}
+            <div className="group relative reveal delay-100">
+              <div className="aspect-square bg-white rounded-lg overflow-hidden mb-4 relative border border-neutral-100">
+                <img
+                  src="https://images.unsplash.com/photo-1597696929736-6d13bed8e6a8?w=800&q=80"
+                  alt="Vase"
+                  className="w-full h-full object-cover group-hover:opacity-0 transition-opacity absolute inset-0 z-10"
+                />
+                <img
+                  src="https://images.unsplash.com/photo-1608111115633-872fa895d40d?w=800&q=80"
+                  alt="Vase Context"
+                  className="w-full h-full object-cover absolute inset-0 scale-105"
+                />
+                <div className="absolute bottom-4 left-4 right-4 z-20 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+                  <button className="w-full h-10 bg-white/95 backdrop-blur text-neutral-900 text-xs font-bold rounded shadow-lg hover:bg-neutral-900 hover:text-white transition-colors flex items-center justify-center gap-2">
+                    <Icon icon="lucide:plus" width="14"></Icon> Quick Add
+                  </button>
+                </div>
+                <div className="absolute top-3 right-3 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <button className="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center transition-all text-neutral-400 hover:text-red-500 hover:scale-110">
+                    <Icon icon="lucide:heart" width="16"></Icon>
+                  </button>
+                </div>
+              </div>
+              <div className="flex justify-between items-start">
+                <div>
+                  <h3 className="text-sm font-semibold text-neutral-900 tracking-tight">
+                    Sculpt Vase 02
+                  </h3>
+                  <p className="text-xs text-neutral-500 mt-1">Raw Clay</p>
+                </div>
+                <span className="text-sm font-semibold text-neutral-900">$140</span>
+              </div>
+            </div>
+
+            {/* Product 4 */}
+            <div className="group relative reveal delay-150">
+              <div className="aspect-square bg-white rounded-lg overflow-hidden mb-4 relative border border-neutral-100">
+                <img
+                  src="https://images.unsplash.com/photo-1533090481720-856c6e3c1fdc?q=80&w=1888&auto=format&fit=crop"
+                  alt="Table"
+                  className="w-full h-full object-cover group-hover:opacity-0 transition-opacity absolute inset-0 z-10"
+                />
+                <img
+                  src="https://images.unsplash.com/photo-1605239435870-67df4c54a0b3?w=800&q=80"
+                  alt="Table Context"
+                  className="w-full h-full object-cover absolute inset-0 scale-105"
+                />
+                <div className="absolute bottom-4 left-4 right-4 z-20 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+                  <button className="w-full h-10 bg-white/95 backdrop-blur text-neutral-900 text-xs font-bold rounded shadow-lg hover:bg-neutral-900 hover:text-white transition-colors flex items-center justify-center gap-2">
+                    <Icon icon="lucide:plus" width="14"></Icon> Quick Add
+                  </button>
+                </div>
+                <div className="absolute top-3 right-3 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <button className="w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center transition-all text-neutral-400 hover:text-red-500 hover:scale-110">
+                    <Icon icon="lucide:heart" width="16"></Icon>
+                  </button>
+                </div>
+              </div>
+              <div className="flex justify-between items-start">
+                <div>
+                  <h3 className="text-sm font-semibold text-neutral-900 tracking-tight">
+                    Side Table
+                  </h3>
+                  <p className="text-xs text-neutral-500 mt-1">Walnut Finish</p>
+                </div>
+                <span className="text-sm font-semibold text-neutral-900">$450</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-16 text-center">
+            <Link
+              href="#"
+              className="inline-block border-b border-black pb-0.5 text-sm font-semibold hover:text-neutral-600 hover:border-neutral-600 transition-all"
+            >
+              View All Products
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* COLLECTIONS (Split Screen) */}
+      <section
+        className="w-full grid lg:grid-cols-2 min-h-[600px] border-b border-neutral-100 scroll-mt-20"
+        id="collections"
+      >
+        <div className="relative bg-neutral-100 h-96 lg:h-auto overflow-hidden group">
+          <img
+            src="https://images.unsplash.com/photo-1631679706909-1844bbd07221?q=80&w=1992&auto=format&fit=crop"
+            alt="Craftsmanship"
+            className="absolute inset-0 w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-105"
+          />
+        </div>
+        <div className="flex flex-col justify-center px-6 py-20 lg:px-24 bg-white">
+          <div className="reveal max-w-lg">
+            <span className="text-xs font-bold tracking-widest text-neutral-400 uppercase mb-4 block">
+              Our Philosophy
+            </span>
+            <h2 className="text-3xl lg:text-4xl font-medium tracking-tighter mb-6 leading-tight">
+              Designed to endure,<br />crafted to inspire.
+            </h2>
+            <p className="text-neutral-500 leading-relaxed mb-8 text-sm">
+              We believe in fewer, better things. Each piece in our collection is
+              thoughtfully designed with sustainability and longevity in mind,
+              using materials that age gracefully over time.
+            </p>
+
+            <ul className="space-y-4 mb-10">
+              <li className="flex items-center gap-3 text-sm font-medium text-neutral-800">
+                <div className="w-5 h-5 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-900">
+                  <Icon icon="lucide:check" width="12"></Icon>
+                </div>
+                Ethically sourced materials
+              </li>
+              <li className="flex items-center gap-3 text-sm font-medium text-neutral-800">
+                <div className="w-5 h-5 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-900">
+                  <Icon icon="lucide:check" width="12"></Icon>
+                </div>
+                Carbon neutral shipping
+              </li>
+              <li className="flex items-center gap-3 text-sm font-medium text-neutral-800">
+                <div className="w-5 h-5 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-900">
+                  <Icon icon="lucide:check" width="12"></Icon>
+                </div>
+                Artisan craftsmanship
+              </li>
+            </ul>
+
+            <Link
+              href="#about"
+              className="inline-flex items-center text-sm font-semibold border border-neutral-200 px-6 py-3.5 rounded hover:bg-neutral-50 transition-colors"
+            >
+              Read our story
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* JOURNAL */}
+      <section className="w-full py-20 lg:py-32 scroll-mt-20" id="journal">
+        <div className="max-w-[1440px] mx-auto px-6">
+          <h2 className="text-3xl font-medium tracking-tighter mb-12 reveal">
+            The Journal
+          </h2>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Article 1 */}
+            <article className="group cursor-pointer reveal">
+              <div className="overflow-hidden rounded-xl mb-5 aspect-[16/10] bg-neutral-100">
+                <img
+                  src="https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?q=80&w=2070&auto=format&fit=crop"
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  alt="Blog 1"
+                />
+              </div>
+              <div className="flex items-center gap-2 text-xs font-semibold text-neutral-500 mb-2.5 uppercase tracking-wide">
+                <span>Oct 12, 2023</span>
+                <span className="w-1 h-1 bg-neutral-300 rounded-full"></span>
+                <span>Interiors</span>
+              </div>
+              <h3 className="text-xl font-medium tracking-tight mb-2 group-hover:underline decoration-1 underline-offset-4">
+                Minimalism in the Modern Home
+              </h3>
+              <p className="text-sm text-neutral-500 line-clamp-2 leading-relaxed">
+                Exploring the balance between functionality and aesthetic in
+                contemporary living spaces, emphasizing clutter-free environments.
+              </p>
+            </article>
+
+            {/* Article 2 */}
+            <article className="group cursor-pointer reveal delay-100">
+              <div className="overflow-hidden rounded-xl mb-5 aspect-[16/10] bg-neutral-100">
+                <img
+                  src="https://images.unsplash.com/photo-1517705008128-361805f42e86?q=80&w=1987&auto=format&fit=crop"
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  alt="Blog 2"
+                />
+              </div>
+              <div className="flex items-center gap-2 text-xs font-semibold text-neutral-500 mb-2.5 uppercase tracking-wide">
+                <span>Sep 28, 2023</span>
+                <span className="w-1 h-1 bg-neutral-300 rounded-full"></span>
+                <span>Design</span>
+              </div>
+              <h3 className="text-xl font-medium tracking-tight mb-2 group-hover:underline decoration-1 underline-offset-4">
+                The Art of Lighting
+              </h3>
+              <p className="text-sm text-neutral-500 line-clamp-2 leading-relaxed">
+                How proper lighting transforms the mood and utility of a room
+                instantly, creating warmth and depth in any space.
+              </p>
+            </article>
+
+            {/* Article 3 */}
+            <article className="group cursor-pointer reveal delay-200">
+              <div className="overflow-hidden rounded-xl mb-5 aspect-[16/10] bg-neutral-100">
+                <img
+                  src="https://images.unsplash.com/photo-1505330622279-bf7d7fc918f4?q=80&w=2070&auto=format&fit=crop"
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  alt="Blog 3"
+                />
+              </div>
+              <div className="flex items-center gap-2 text-xs font-semibold text-neutral-500 mb-2.5 uppercase tracking-wide">
+                <span>Sep 15, 2023</span>
+                <span className="w-1 h-1 bg-neutral-300 rounded-full"></span>
+                <span>Studio</span>
+              </div>
+              <h3 className="text-xl font-medium tracking-tight mb-2 group-hover:underline decoration-1 underline-offset-4">
+                Meet the Makers
+              </h3>
+              <p className="text-sm text-neutral-500 line-clamp-2 leading-relaxed">
+                A behind-the-scenes look at the artisans crafting our ceramic
+                collection using traditional techniques handed down for generations.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      {/* Newsletter */}
+      <section className="w-full py-24 bg-neutral-900 text-white" id="newsletter">
+        <div className="max-w-screen-xl mx-auto px-6 text-center reveal">
+          <Icon icon="lucide:mail-open" width="32" className="mb-6 text-neutral-400"></Icon>
+          <h2 className="text-3xl lg:text-4xl font-medium tracking-tighter mb-4">
+            Join the list
+          </h2>
+          <p className="text-neutral-400 mb-10 max-w-md mx-auto text-sm">
+            Sign up for early access to new drops and exclusive offers. No spam,
+            ever.
+          </p>
+
+          <form
+            className="flex flex-col sm:flex-row gap-2 max-w-md mx-auto"
+            onSubmit={(e) => e.preventDefault()}
+          >
+            <input
+              type="email"
+              placeholder="email@address.com"
+              className="flex-1 bg-neutral-800 border border-neutral-700 text-white text-sm rounded-lg px-4 py-3 outline-none focus:border-neutral-500 focus:ring-1 focus:ring-neutral-500 transition-all placeholder:text-neutral-600"
+            />
+            <button
+              type="submit"
+              className="bg-white text-neutral-900 text-sm font-bold px-6 py-3 rounded-lg hover:bg-neutral-200 transition-colors"
+            >
+              Subscribe
+            </button>
+          </form>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="w-full bg-white pt-20 pb-10 border-t border-neutral-100">
+        <div className="max-w-[1440px] mx-auto px-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+            <div>
+              <h4 className="font-semibold text-sm tracking-wide mb-5 text-neutral-900">
+                Shop
+              </h4>
+              <ul className="space-y-3 text-sm text-neutral-500">
+                <li>
+                  <Link href="#" className="hover:text-black transition-colors">
+                    New Arrivals
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#" className="hover:text-black transition-colors">
+                    Best Sellers
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#" className="hover:text-black transition-colors">
+                    Furniture
+                  </Link>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-semibold text-sm tracking-wide mb-5 text-neutral-900">
+                Support
+              </h4>
+              <ul className="space-y-3 text-sm text-neutral-500">
+                <li>
+                  <Link href="#" className="hover:text-black transition-colors">
+                    Help Center
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#" className="hover:text-black transition-colors">
+                    Shipping & Returns
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#" className="hover:text-black transition-colors">
+                    Size Guide
+                  </Link>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-semibold text-sm tracking-wide mb-5 text-neutral-900">
+                Company
+              </h4>
+              <ul className="space-y-3 text-sm text-neutral-500">
+                <li>
+                  <Link href="#" className="hover:text-black transition-colors">
+                    Our Story
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#" className="hover:text-black transition-colors">
+                    Sustainability
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#" className="hover:text-black transition-colors">
+                    Careers
+                  </Link>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-semibold text-sm tracking-wide mb-5 text-neutral-900">
+                Follow Us
+              </h4>
+              <div className="flex gap-4 text-neutral-500">
+                <Link
+                  href="#"
+                  className="hover:text-black transition-colors p-2 bg-neutral-50 rounded-full"
+                >
+                  <Icon icon="lucide:instagram" width="18"></Icon>
+                </Link>
+                <Link
+                  href="#"
+                  className="hover:text-black transition-colors p-2 bg-neutral-50 rounded-full"
+                >
+                  <Icon icon="lucide:twitter" width="18"></Icon>
+                </Link>
+                <Link
+                  href="#"
+                  className="hover:text-black transition-colors p-2 bg-neutral-50 rounded-full"
+                >
+                  <Icon icon="lucide:facebook" width="18"></Icon>
+                </Link>
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-neutral-100 gap-4">
+            <div className="text-xl font-bold tracking-tighter">LUMA</div>
+            <div className="text-[11px] text-neutral-400 font-medium">
+              © 2023 LUMA Inc. All rights reserved.
+            </div>
+            <div className="flex gap-3">
+              <div className="h-6 px-2 bg-neutral-50 rounded border border-neutral-100 flex items-center justify-center text-neutral-400">
+                <Icon icon="lucide:credit-card" width="14"></Icon>
+              </div>
+              <div className="h-6 px-2 bg-neutral-50 rounded border border-neutral-100 flex items-center justify-center text-neutral-400">
+                <Icon icon="lucide:wallet" width="14"></Icon>
+              </div>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </>
+  );
+}
