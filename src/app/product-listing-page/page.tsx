@@ -1,21 +1,26 @@
 "use client";
 
+import type { MouseEvent } from "react";
 import Link from "next/link";
 import Icon from "@/components/Icon";
+import { useCart } from "@/context/CartContext";
+import { useProductsCatalog } from "@/context/ProductsCatalogContext";
+import { productHref } from "@/lib/catalog";
+import type { ProductJson } from "@/types/product";
 
 const categories = [
-  { name: "All Furniture", count: 42 },
-  { name: "Seating", count: 18 },
-  { name: "Tables", count: 12 },
-  { name: "Storage", count: 8 },
-  { name: "Lighting", count: 4 },
+  { name: "All beauty", count: 42 },
+  { name: "Skincare", count: 22 },
+  { name: "Makeup", count: 10 },
+  { name: "Body care", count: 6 },
+  { name: "Tools & accessories", count: 4 },
 ];
 
 const materials = [
-  "Solid Oak",
-  "Walnut",
-  "Bouclé Fabric",
-  "Brushed Steel",
+  "Dry",
+  "Oily",
+  "Combination",
+  "Sensitive",
 ];
 
 const colors = [
@@ -26,64 +31,147 @@ const colors = [
   { name: "Dark Grey", hex: "#4B5563" },
 ];
 
-const products = [
+type ListingRow = {
+  id: number;
+  name: string;
+  material: string;
+  price: number;
+  image: string;
+  tag: string | null;
+  swatches: string[];
+  detailHref: string | null;
+  shadeCount: number | null;
+  quickAddId: string;
+  href: string;
+};
+
+function rowFromApi(p: ProductJson): ListingRow {
+  return {
+    id: p.id,
+    name: p.name,
+    material: p.material ?? "",
+    price: p.price,
+    image: p.imageUrl,
+    tag: p.tag,
+    swatches: p.swatches,
+    detailHref: p.detailHref,
+    shadeCount: p.shadeCount,
+    quickAddId: p.slug,
+    href: productHref(p),
+  };
+}
+
+const FALLBACK_PRODUCTS: ListingRow[] = [
   {
     id: 1,
-    name: "Kyoto Lounge Chair",
-    material: "Solid Ash & Paper Cord",
+    name: "Barrier Restore Serum",
+    material: "All skin types · 30 ml",
     price: 1295,
-    image: "https://images.unsplash.com/photo-1592078615290-033ee584e267?q=80&w=1964&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?q=80&w=1964&auto=format&fit=crop",
     tag: "NEW",
-    swatches: ["#F3F4F6", "#171717"]
+    swatches: ["#F3F4F6", "#E8DFD4"],
+    detailHref: "/product-detail-page",
+    shadeCount: null,
+    quickAddId: "barrier-serum",
+    href: "/product-detail-page",
   },
   {
     id: 2,
-    name: "Nara Side Table",
-    material: "Blackened Steel",
-    price: 450,
-    image: "https://images.unsplash.com/photo-1533090481720-856c6e3c1fdc?q=80&w=1888&auto=format&fit=crop",
+    name: "Cloud Cream Moisturizer",
+    material: "Dry to combination",
+    price: 890,
+    image: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?q=80&w=1888&auto=format&fit=crop",
     tag: null,
-    swatches: ["#171717"]
+    swatches: ["#F5F0E8", "#D4C4B0"],
+    detailHref: null,
+    shadeCount: null,
+    quickAddId: "cloud-cream",
+    href: "/product-detail-page",
   },
   {
     id: 3,
-    name: "Arco Floor Lamp",
-    material: "Brass & Marble",
+    name: "Soft Focus Concealer",
+    material: "Full coverage · C / W / N undertones",
     price: 895,
-    image: "https://images.unsplash.com/photo-1534073828943-f801091bb18c?w=800&q=80",
+    image: "https://images.unsplash.com/photo-1631214524020-7e18db9a8f92?q=80&w=800&auto=format&fit=crop",
     tag: "BEST SELLER",
-    swatches: ["#E5E7EB", "#FACC15"]
+    swatches: [
+      "#F4E8DC",
+      "#EDD8C8",
+      "#E8D0B8",
+      "#E0C4A8",
+      "#D4B896",
+      "#CFAE88",
+      "#C49A78",
+      "#B88968"
+    ],
+    shadeCount: 18,
+    detailHref: "/product-detail-page?p=concealer",
+    quickAddId: "soft-focus-concealer",
+    href: "/product-detail-page?p=concealer",
   },
   {
     id: 4,
-    name: "Cloud Modular Sofa",
-    material: "Performance Velvet",
-    price: 3400,
-    image: "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?q=80&w=2587&auto=format&fit=crop",
+    name: "Gentle Foam Cleanser",
+    material: "Sensitive skin safe",
+    price: 695,
+    image: "https://images.unsplash.com/photo-1556228720-195a672e8a03?q=80&w=2587&auto=format&fit=crop",
     tag: null,
-    swatches: ["#BE123C", "#171717", "#78350F"]
+    swatches: ["#F3F4F6", "#93C5FD"],
+    detailHref: null,
+    shadeCount: null,
+    quickAddId: "gentle-cleanser",
+    href: "/product-detail-page",
   },
   {
     id: 5,
-    name: "Mono Ceramic Vase",
-    material: "Hand-thrown Clay",
-    price: 120,
-    image: "https://images.unsplash.com/photo-1597696929736-6d13bed8e6a8?w=800&q=80",
+    name: "Overnight Repair Mask",
+    material: "Weekly treatment",
+    price: 1120,
+    image: "https://images.unsplash.com/photo-1598440947619-c608c443a5c7?q=80&w=800&auto=format&fit=crop",
     tag: null,
-    swatches: ["#F3F4F6"]
+    swatches: ["#E9D5FF"],
+    detailHref: null,
+    shadeCount: null,
+    quickAddId: "overnight-mask",
+    href: "/product-listing-page",
   },
   {
     id: 6,
-    name: "Linear Console",
-    material: "Solid Walnut",
-    price: 1850,
-    image: "https://images.unsplash.com/photo-1622653533660-a1538fe8424c?w=2560&q=80",
+    name: "Mineral SPF 50",
+    material: "Invisible on all tones",
+    price: 1450,
+    image: "https://images.unsplash.com/photo-1556228578-0d85b1a4e571?q=80&w=2560&auto=format&fit=crop",
     tag: null,
-    swatches: ["#78350F"]
+    swatches: ["#FEF3C7", "#FDE68A"],
+    detailHref: null,
+    shadeCount: null,
+    quickAddId: "mineral-spf",
+    href: "/product-listing-page",
   }
 ];
 
 export default function ShopPage() {
+  const { addItem } = useCart();
+  const { products: apiProducts, getQuickProduct, isLoading } = useProductsCatalog();
+  const products =
+    apiProducts.length > 0 ? apiProducts.map(rowFromApi) : FALLBACK_PRODUCTS;
+
+  function handleQuickAdd(quickAddId: string, e: MouseEvent<HTMLButtonElement>) {
+    e.preventDefault();
+    e.stopPropagation();
+    const p = getQuickProduct(quickAddId);
+    if (!p) return;
+    addItem({
+      productId: p.id,
+      name: p.name,
+      price: p.price,
+      image: p.image,
+      variantLabel: p.defaultVariant,
+      quantity: 1,
+    });
+  }
+
   return (
     <div className="pt-32 pb-24 min-h-screen bg-white">
       <div className="max-w-[1440px] mx-auto px-6">
@@ -108,9 +196,9 @@ export default function ShopPage() {
               </ul>
             </div>
 
-            {/* Material */}
+            {/* Skin type */}
             <div>
-              <h3 className="text-sm font-medium tracking-tighter text-black mb-8">Material</h3>
+              <h3 className="text-sm font-medium tracking-tighter text-black mb-8">Skin type</h3>
               <div className="space-y-4">
                 {materials.map((mat) => (
                   <label key={mat} className="flex items-center gap-3 group cursor-pointer">
@@ -162,13 +250,13 @@ export default function ShopPage() {
               <nav className="flex items-center gap-2 text-[10px] font-bold text-neutral-400 uppercase tracking-[0.2em] mb-4">
                 <Link href="/" className="hover:text-black transition-colors">Home</Link>
                 <span className="text-neutral-200">/</span>
-                <span className="text-black">Furniture</span>
+                <span className="text-black">Skincare & beauty</span>
               </nav>
               <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
-                  <h1 className="text-4xl lg:text-[44px] font-medium tracking-tighter mb-4 text-black">All Furniture</h1>
+                  <h1 className="text-4xl lg:text-[44px] font-medium tracking-tighter mb-4 text-black">Skincare & beauty</h1>
                   <p className="text-neutral-500 text-sm md:text-base font-medium leading-relaxed max-w-xl">
-                    Designed to endure. Crafted from honest materials to age with grace.
+                    Clean, effective formulas and makeup you can feel good about—thoughtfully made for real routines.
                   </p>
                 </div>
                 <div className="flex items-center gap-4">
@@ -185,7 +273,7 @@ export default function ShopPage() {
               {products.map((product, idx) => (
                 <div key={product.id} className="group reveal" style={{ transitionDelay: `${idx * 100}ms` }}>
                   <div className="aspect-[4/5] bg-neutral-50 rounded-lg overflow-hidden mb-5 relative border border-neutral-100">
-                    <Link href="/product-detail-page" className="block w-full h-full cursor-pointer">
+                    <Link href={product.href} className="block w-full h-full cursor-pointer">
                       <img
                         src={product.image}
                         className="w-full h-full object-cover transition-transform duration-[1.5s] group-hover:scale-105"
@@ -201,7 +289,11 @@ export default function ShopPage() {
 
                     {/* Quick Add Button on Hover */}
                     <div className="absolute bottom-6 left-6 right-6 z-20 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
-                      <button className="w-full h-12 bg-white/95 backdrop-blur text-black text-[11px] font-bold rounded shadow-xl hover:bg-black hover:text-white transition-all uppercase tracking-widest">
+                      <button
+                        type="button"
+                        onClick={(e) => handleQuickAdd(product.quickAddId, e)}
+                        className="w-full h-12 bg-white/95 backdrop-blur text-black text-[11px] font-bold rounded shadow-xl hover:bg-black hover:text-white transition-all uppercase tracking-widest"
+                      >
                         Quick Add
                       </button>
                     </div>
@@ -217,7 +309,7 @@ export default function ShopPage() {
                   {/* Product Details */}
                   <div className="space-y-1.5">
                     <div className="flex justify-between items-start group/title">
-                      <Link href="/product-detail-page">
+                      <Link href={product.href}>
                         <h3 className="text-sm font-semibold text-black tracking-tight group-hover/title:text-neutral-500 transition-colors leading-tight">
                           {product.name}
                         </h3>
@@ -227,14 +319,23 @@ export default function ShopPage() {
                     <p className="text-[11px] text-neutral-400 font-medium uppercase tracking-wider">
                       {product.material}
                     </p>
-                    <div className="flex gap-2 pt-1.5">
-                       {product.swatches.map((swatch, i) => (
-                         <div 
-                           key={i} 
-                           className="w-2.5 h-2.5 rounded-full ring-1 ring-offset-2 ring-transparent hover:ring-neutral-200 transition-all cursor-pointer" 
+                    <div className="flex flex-wrap items-center gap-2 pt-1.5">
+                       {(product.shadeCount
+                         ? product.swatches.slice(0, 8)
+                         : product.swatches
+                       ).map((swatch, i) => (
+                         <div
+                           key={i}
+                           className="w-2.5 h-2.5 rounded-full ring-1 ring-black/10 ring-inset shrink-0"
                            style={{ backgroundColor: swatch }}
+                           title="Shade preview"
                          />
                        ))}
+                       {product.shadeCount != null && product.shadeCount > 8 && (
+                         <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">
+                           +{product.shadeCount - 8} shades
+                         </span>
+                       )}
                     </div>
                   </div>
                 </div>
@@ -244,7 +345,9 @@ export default function ShopPage() {
             {/* Pagination Section */}
             <div className="mt-24 pt-10 border-t border-neutral-100 flex flex-col sm:flex-row items-center justify-between gap-8 reveal">
               <p className="text-[11px] font-bold text-neutral-400 uppercase tracking-widest leading-none">
-                Showing 6 of 42 products
+                {isLoading
+                  ? "Loading products…"
+                  : `Showing ${products.length} product${products.length === 1 ? "" : "s"}`}
               </p>
               
               <div className="flex items-center gap-4">
