@@ -2,8 +2,23 @@
 
 import Link from "next/link";
 import Icon from "@/components/Icon";
+import { useEffect, useState } from "react";
+import { ORDER_STORAGE_KEY } from "@/lib/order";
+
+type LastOrder = { orderId: string; total: number; placedAt: string; email?: string };
 
 export default function AccountDashboardPage() {
+  const [lastOrder, setLastOrder] = useState<LastOrder | null>(null);
+
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem(ORDER_STORAGE_KEY);
+      if (raw) setLastOrder(JSON.parse(raw));
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
   return (
     <div className="pt-32 pb-24">
       <div className="max-w-[1440px] mx-auto px-6">
@@ -30,6 +45,20 @@ export default function AccountDashboardPage() {
 
            {/* Content */}
            <div className="lg:col-span-3 space-y-12 reveal delay-100">
+              {lastOrder && (
+                <div className="p-6 rounded-2xl bg-neutral-900 text-white">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-neutral-400 mb-2">Latest order</p>
+                  <p className="text-lg font-medium">
+                    #{lastOrder.orderId}{" "}
+                    <span className="text-neutral-400 font-normal text-sm">
+                      · KSh {lastOrder.total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </span>
+                  </p>
+                  <p className="text-xs text-neutral-400 mt-2">
+                    Placed {new Date(lastOrder.placedAt).toLocaleString()}
+                  </p>
+                </div>
+              )}
               {/* Stats/Quick Links */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                  <div className="bg-neutral-50 p-8 rounded-3xl border border-neutral-100">

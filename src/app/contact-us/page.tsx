@@ -25,6 +25,7 @@ const faqs = [
 export default function ContactPage() {
   const [activeInquiry, setActiveInquiry] = useState("Customer Support");
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [sent, setSent] = useState(false);
 
   const toggleFaq = (index: number) => {
     setOpenFaq(openFaq === index ? null : index);
@@ -45,7 +46,13 @@ export default function ContactPage() {
         <div className="flex flex-col lg:flex-row gap-20">
           {/* Left: Form Column */}
           <div className="flex-1 reveal">
-            <form className="space-y-10" onSubmit={(e) => e.preventDefault()}>
+            <form
+              className="space-y-10"
+              onSubmit={(e) => {
+                e.preventDefault();
+                setSent(true);
+              }}
+            >
               {/* Inquiry Type */}
               <div className="space-y-4">
                 <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-400">Inquiry Type</label>
@@ -71,35 +78,44 @@ export default function ContactPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-3">
                   <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-400">First Name</label>
-                  <input type="text" placeholder="Jane" className="w-full h-14 bg-neutral-50 border border-neutral-100 rounded-lg px-6 text-sm font-medium outline-none focus:border-black transition-colors" />
+                  <input name="firstName" type="text" required placeholder="Jane" className="w-full h-14 bg-neutral-50 border border-neutral-100 rounded-lg px-6 text-sm font-medium outline-none focus:border-black transition-colors" />
                 </div>
                 <div className="space-y-3">
                   <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-400">Last Name</label>
-                  <input type="text" placeholder="Doe" className="w-full h-14 bg-neutral-50 border border-neutral-100 rounded-lg px-6 text-sm font-medium outline-none focus:border-black transition-colors" />
+                  <input name="lastName" type="text" required placeholder="Doe" className="w-full h-14 bg-neutral-50 border border-neutral-100 rounded-lg px-6 text-sm font-medium outline-none focus:border-black transition-colors" />
                 </div>
               </div>
 
               {/* Email */}
               <div className="space-y-3">
                 <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-400">Email Address</label>
-                <input type="email" placeholder="jane@example.com" className="w-full h-14 bg-neutral-50 border border-neutral-100 rounded-lg px-6 text-sm font-medium outline-none focus:border-black transition-colors" />
+                <input name="email" type="email" required placeholder="jane@example.com" className="w-full h-14 bg-neutral-50 border border-neutral-100 rounded-lg px-6 text-sm font-medium outline-none focus:border-black transition-colors" />
               </div>
 
               {/* Order Number (Optional) */}
               <div className="space-y-3">
                 <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-400">Order Number (Optional)</label>
-                <input type="text" placeholder="#ANASHE-12345" className="w-full h-14 bg-neutral-50 border border-neutral-100 rounded-lg px-6 text-sm font-medium outline-none focus:border-black transition-colors" />
+                <input name="order" type="text" placeholder="#ANASHE-12345" className="w-full h-14 bg-neutral-50 border border-neutral-100 rounded-lg px-6 text-sm font-medium outline-none focus:border-black transition-colors" />
               </div>
 
               {/* Message */}
               <div className="space-y-3">
                 <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-neutral-400">Message</label>
-                <textarea rows={6} placeholder="How can we help you today?" className="w-full bg-neutral-50 border border-neutral-100 rounded-lg p-6 text-sm font-medium outline-none focus:border-black transition-colors resize-none"></textarea>
+                <textarea name="message" required rows={6} placeholder="How can we help you today?" className="w-full bg-neutral-50 border border-neutral-100 rounded-lg p-6 text-sm font-medium outline-none focus:border-black transition-colors resize-none"></textarea>
               </div>
 
-              <button className="h-14 bg-black text-white px-10 rounded-lg font-bold hover:bg-neutral-800 transition-all shadow-xl shadow-black/10 flex items-center justify-center gap-2 group">
-                Send Message <Icon icon="lucide:arrow-right" width="18" className="group-hover:translate-x-1 transition-transform"></Icon>
-              </button>
+              {sent ? (
+                <p className="text-sm font-medium text-green-700">
+                  Thanks — your message has been received. We&apos;ll reply within one business day.
+                </p>
+              ) : (
+                <button
+                  type="submit"
+                  className="h-14 bg-black text-white px-10 rounded-lg font-bold hover:bg-neutral-800 transition-all shadow-xl shadow-black/10 flex items-center justify-center gap-2 group"
+                >
+                  Send Message <Icon icon="lucide:arrow-right" width="18" className="group-hover:translate-x-1 transition-transform"></Icon>
+                </button>
+              )}
             </form>
           </div>
 

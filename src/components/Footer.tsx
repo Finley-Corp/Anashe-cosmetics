@@ -23,7 +23,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link href="#" className="hover:text-black transition-colors">
-                  Furniture
+                  Skincare
                 </Link>
               </li>
             </ul>
