@@ -6,22 +6,31 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db:seed": "tsx scripts/seed-products.ts",
+    "db:generate-sql": "tsx scripts/generate-seed-sql.ts",
+    "db:seed-http": "tsx scripts/seed-via-http.ts"
   },
   "dependencies": {
+    "@imagekit/nodejs": "^7.4.0",
+    "@neondatabase/serverless": "^1.0.2",
     "iconify-icon": "^3.0.2",
     "next": "16.2.3",
+    "pg": "^8.20.0",
     "react": "19.2.4",
     "react-dom": "19.2.4"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
+    "@types/pg": "^8.20.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "dotenv": "^17.4.2",
     "eslint": "^9",
     "eslint-config-next": "16.2.3",
     "tailwindcss": "^4",
+    "tsx": "^4.21.0",
     "typescript": "^5"
   }
 }
