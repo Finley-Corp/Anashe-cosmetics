@@ -1,54 +1,57 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import Icon from "@/components/Icon";
 
 const posts = [
   {
     id: 1,
-    title: "Minimalism in the Modern Home",
-    category: "Interiors",
+    title: "Building a barrier-friendly routine",
+    category: "Skincare",
     date: "Oct 12, 2023",
-    image: "https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?q=80&w=2070&auto=format&fit=crop",
-    excerpt: "Exploring the balance between functionality and aesthetic in contemporary living spaces, emphasizing clutter-free environments."
+    image: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?q=80&w=2070&auto=format&fit=crop",
+    excerpt: "How to layer serums, moisturizers, and SPF without overwhelming your skin—especially when you are prone to sensitivity."
   },
   {
     id: 2,
-    title: "The Art of Lighting",
-    category: "Design",
+    title: "Makeup that lets skin breathe",
+    category: "Beauty",
     date: "Sep 28, 2023",
-    image: "https://images.unsplash.com/photo-1517705008128-361805f42e86?q=80&w=1987&auto=format&fit=crop",
-    excerpt: "How proper lighting transforms the mood and utility of a room instantly, creating warmth and depth in any space."
+    image: "https://images.unsplash.com/photo-1586495777744-4413f21062fa?q=80&w=1987&auto=format&fit=crop",
+    excerpt: "Choosing finishes and coverage levels that complement your skincare, from sheer tint to full glam."
   },
   {
     id: 3,
-    title: "Meet the Makers",
+    title: "Inside our lab",
     category: "Studio",
     date: "Sep 15, 2023",
-    image: "https://images.unsplash.com/photo-1505330622279-bf7d7fc918f4?q=80&w=2070&auto=format&fit=crop",
-    excerpt: "A behind-the-scenes look at the artisans crafting our ceramic collection using traditional techniques."
+    image: "https://images.unsplash.com/photo-1556228578-0d85b1a4e571?q=80&w=2070&auto=format&fit=crop",
+    excerpt: "A look at how we stability-test formulas and why small batches help us keep quality consistent."
   },
   {
     id: 4,
-    title: "Sustainable Sourcing",
+    title: "Conscious packaging",
     category: "Philosophy",
     date: "Aug 30, 2023",
     image: "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=800&q=80",
-    excerpt: "Our commitment to the planet begins with the materials we choose for every piece in the ANASHE collection."
+    excerpt: "Our approach to refills, recyclability, and reducing waste across the ANASHE line."
   }
 ];
 
 export default function BlogPage() {
+  const [blogNewsletterDone, setBlogNewsletterDone] = useState(false);
+
   return (
     <div className="pt-32 pb-24">
       <div className="max-w-[1440px] mx-auto px-6">
         {/* Header */}
         <div className="text-center max-w-2xl mx-auto mb-20 reveal">
           <span className="text-[10px] font-bold text-neutral-400 uppercase tracking-[0.3em] mb-4 block">The Journal</span>
-          <h1 className="text-4xl lg:text-6xl font-medium tracking-tighter mb-6">Thoughts on Design & Living</h1>
+          <h1 className="text-4xl lg:text-6xl font-medium tracking-tighter mb-6">Skincare, makeup & ritual</h1>
           <p className="text-neutral-500 text-lg leading-relaxed">
-            A curated space for inspiration, craftsmanship stories, and the 
-            art of intentional living.
+            Guides, ingredient explainers, and stories from the people who formulate
+            and wear ANASHE every day.
           </p>
         </div>
 
@@ -75,7 +78,7 @@ export default function BlogPage() {
 
         {/* Categories Nav */}
         <div className="flex justify-center gap-8 border-y border-neutral-100 py-6 mb-20 reveal">
-           {["All Stories", "Design", "Interiors", "Studio", "Philosophy"].map((cat, i) => (
+           {["All Stories", "Skincare", "Beauty", "Studio", "Philosophy"].map((cat, i) => (
              <button key={cat} className={`text-xs font-bold uppercase tracking-widest transition-colors ${i === 0 ? "text-neutral-900" : "text-neutral-400 hover:text-neutral-900"}`}>
                {cat}
              </button>
@@ -113,14 +116,28 @@ export default function BlogPage() {
         <div className="mt-32 p-12 lg:p-20 bg-neutral-50 rounded-3xl text-center reveal">
            <h3 className="text-3xl font-medium tracking-tighter mb-4">Inbox Inspiration</h3>
            <p className="text-neutral-500 mb-10 max-w-sm mx-auto text-sm">Join 12,000+ readers who receive our weekly curation of design and craftsmanship.</p>
-           <form className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto" onSubmit={(e) => e.preventDefault()}>
-              <input 
-                type="email" 
-                placeholder="email@address.com" 
-                className="flex-1 bg-white border border-neutral-200 px-6 py-4 rounded-xl text-sm outline-none focus:border-neutral-900 transition-colors"
+           <form
+              className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto"
+              onSubmit={(e) => {
+                e.preventDefault();
+                const fd = new FormData(e.currentTarget);
+                if (String(fd.get("email") ?? "").trim()) setBlogNewsletterDone(true);
+              }}
+            >
+              <input
+                name="email"
+                type="email"
+                required
+                disabled={blogNewsletterDone}
+                placeholder="email@address.com"
+                className="flex-1 bg-white border border-neutral-200 px-6 py-4 rounded-xl text-sm outline-none focus:border-neutral-900 transition-colors disabled:opacity-60"
               />
-              <button className="bg-neutral-900 text-white px-8 py-4 rounded-xl text-sm font-bold uppercase tracking-widest hover:bg-neutral-800 transition-all">
-                Join Us
+              <button
+                type="submit"
+                disabled={blogNewsletterDone}
+                className="bg-neutral-900 text-white px-8 py-4 rounded-xl text-sm font-bold uppercase tracking-widest hover:bg-neutral-800 transition-all disabled:opacity-60"
+              >
+                {blogNewsletterDone ? "You’re in" : "Join Us"}
               </button>
            </form>
         </div>
