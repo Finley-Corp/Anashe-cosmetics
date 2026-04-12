@@ -1,9 +1,29 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import Icon from "@/components/Icon";
+import { useCart } from "@/context/CartContext";
+import { useProductsCatalog } from "@/context/ProductsCatalogContext";
 
 export default function Home() {
+  const { addItem } = useCart();
+  const { getQuickProduct } = useProductsCatalog();
+  const [newsletterDone, setNewsletterDone] = useState(false);
+
+  function addQuickProduct(productId: string) {
+    const p = getQuickProduct(productId);
+    if (!p) return;
+    addItem({
+      productId: p.id,
+      name: p.name,
+      price: p.price,
+      image: p.image,
+      variantLabel: p.defaultVariant,
+      quantity: 1,
+    });
+  }
+
   return (
     <>
       {/* HERO SECTION */}
@@ -50,19 +70,19 @@ export default function Home() {
                     <Icon icon="lucide:star" fill="currentColor"></Icon>
                   </div>
                   <span className="text-xs font-medium text-neutral-500 mt-0.5">
-                    Trusted by designers
+                    Trusted by skincare lovers
                   </span>
                 </div>
               </div>
 
               <h1 className="text-5xl lg:text-7xl font-medium tracking-tighter leading-[0.95] mb-6 text-neutral-900 animate-fade-in-up opacity-0 delay-100">
-                Timeless design, <br />
-                <span className="text-neutral-400">everyday living.</span>
+                Radiant skin, <br />
+                <span className="text-neutral-400">thoughtful care.</span>
               </h1>
 
               <p className="text-lg text-neutral-500 mb-10 leading-relaxed max-w-md animate-fade-in-up opacity-0 delay-200">
-                Premium furniture designed for the modern sanctuary. Hand-finished
-                materials meets ergonomic excellence.
+                Premium skincare and beauty for real routines—clean formulas,
+                flattering makeup, and body care you will reach for every day.
               </p>
 
               {/* Buttons */}
@@ -91,8 +111,8 @@ export default function Home() {
                   <Icon icon="lucide:truck" width="14"></Icon> Free Shipping
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <Icon icon="lucide:shield-check" width="14"></Icon> 5-Year
-                  Warranty
+                  <Icon icon="lucide:shield-check" width="14"></Icon> Easy
+                  returns
                 </div>
               </div>
             </div>
@@ -103,8 +123,8 @@ export default function Home() {
               <div className="absolute inset-0 rounded-[32px] overflow-hidden shadow-2xl bg-[#F8F8F8] group">
                 <Link href="/product-detail-page" className="block w-full h-full cursor-pointer relative z-10">
                   <img
-                    src="https://images.unsplash.com/photo-1567016376408-0226e4d0c1ea?q=80&w=1780&auto=format&fit=crop"
-                    alt="Linen Lounge Chair"
+                    src="https://images.unsplash.com/photo-1620916566398-39f1143ab7be?q=80&w=1780&auto=format&fit=crop"
+                    alt="Barrier Restore Serum"
                     className="object-center transition-transform duration-[2s] group-hover:scale-105 w-full h-full object-cover"
                   />
                   <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
@@ -119,11 +139,11 @@ export default function Home() {
                       Best Seller
                     </p>
                     <h3 className="text-[17px] font-bold text-neutral-900 tracking-tight">
-                      Linen Lounge Chair
+                      Barrier Restore Serum
                     </h3>
                   </div>
                   <span className="bg-neutral-900 text-white text-[11px] font-bold px-2 py-1 rounded-md">
-                    KSh 890
+                    KSh 1,295
                   </span>
                 </div>
 
@@ -135,7 +155,11 @@ export default function Home() {
                     <button className="w-6 h-6 rounded-full bg-[#8C7E72] ring-2 ring-transparent hover:ring-offset-2 hover:ring-neutral-200 cursor-pointer transition-all"></button>
                   </div>
                   
-                  <button className="w-full h-12 bg-neutral-900 hover:bg-black text-white text-[11px] font-bold rounded-xl transition-all flex items-center justify-center gap-2 uppercase tracking-widest shadow-lg shadow-black/10">
+                  <button
+                    type="button"
+                    onClick={() => addQuickProduct("barrier-serum")}
+                    className="w-full h-12 bg-neutral-900 hover:bg-black text-white text-[11px] font-bold rounded-xl transition-all flex items-center justify-center gap-2 uppercase tracking-widest shadow-lg shadow-black/10"
+                  >
                     <Icon icon="lucide:shopping-bag" width="16"></Icon>
                     Add to Cart
                   </button>
@@ -145,9 +169,9 @@ export default function Home() {
               {/* Secondary Image (Context) */}
               <div className="hidden lg:block absolute -right-6 top-10 w-52 aspect-[3/4] rounded-2xl overflow-hidden border-[6px] border-white shadow-2xl animate-fade-in-up opacity-0 delay-300 hover:scale-[1.03] transition-transform duration-700 z-20">
                 <img
-                  src="https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?q=80&w=2070&auto=format&fit=crop"
+                  src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?q=80&w=2070&auto=format&fit=crop"
                   className="w-full h-full object-cover"
-                  alt="Furniture Context"
+                  alt="Skincare products"
                 />
               </div>
             </div>
@@ -167,10 +191,10 @@ export default function Home() {
               <Icon icon="lucide:box" width="14"></Icon> Free Global Shipping
             </span>
             <span className="flex items-center gap-2 hover:text-neutral-600 transition-colors cursor-default">
-              <Icon icon="lucide:shield-check" width="14"></Icon> 5 Year Warranty
+              <Icon icon="lucide:shield-check" width="14"></Icon> Dermatologist-tested
             </span>
             <span className="flex items-center gap-2 hidden sm:flex hover:text-neutral-600 transition-colors cursor-default">
-              <Icon icon="lucide:award" width="14"></Icon> Award Winning Design
+              <Icon icon="lucide:heart" width="14"></Icon> Cruelty-free
             </span>
           </div>
         </div>
@@ -201,9 +225,9 @@ export default function Home() {
             <div className="h-96 md:h-auto md:col-span-2 relative group overflow-hidden rounded-xl bg-neutral-100 reveal cursor-pointer">
               <Link href="/product-detail-page" className="block w-full h-full cursor-pointer relative z-10">
                 <img
-                  src="https://images.unsplash.com/photo-1622653533660-a1538fe8424c?w=2560&q=80"
+                  src="https://images.unsplash.com/photo-1617897903246-719242758050?q=80&w=2560&auto=format&fit=crop"
                   className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  alt="Lighting"
+                  alt="Serums and treatments"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-80 transition-opacity duration-500"></div>
               </Link>
@@ -212,10 +236,10 @@ export default function Home() {
                   Collection 01
                 </span>
                 <h3 className="text-3xl font-medium tracking-tight mb-2">
-                  Lighting Series
+                  Serums & treatments
                 </h3>
                 <p className="text-white/80 text-sm max-w-sm">
-                  Illuminate your sanctuary with our hand-blown glass collection.
+                  Targeted actives for glow, clarity, and barrier support—layered your way.
                 </p>
               </div>
               <button className="absolute top-6 right-6 w-12 h-12 bg-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-300 shadow-xl z-20 text-neutral-900">
@@ -228,27 +252,27 @@ export default function Home() {
               <div className="relative group overflow-hidden rounded-xl bg-neutral-100 reveal delay-100 cursor-pointer">
                 <Link href="/product-detail-page" className="block w-full h-full cursor-pointer relative z-10">
                   <img
-                    src="https://images.unsplash.com/photo-1594026112284-02bb6f3352fe?q=80&w=2070&auto=format&fit=crop"
+                    src="https://images.unsplash.com/photo-1556228720-195a672e8a03?q=80&w=2070&auto=format&fit=crop"
                     className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                    alt="Ceramics"
+                    alt="Cleansers"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-80"></div>
                 </Link>
                 <div className="absolute bottom-6 left-6 text-white z-10">
-                  <h3 className="text-xl font-medium tracking-tight">Ceramics</h3>
+                  <h3 className="text-xl font-medium tracking-tight">Cleansers</h3>
                 </div>
               </div>
               <div className="relative group overflow-hidden rounded-xl bg-neutral-100 reveal delay-200 cursor-pointer">
                 <Link href="/product-detail-page" className="block w-full h-full cursor-pointer relative z-10">
                   <img
-                    src="https://images.unsplash.com/photo-1567016432779-094069958ea5?q=80&w=1780&auto=format&fit=crop"
+                    src="https://images.unsplash.com/photo-1586495777744-4413f21062fa?q=80&w=1780&auto=format&fit=crop"
                     className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                    alt="Furniture"
+                    alt="Makeup"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-80"></div>
                 </Link>
                 <div className="absolute bottom-6 left-6 text-white z-10">
-                  <h3 className="text-xl font-medium tracking-tight">Seating</h3>
+                  <h3 className="text-xl font-medium tracking-tight">Makeup</h3>
                 </div>
               </div>
             </div>
@@ -264,7 +288,7 @@ export default function Home() {
         <div className="max-w-[1440px] mx-auto px-6">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-12 gap-6 reveal">
             <h2 className="text-3xl font-medium tracking-tighter text-neutral-900">
-              Essential Objects
+              Skincare essentials
             </h2>
 
             {/* Filter Tabs */}
@@ -273,13 +297,13 @@ export default function Home() {
                 All
               </button>
               <button className="px-5 py-2.5 rounded-full bg-white border border-neutral-200 text-neutral-600 text-xs font-semibold hover:border-neutral-400 hover:text-neutral-900 transition-colors">
-                Lighting
+                Skincare
               </button>
               <button className="px-5 py-2.5 rounded-full bg-white border border-neutral-200 text-neutral-600 text-xs font-semibold hover:border-neutral-400 hover:text-neutral-900 transition-colors">
-                Furniture
+                Makeup
               </button>
               <button className="px-5 py-2.5 rounded-full bg-white border border-neutral-200 text-neutral-600 text-xs font-semibold hover:border-neutral-400 hover:text-neutral-900 transition-colors">
-                Accessories
+                Body care
               </button>
             </div>
           </div>
@@ -291,19 +315,27 @@ export default function Home() {
               <div className="aspect-square bg-white rounded-lg overflow-hidden mb-4 relative border border-neutral-100">
                 <Link href="/product-detail-page" className="block w-full h-full cursor-pointer relative z-10">
                   <img
-                    src="https://images.unsplash.com/photo-1604610728890-6f4b631ed081?w=800&q=80"
-                    alt="Lamp"
+                    src="https://images.unsplash.com/photo-1617897903246-719242758050?q=80&w=800&auto=format&fit=crop"
+                    alt="Barrier Restore Serum"
                     className="w-full h-full object-cover group-hover:opacity-0 transition-opacity absolute inset-0 z-10"
                   />
                   <img
-                    src="https://images.unsplash.com/photo-1603801705819-e3b27f8bb8cc?w=800&q=80"
-                    alt="Lamp Context"
+                    src="https://images.unsplash.com/photo-1620916566398-39f1143ab7be?q=80&w=800&auto=format&fit=crop"
+                    alt="Serum alternate angle"
                     className="w-full h-full object-cover absolute inset-0 scale-105"
                   />
                 </Link>
 
                 <div className="absolute bottom-4 left-4 right-4 z-20 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
-                  <button className="w-full h-10 bg-white/95 backdrop-blur text-neutral-900 text-xs font-bold rounded shadow-lg hover:bg-neutral-900 hover:text-white transition-colors flex items-center justify-center gap-2">
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      addQuickProduct("barrier-serum");
+                    }}
+                    className="w-full h-10 bg-white/95 backdrop-blur text-neutral-900 text-xs font-bold rounded shadow-lg hover:bg-neutral-900 hover:text-white transition-colors flex items-center justify-center gap-2"
+                  >
                     <Icon icon="lucide:plus" width="14"></Icon> Quick Add
                   </button>
                 </div>
@@ -316,11 +348,11 @@ export default function Home() {
               <div className="flex justify-between items-start">
                 <div className="cursor-pointer" onClick={() => window.location.href='/product-detail-page'}>
                   <h3 className="text-sm font-semibold text-neutral-900 tracking-tight">
-                    Orbital Lamp
+                    Barrier Restore Serum
                   </h3>
-                  <p className="text-xs text-neutral-500 mt-1">Matte Black Steel</p>
+                  <p className="text-xs text-neutral-500 mt-1">30 ml · Niacinamide</p>
                 </div>
-                <span className="text-sm font-semibold text-neutral-900">KSh 320</span>
+                <span className="text-sm font-semibold text-neutral-900">KSh 1,295</span>
               </div>
             </div>
 
@@ -329,13 +361,13 @@ export default function Home() {
               <div className="aspect-square bg-white rounded-lg overflow-hidden mb-4 relative border border-neutral-100">
                 <Link href="/product-detail-page" className="block w-full h-full cursor-pointer relative z-10">
                   <img
-                    src="https://images.unsplash.com/photo-1592078615290-033ee584e267?q=80&w=1964&auto=format&fit=crop"
-                    alt="Chair"
+                    src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?q=80&w=1964&auto=format&fit=crop"
+                    alt="Cloud Cream Moisturizer"
                     className="w-full h-full object-cover group-hover:opacity-0 transition-opacity absolute inset-0 z-10"
                   />
                   <img
-                    src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800&q=80"
-                    alt="Chair Context"
+                    src="https://images.unsplash.com/photo-1598440947619-c608c443a5c7?q=80&w=800&auto=format&fit=crop"
+                    alt="Moisturizer texture"
                     className="w-full h-full object-cover absolute inset-0 scale-105"
                   />
                 </Link>
@@ -343,7 +375,15 @@ export default function Home() {
                   New
                 </div>
                 <div className="absolute bottom-4 left-4 right-4 z-20 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
-                  <button className="w-full h-10 bg-white/95 backdrop-blur text-neutral-900 text-xs font-bold rounded shadow-lg hover:bg-neutral-900 hover:text-white transition-colors flex items-center justify-center gap-2">
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      addQuickProduct("cloud-cream");
+                    }}
+                    className="w-full h-10 bg-white/95 backdrop-blur text-neutral-900 text-xs font-bold rounded shadow-lg hover:bg-neutral-900 hover:text-white transition-colors flex items-center justify-center gap-2"
+                  >
                     <Icon icon="lucide:plus" width="14"></Icon> Quick Add
                   </button>
                 </div>
@@ -356,9 +396,9 @@ export default function Home() {
               <div className="flex justify-between items-start">
                 <div className="cursor-pointer" onClick={() => window.location.href='/product-detail-page'}>
                   <h3 className="text-sm font-semibold text-neutral-900 tracking-tight">
-                    Linen Lounge
+                    Cloud Cream Moisturizer
                   </h3>
-                  <p className="text-xs text-neutral-500 mt-1">Natural Oak</p>
+                  <p className="text-xs text-neutral-500 mt-1">Ceramides · Unscented</p>
                 </div>
                 <span className="text-sm font-semibold text-neutral-900">KSh 890</span>
               </div>
@@ -369,18 +409,26 @@ export default function Home() {
               <div className="aspect-square bg-white rounded-lg overflow-hidden mb-4 relative border border-neutral-100">
                 <Link href="/product-detail-page" className="block w-full h-full cursor-pointer relative z-10">
                   <img
-                    src="https://images.unsplash.com/photo-1597696929736-6d13bed8e6a8?w=800&q=80"
-                    alt="Vase"
+                    src="https://images.unsplash.com/photo-1586495777744-4413f21062fa?q=80&w=800&auto=format&fit=crop"
+                    alt="Velvet Matte Lip"
                     className="w-full h-full object-cover group-hover:opacity-0 transition-opacity absolute inset-0 z-10"
                   />
                   <img
-                    src="https://images.unsplash.com/photo-1608111115633-872fa895d40d?w=800&q=80"
-                    alt="Vase Context"
+                    src="https://images.unsplash.com/photo-1512496015851-a90fb38ba796?q=80&w=800&auto=format&fit=crop"
+                    alt="Lipstick shades"
                     className="w-full h-full object-cover absolute inset-0 scale-105"
                   />
                 </Link>
                 <div className="absolute bottom-4 left-4 right-4 z-20 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
-                  <button className="w-full h-10 bg-white/95 backdrop-blur text-neutral-900 text-xs font-bold rounded shadow-lg hover:bg-neutral-900 hover:text-white transition-colors flex items-center justify-center gap-2">
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      addQuickProduct("velvet-lip");
+                    }}
+                    className="w-full h-10 bg-white/95 backdrop-blur text-neutral-900 text-xs font-bold rounded shadow-lg hover:bg-neutral-900 hover:text-white transition-colors flex items-center justify-center gap-2"
+                  >
                     <Icon icon="lucide:plus" width="14"></Icon> Quick Add
                   </button>
                 </div>
@@ -393,11 +441,11 @@ export default function Home() {
               <div className="flex justify-between items-start">
                 <div className="cursor-pointer" onClick={() => window.location.href='/product-detail-page'}>
                   <h3 className="text-sm font-semibold text-neutral-900 tracking-tight">
-                    Sculpt Vase 02
+                    Velvet Matte Lip
                   </h3>
-                  <p className="text-xs text-neutral-500 mt-1">Raw Clay</p>
+                  <p className="text-xs text-neutral-500 mt-1">Rosewood · 4 g</p>
                 </div>
-                <span className="text-sm font-semibold text-neutral-900">KSh 140</span>
+                <span className="text-sm font-semibold text-neutral-900">KSh 895</span>
               </div>
             </div>
 
@@ -406,18 +454,26 @@ export default function Home() {
               <div className="aspect-square bg-white rounded-lg overflow-hidden mb-4 relative border border-neutral-100">
                 <Link href="/product-detail-page" className="block w-full h-full cursor-pointer relative z-10">
                   <img
-                    src="https://images.unsplash.com/photo-1533090481720-856c6e3c1fdc?q=80&w=1888&auto=format&fit=crop"
-                    alt="Table"
+                    src="https://images.unsplash.com/photo-1556228720-195a672e8a03?q=80&w=1888&auto=format&fit=crop"
+                    alt="Gentle Foam Cleanser"
                     className="w-full h-full object-cover group-hover:opacity-0 transition-opacity absolute inset-0 z-10"
                   />
                   <img
-                    src="https://images.unsplash.com/photo-1605239435870-67df4c54a0b3?w=800&q=80"
-                    alt="Table Context"
+                    src="https://images.unsplash.com/photo-1570194065650-d99fb4b38b17?q=80&w=800&auto=format&fit=crop"
+                    alt="Cleanser lather"
                     className="w-full h-full object-cover absolute inset-0 scale-105"
                   />
                 </Link>
                 <div className="absolute bottom-4 left-4 right-4 z-20 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
-                  <button className="w-full h-10 bg-white/95 backdrop-blur text-neutral-900 text-xs font-bold rounded shadow-lg hover:bg-neutral-900 hover:text-white transition-colors flex items-center justify-center gap-2">
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      addQuickProduct("gentle-cleanser");
+                    }}
+                    className="w-full h-10 bg-white/95 backdrop-blur text-neutral-900 text-xs font-bold rounded shadow-lg hover:bg-neutral-900 hover:text-white transition-colors flex items-center justify-center gap-2"
+                  >
                     <Icon icon="lucide:plus" width="14"></Icon> Quick Add
                   </button>
                 </div>
@@ -430,11 +486,11 @@ export default function Home() {
               <div className="flex justify-between items-start">
                 <div className="cursor-pointer" onClick={() => window.location.href='/product-detail-page'}>
                   <h3 className="text-sm font-semibold text-neutral-900 tracking-tight">
-                    Side Table
+                    Gentle Foam Cleanser
                   </h3>
-                  <p className="text-xs text-neutral-500 mt-1">Walnut Finish</p>
+                  <p className="text-xs text-neutral-500 mt-1">pH-balanced · 150 ml</p>
                 </div>
-                <span className="text-sm font-semibold text-neutral-900">KSh 450</span>
+                <span className="text-sm font-semibold text-neutral-900">KSh 695</span>
               </div>
             </div>
           </div>
@@ -457,8 +513,8 @@ export default function Home() {
       >
         <div className="relative bg-neutral-100 h-96 lg:h-auto overflow-hidden group">
           <img
-            src="https://images.unsplash.com/photo-1631679706909-1844bbd07221?q=80&w=1992&auto=format&fit=crop"
-            alt="Craftsmanship"
+            src="https://images.unsplash.com/photo-1556228578-0d85b1a4e571?q=80&w=1992&auto=format&fit=crop"
+            alt="ANASHE beauty products"
             className="absolute inset-0 w-full h-full object-cover transition-transform duration-[2s] group-hover:scale-105"
           />
         </div>
@@ -468,12 +524,12 @@ export default function Home() {
               Our Philosophy
             </span>
             <h2 className="text-3xl lg:text-4xl font-medium tracking-tighter mb-6 leading-tight">
-              Designed to endure,<br />crafted to inspire.
+              Formulas you trust,<br />results you can see.
             </h2>
             <p className="text-neutral-500 leading-relaxed mb-8 text-sm">
-              We believe in fewer, better things. Each piece in our collection is
-              thoughtfully designed with sustainability and longevity in mind,
-              using materials that age gracefully over time.
+              We believe in honest labels and textures you will use to the last drop.
+              Every product is developed with efficacy, skin tolerance, and
+              responsible sourcing in mind.
             </p>
 
             <ul className="space-y-4 mb-10">
@@ -481,19 +537,19 @@ export default function Home() {
                 <div className="w-5 h-5 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-900">
                   <Icon icon="lucide:check" width="12"></Icon>
                 </div>
-                Ethically sourced materials
+                No unnecessary fillers
               </li>
               <li className="flex items-center gap-3 text-sm font-medium text-neutral-800">
                 <div className="w-5 h-5 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-900">
                   <Icon icon="lucide:check" width="12"></Icon>
                 </div>
-                Carbon neutral shipping
+                Carbon-conscious shipping
               </li>
               <li className="flex items-center gap-3 text-sm font-medium text-neutral-800">
                 <div className="w-5 h-5 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-900">
                   <Icon icon="lucide:check" width="12"></Icon>
                 </div>
-                Artisan craftsmanship
+                Cruelty-free &amp; dermatologist-tested
               </li>
             </ul>
 
@@ -518,7 +574,7 @@ export default function Home() {
             <article className="group cursor-pointer reveal">
               <div className="overflow-hidden rounded-xl mb-5 aspect-[16/10] bg-neutral-100">
                 <img
-                  src="https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?q=80&w=2070&auto=format&fit=crop"
+                  src="https://images.unsplash.com/photo-1620916566398-39f1143ab7be?q=80&w=2070&auto=format&fit=crop"
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   alt="Blog 1"
                 />
@@ -526,14 +582,14 @@ export default function Home() {
               <div className="flex items-center gap-2 text-xs font-semibold text-neutral-500 mb-2.5 uppercase tracking-wide">
                 <span>Oct 12, 2023</span>
                 <span className="w-1 h-1 bg-neutral-300 rounded-full"></span>
-                <span>Interiors</span>
+                <span>Skincare</span>
               </div>
               <h3 className="text-xl font-medium tracking-tight mb-2 group-hover:underline decoration-1 underline-offset-4">
-                Minimalism in the Modern Home
+                Your barrier-friendly routine
               </h3>
               <p className="text-sm text-neutral-500 line-clamp-2 leading-relaxed">
-                Exploring the balance between functionality and aesthetic in
-                contemporary living spaces, emphasizing clutter-free environments.
+                How to layer cleanser, serum, and moisturizer without overwhelming
+                sensitive or reactive skin.
               </p>
             </article>
 
@@ -541,7 +597,7 @@ export default function Home() {
             <article className="group cursor-pointer reveal delay-100">
               <div className="overflow-hidden rounded-xl mb-5 aspect-[16/10] bg-neutral-100">
                 <img
-                  src="https://images.unsplash.com/photo-1517705008128-361805f42e86?q=80&w=1987&auto=format&fit=crop"
+                  src="https://images.unsplash.com/photo-1586495777744-4413f21062fa?q=80&w=1987&auto=format&fit=crop"
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   alt="Blog 2"
                 />
@@ -549,14 +605,14 @@ export default function Home() {
               <div className="flex items-center gap-2 text-xs font-semibold text-neutral-500 mb-2.5 uppercase tracking-wide">
                 <span>Sep 28, 2023</span>
                 <span className="w-1 h-1 bg-neutral-300 rounded-full"></span>
-                <span>Design</span>
+                <span>Makeup</span>
               </div>
               <h3 className="text-xl font-medium tracking-tight mb-2 group-hover:underline decoration-1 underline-offset-4">
-                The Art of Lighting
+                Makeup that works with your skin
               </h3>
               <p className="text-sm text-neutral-500 line-clamp-2 leading-relaxed">
-                How proper lighting transforms the mood and utility of a room
-                instantly, creating warmth and depth in any space.
+                Choosing finishes and coverage that complement the skincare underneath,
+                from sheer tint to full glam.
               </p>
             </article>
 
@@ -564,7 +620,7 @@ export default function Home() {
             <article className="group cursor-pointer reveal delay-200">
               <div className="overflow-hidden rounded-xl mb-5 aspect-[16/10] bg-neutral-100">
                 <img
-                  src="https://images.unsplash.com/photo-1505330622279-bf7d7fc918f4?q=80&w=2070&auto=format&fit=crop"
+                  src="https://images.unsplash.com/photo-1556228578-0d85b1a4e571?q=80&w=2070&auto=format&fit=crop"
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   alt="Blog 3"
                 />
@@ -572,14 +628,14 @@ export default function Home() {
               <div className="flex items-center gap-2 text-xs font-semibold text-neutral-500 mb-2.5 uppercase tracking-wide">
                 <span>Sep 15, 2023</span>
                 <span className="w-1 h-1 bg-neutral-300 rounded-full"></span>
-                <span>Studio</span>
+                <span>Lab</span>
               </div>
               <h3 className="text-xl font-medium tracking-tight mb-2 group-hover:underline decoration-1 underline-offset-4">
-                Meet the Makers
+                Inside our formulation lab
               </h3>
               <p className="text-sm text-neutral-500 line-clamp-2 leading-relaxed">
-                A behind-the-scenes look at the artisans crafting our ceramic
-                collection using traditional techniques handed down for generations.
+                Why we stability-test every batch and how small production runs help
+                us keep quality consistent.
               </p>
             </article>
           </div>
@@ -600,20 +656,32 @@ export default function Home() {
 
           <form
             className="flex flex-col sm:flex-row gap-2 max-w-md mx-auto"
-            onSubmit={(e) => e.preventDefault()}
+            onSubmit={(e) => {
+              e.preventDefault();
+              const fd = new FormData(e.currentTarget);
+              const email = String(fd.get("email") ?? "").trim();
+              if (email) setNewsletterDone(true);
+            }}
           >
             <input
+              name="email"
               type="email"
+              required
+              disabled={newsletterDone}
               placeholder="email@address.com"
-              className="flex-1 bg-neutral-800 border border-neutral-700 text-white text-sm rounded-lg px-4 py-3 outline-none focus:border-neutral-500 focus:ring-1 focus:ring-neutral-500 transition-all placeholder:text-neutral-600"
+              className="flex-1 bg-neutral-800 border border-neutral-700 text-white text-sm rounded-lg px-4 py-3 outline-none focus:border-neutral-500 focus:ring-1 focus:ring-neutral-500 transition-all placeholder:text-neutral-600 disabled:opacity-60"
             />
             <button
               type="submit"
-              className="bg-white text-neutral-900 text-sm font-bold px-6 py-3 rounded-lg hover:bg-neutral-200 transition-colors"
+              disabled={newsletterDone}
+              className="bg-white text-neutral-900 text-sm font-bold px-6 py-3 rounded-lg hover:bg-neutral-200 transition-colors disabled:opacity-60"
             >
-              Subscribe
+              {newsletterDone ? "Subscribed" : "Subscribe"}
             </button>
           </form>
+          {newsletterDone && (
+            <p className="mt-4 text-sm text-neutral-400">Thanks — you&apos;re on the list.</p>
+          )}
         </div>
       </section>
     </>
