@@ -1,13 +1,23 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import Icon from "@/components/Icon";
+import { useCart } from "@/context/CartContext";
+import { useProductsCatalog } from "@/context/ProductsCatalogContext";
 
 export default function Navbar() {
+  const { itemCount } = useCart();
+  const { searchCatalog } = useProductsCatalog();
   const [isSearchActive, setIsSearchActive] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const searchResults = useMemo(
+    () => searchCatalog(searchQuery),
+    [searchCatalog, searchQuery]
+  );
 
   useEffect(() => {
     // Scroll logic for navbar
@@ -19,6 +29,7 @@ export default function Navbar() {
     // Escape for search
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape" && isSearchActive) {
+        setSearchQuery("");
         setIsSearchActive(false);
       }
     };
@@ -30,10 +41,6 @@ export default function Navbar() {
     };
   }, [isSearchActive]);
 
-  const toggleSearch = () => {
-    setIsSearchActive(!isSearchActive);
-  };
-
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
@@ -41,6 +48,18 @@ export default function Navbar() {
   const closeMenu = () => {
     setIsMenuOpen(false);
   };
+
+  function handleToggleSearch() {
+    setIsSearchActive((prev) => {
+      if (prev) setSearchQuery("");
+      return !prev;
+    });
+  }
+
+  function closeSearchOverlay() {
+    setSearchQuery("");
+    setIsSearchActive(false);
+  }
 
   return (
     <nav
@@ -53,30 +72,55 @@ export default function Navbar() {
         {/* Search Bar Overlay */}
         <div
           id="search-bar-container"
-          className={`absolute inset-0 bg-white z-[60] flex items-center px-6 transition-all duration-300 transform ${
+          className={`absolute inset-0 bg-white z-[60] flex flex-col pt-4 pb-6 px-6 transition-all duration-300 transform overflow-y-auto ${
             isSearchActive
               ? "opacity-100 visible translate-y-0"
               : "opacity-0 invisible -translate-y-2"
           }`}
         >
-          <div className="max-w-[1440px] mx-auto w-full flex items-center gap-3">
-            <Icon icon="lucide:search" width="20" className="text-neutral-400"></Icon>
+          <div className="max-w-[1440px] mx-auto w-full flex items-center gap-3 shrink-0">
+            <Icon icon="lucide:search" width="20" className="text-neutral-400 shrink-0"></Icon>
             <input
               type="text"
               id="search-input"
-              placeholder="Search for products, collections, or articles..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search products or pages…"
               className="flex-1 h-10 bg-transparent border-none outline-none text-sm text-neutral-900 placeholder:text-neutral-400 font-medium"
               ref={(input) => {
                 if (input && isSearchActive) input.focus();
               }}
             />
             <button
-              onClick={toggleSearch}
-              className="p-2 hover:bg-neutral-100 rounded-full text-neutral-500 hover:text-neutral-900 transition-colors"
+              type="button"
+              onClick={handleToggleSearch}
+              className="p-2 hover:bg-neutral-100 rounded-full text-neutral-500 hover:text-neutral-900 transition-colors shrink-0"
             >
               <Icon icon="lucide:x" width="20"></Icon>
             </button>
           </div>
+          {searchQuery.trim().length > 0 && (
+            <div className="max-w-[1440px] mx-auto w-full mt-4 border border-neutral-100 rounded-xl bg-white shadow-lg max-h-[min(50vh,320px)] overflow-y-auto">
+              {searchResults.length === 0 ? (
+                <p className="px-4 py-6 text-sm text-neutral-500">No matches. Try &quot;serum&quot;, &quot;concealer&quot;, or &quot;journal&quot;.</p>
+              ) : (
+                <ul className="py-2">
+                  {searchResults.map((r) => (
+                    <li key={`${r.type}-${r.href}-${r.label}`}>
+                      <Link
+                        href={r.href}
+                        onClick={closeSearchOverlay}
+                        className="w-full text-left px-4 py-3 text-sm hover:bg-neutral-50 flex justify-between gap-4"
+                      >
+                        <span className="font-medium text-neutral-900">{r.label}</span>
+                        <span className="text-[10px] uppercase tracking-widest text-neutral-400 shrink-0">{r.type}</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Left Group: Mobile Menu & Logo */}
@@ -152,19 +196,19 @@ export default function Navbar() {
                     href="#"
                     className="text-sm text-neutral-600 hover:text-black transition-colors flex items-center gap-2"
                   >
-                    <Icon icon="lucide:sofa" width="14"></Icon> Furniture
+                    <Icon icon="lucide:droplets" width="14"></Icon> Skincare
                   </Link>
                   <Link
                     href="#"
                     className="text-sm text-neutral-600 hover:text-black transition-colors flex items-center gap-2"
                   >
-                    <Icon icon="lucide:lamp" width="14"></Icon> Lighting
+                    <Icon icon="lucide:sparkles" width="14"></Icon> Makeup
                   </Link>
                   <Link
                     href="#"
                     className="text-sm text-neutral-600 hover:text-black transition-colors flex items-center gap-2"
                   >
-                    <Icon icon="lucide:flower-2" width="14"></Icon> Accessories
+                    <Icon icon="lucide:flower-2" width="14"></Icon> Body care
                   </Link>
                 </div>
               </div>
@@ -194,7 +238,8 @@ export default function Navbar() {
         {/* Right Icons */}
         <div className="flex items-center gap-3 z-50">
           <button
-            onClick={toggleSearch}
+            type="button"
+            onClick={handleToggleSearch}
             className="w-8 h-8 flex items-center justify-center text-neutral-500 hover:text-black transition-colors rounded-full hover:bg-neutral-100"
             aria-label="Search"
           >
@@ -216,9 +261,11 @@ export default function Navbar() {
             role="button"
           >
             <Icon icon="lucide:shopping-bag" width="20" stroke-width="1.5"></Icon>
-            <span className="absolute top-1 right-0.5 w-3 h-3 bg-neutral-900 text-white text-[8px] font-bold flex items-center justify-center rounded-full ring-2 ring-white">
-              2
-            </span>
+            {itemCount > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 min-w-[14px] h-3.5 px-0.5 bg-neutral-900 text-white text-[8px] font-bold flex items-center justify-center rounded-full ring-2 ring-white">
+                {itemCount > 99 ? "99+" : itemCount}
+              </span>
+            )}
           </Link>
         </div>
       </div>
@@ -264,7 +311,7 @@ export default function Navbar() {
                 Seasonal
               </Link>
               <Link href="#" className="block text-sm text-neutral-500">
-                Rooms
+                Gift sets
               </Link>
             </div>
           </div>
@@ -281,6 +328,13 @@ export default function Navbar() {
             className="text-2xl font-medium text-neutral-900 block tracking-tight"
           >
             Journal
+          </Link>
+          <Link
+            href="/contact-us"
+            onClick={closeMenu}
+            className="text-2xl font-medium text-neutral-900 block tracking-tight"
+          >
+            Contact
           </Link>
         </div>
       </div>
