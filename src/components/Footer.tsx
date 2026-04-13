@@ -78,9 +78,9 @@ export default function Footer() {
         </div>
 
         <div className="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-neutral-100 gap-4">
-          <div className="text-xl font-bold tracking-tighter">LUMA</div>
+          <div className="text-xl font-bold tracking-tighter">Anashe</div>
           <div className="text-[11px] text-neutral-400 font-medium">
-            © {new Date().getFullYear()} LUMA Inc. All rights reserved.
+            © {new Date().getFullYear()} Anashe Inc. All rights reserved.
           </div>
           <div className="flex gap-3">
             <div className="h-6 px-2 bg-neutral-50 rounded border border-neutral-100 flex items-center justify-center text-neutral-400">

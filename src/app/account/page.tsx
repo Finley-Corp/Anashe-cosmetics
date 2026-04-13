@@ -4,8 +4,8 @@ import Footer from "@/components/Footer";
 import AccountClient from "./AccountClient";
 
 export const metadata: Metadata = {
-  title: "My Account | LUMA",
-  description: "Manage your LUMA account, orders, and preferences.",
+  title: "My Account | Anashe",
+  description: "Manage your Anashe account, orders, and preferences.",
 };
 
 export default function AccountPage() {

@@ -7,12 +7,17 @@ body {
   overflow-x: hidden;
 }
 
-/* AEX display / accent font utilities */
+/* Use Crimson Pro for all headings globally */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-crimson), 'Crimson Pro', serif;
+}
+
+/* Keep existing utility classes aligned to the same serif family */
 .font-display {
-  font-family: var(--font-oswald), 'Oswald', sans-serif;
+  font-family: var(--font-crimson), 'Crimson Pro', serif;
 }
 .font-accent {
-  font-family: var(--font-playfair), 'Playfair Display', serif;
+  font-family: var(--font-crimson), 'Crimson Pro', serif;
 }
 
 /* Hero entrance animation */

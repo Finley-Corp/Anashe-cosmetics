@@ -4,8 +4,8 @@ import Footer from "@/components/Footer";
 import CartClient from "./CartClient";
 
 export const metadata: Metadata = {
-  title: "Cart | LUMA",
-  description: "Review your LUMA selections before checkout.",
+  title: "Cart | Anashe",
+  description: "Review your Anashe selections before checkout.",
 };
 
 export default function CartPage() {

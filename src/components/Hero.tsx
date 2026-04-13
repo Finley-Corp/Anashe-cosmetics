@@ -3,18 +3,18 @@
 import { useEffect } from "react";
 import Link from "next/link";
 
-const BLIND_IMAGE = "/images/hero-image.jpg";
+const BLIND_IMAGE = "/images/hero-2.jpg";
 
 const BG_IMAGE =
   "https://hoirqrkdgbmvpwutwuwj.supabase.co/storage/v1/object/public/assets/assets/4024eb96-6b8f-4f13-99f1-f1889425c4e5_3840w.jpg?w=800&q=80";
 
 // Panel config matches the reference exactly
 const PANELS = [
-  { wPct: "18%", hPct: "80%", ty: "-translate-y-4", z: "z-10", shadow: "shadow-lg",   pos: "0%" },
-  { wPct: "22%", hPct: "95%", ty: "translate-y-1",  z: "z-20", shadow: "shadow-xl",   pos: "25%" },
-  { wPct: "28%", hPct: "110%",ty: "-translate-y-2", z: "z-30", shadow: "shadow-2xl",  pos: "50%" },
-  { wPct: "22%", hPct: "95%", ty: "translate-y-1",  z: "z-20", shadow: "shadow-xl",   pos: "75%" },
-  { wPct: "18%", hPct: "80%", ty: "-translate-y-4", z: "z-10", shadow: "shadow-lg",   pos: "100%" },
+  { wPct: "18%", hPct: "80%", ty: "-translate-y-4", z: "z-10", shadow: "shadow-lg",   pos: "9%" },
+  { wPct: "22%", hPct: "95%", ty: "translate-y-1",  z: "z-20", shadow: "shadow-xl",   pos: "29%" },
+  { wPct: "28%", hPct: "110%",ty: "-translate-y-2", z: "z-30", shadow: "shadow-2xl",  pos: "54%" },
+  { wPct: "22%", hPct: "95%", ty: "translate-y-1",  z: "z-20", shadow: "shadow-xl",   pos: "79%" },
+  { wPct: "18%", hPct: "80%", ty: "-translate-y-4", z: "z-10", shadow: "shadow-lg",   pos: "99%" },
 ];
 
 export default function Hero() {
@@ -77,12 +77,12 @@ export default function Hero() {
         <div className="flex flex-col lg:flex-row gap-x-12 gap-y-12 items-center">
 
           {/* ── LEFT: copy ── */}
-          <div className="w-full lg:w-[45%] flex flex-col items-end order-2 lg:order-1 text-right relative py-16">
-            <h1 className="relative flex flex-col items-end w-full">
+          <div className="w-full lg:w-[45%] flex flex-col items-center md:items-end order-2 lg:order-1 text-center md:text-right relative py-16">
+            <h1 className="relative flex flex-col items-center md:items-end w-full">
               {/* REVEAL */}
               <span
                 className="font-display uppercase font-semibold tracking-tighter leading-[0.85] text-[#2d322f]
-                           text-[5.25rem] md:text-[7.25rem] lg:text-[9.5rem]
+                           text-[clamp(1.76rem,10.5vw,3.15rem)] md:text-[5.44rem] lg:text-[7.13rem]
                            [animation:animationIn_1.2s_ease-out_0.2s_both]"
               >
                 REVEAL
@@ -91,7 +91,7 @@ export default function Hero() {
               {/* RADIANCE */}
               <span
                 className="font-display uppercase font-semibold tracking-tighter leading-[0.85] text-[#2d322f]
-                           text-[5.75rem] md:text-[7.75rem] lg:text-[10.5rem]
+                           text-[clamp(1.91rem,12vw,3.45rem)] md:text-[5.81rem] lg:text-[7.88rem]
                            [animation:animationIn_1.2s_ease-out_0.4s_both]"
               >
                 RADIANCE
@@ -99,7 +99,7 @@ export default function Hero() {
 
               {/* YOUR badge — sits on the seam between the two words */}
               <span
-                className="pointer-events-none absolute -right-2 top-1/2 -translate-y-[55%]
+                className="pointer-events-none absolute right-0 md:-right-2 top-1/2 -translate-y-[55%]
                            border border-[#2d322f]/45 bg-[#3F556B]
                            px-2 py-1 text-[11px] md:text-xs font-semibold uppercase text-white tracking-[0.35em]
                            [animation:animationIn_0.8s_ease-out_0.8s_both]"
@@ -110,7 +110,7 @@ export default function Hero() {
 
             <p
               className="font-accent italic text-lg md:text-xl text-[#3F556B]
-                         mt-10 mb-4 pr-2 [animation:animationIn_0.8s_ease-out_1s_both]"
+                         mt-10 mb-4 md:pr-2 [animation:animationIn_0.8s_ease-out_1s_both]"
             >
               Skin that speaks before you do.
             </p>
@@ -119,7 +119,7 @@ export default function Hero() {
               href="/shop"
               className="bg-[#2d322f] text-white px-10 py-4 text-xs font-semibold uppercase tracking-widest
                          hover:bg-[#3F556B] transition-colors duration-300
-                         mt-12 mr-2 [animation:animationIn_0.8s_ease-out_1.2s_both]"
+                         mt-12 md:mr-2 [animation:animationIn_0.8s_ease-out_1.2s_both]"
             >
               Explore the Collection
             </Link>

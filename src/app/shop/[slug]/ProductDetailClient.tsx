@@ -88,7 +88,7 @@ export default function ProductDetailClient({ product }: { product: Product }) {
             {/* Price */}
             <div className="flex items-baseline gap-3">
               <span className="text-2xl font-semibold text-neutral-900">
-                ${product.price.toLocaleString()}
+                KSh {product.price.toLocaleString()}
               </span>
               <span className="text-sm text-neutral-400 font-medium">Free global shipping</span>
             </div>
@@ -99,28 +99,42 @@ export default function ProductDetailClient({ product }: { product: Product }) {
             </p>
 
             {/* Quantity + Add to cart */}
-            <div className="flex gap-3 items-center pt-2">
-              <div className="flex items-center border border-neutral-200 rounded-xl h-12 overflow-hidden">
+            <div className="pt-2 space-y-3">
+              <div className="flex gap-3 items-center">
+                <div className="flex-1 sm:flex-initial flex items-center border border-neutral-200 rounded-xl h-12 overflow-hidden">
+                  <button
+                    onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                    className="w-12 h-full flex items-center justify-center text-neutral-500 hover:bg-neutral-50 transition-colors text-lg"
+                  >
+                    −
+                  </button>
+                  <span className="flex-1 sm:w-10 text-center text-sm font-semibold text-neutral-900">
+                    {quantity}
+                  </span>
+                  <button
+                    onClick={() => setQuantity((q) => q + 1)}
+                    className="w-12 h-full flex items-center justify-center text-neutral-500 hover:bg-neutral-50 transition-colors text-lg"
+                  >
+                    +
+                  </button>
+                </div>
+
                 <button
-                  onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                  className="w-11 h-full flex items-center justify-center text-neutral-500 hover:bg-neutral-50 transition-colors text-lg"
+                  onClick={() => setWishlisted((w) => !w)}
+                  className="w-12 h-12 rounded-xl border border-neutral-200 flex items-center justify-center hover:border-red-300 hover:text-red-500 transition-all shrink-0"
+                  aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
                 >
-                  −
-                </button>
-                <span className="w-10 text-center text-sm font-semibold text-neutral-900">
-                  {quantity}
-                </span>
-                <button
-                  onClick={() => setQuantity((q) => q + 1)}
-                  className="w-11 h-full flex items-center justify-center text-neutral-500 hover:bg-neutral-50 transition-colors text-lg"
-                >
-                  +
+                  <Icon
+                    icon="lucide:heart"
+                    className={wishlisted ? "text-red-500" : "text-neutral-400"}
+                    width={20}
+                  />
                 </button>
               </div>
 
               <button
                 onClick={handleAddToCart}
-                className={`flex-1 h-12 rounded-xl text-sm font-semibold transition-all duration-300 flex items-center justify-center gap-2 ${
+                className={`w-full h-12 rounded-xl text-sm font-semibold transition-all duration-300 flex items-center justify-center gap-2 ${
                   addedToCart
                     ? "bg-green-600 text-white"
                     : "bg-neutral-900 text-white hover:bg-neutral-700"
@@ -134,20 +148,9 @@ export default function ProductDetailClient({ product }: { product: Product }) {
                 ) : (
                   <>
                     <Icon icon="lucide:shopping-bag" width={16} />
-                    Add to Cart · ${(product.price * quantity).toLocaleString()}
+                    Add to Cart · KSh {(product.price * quantity).toLocaleString()}
                   </>
                 )}
-              </button>
-
-              <button
-                onClick={() => setWishlisted((w) => !w)}
-                className="w-12 h-12 rounded-xl border border-neutral-200 flex items-center justify-center hover:border-red-300 hover:text-red-500 transition-all"
-              >
-                <Icon
-                  icon={wishlisted ? "lucide:heart" : "lucide:heart"}
-                  className={wishlisted ? "text-red-500" : "text-neutral-400"}
-                  width={18}
-                />
               </button>
             </div>
 
