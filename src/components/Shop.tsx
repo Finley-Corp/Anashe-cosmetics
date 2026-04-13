@@ -4,22 +4,20 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Icon } from "@iconify/react";
-import { PRODUCTS as ALL_PRODUCTS } from "@/lib/products";
+import type { Product } from "@/lib/products";
 
-const FILTERS = ["All", "Lighting", "Furniture", "Accessories"];
-
-// Show a curated 4-product preview on the homepage
-const PRODUCTS = ALL_PRODUCTS.slice(0, 4);
+const FILTERS = ["All", "The Ordinary", "Black Girl Sunscreen", "CeraVe", "La Roche-Posay"];
 
 const DELAY = ["", "delay-75", "delay-100", "delay-150"];
 
-export default function Shop() {
+export default function Shop({ products }: { products: Product[] }) {
   const [activeFilter, setActiveFilter] = useState("All");
+  const featuredProducts = products.slice(0, 4);
 
   const filtered =
     activeFilter === "All"
-      ? PRODUCTS
-      : PRODUCTS.filter((p) => p.category === activeFilter);
+      ? featuredProducts
+      : featuredProducts.filter((p) => p.category === activeFilter);
 
   return (
     <section
@@ -94,7 +92,7 @@ export default function Shop() {
                   </p>
                 </Link>
                 <span className="text-sm font-semibold text-neutral-900 shrink-0 ml-2">
-                  ${product.price.toLocaleString()}
+                  KSh {product.price.toLocaleString()}
                 </span>
               </div>
             </div>

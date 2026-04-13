@@ -2,28 +2,29 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { PRODUCTS, getProductBySlug } from "@/lib/products";
+import { getCatalogProductBySlug, getCatalogProducts } from "@/lib/catalog-db";
 import ProductDetailClient from "./ProductDetailClient";
 
 type Props = { params: Promise<{ slug: string }> };
 
 export async function generateStaticParams() {
-  return PRODUCTS.map((p) => ({ slug: p.slug }));
+  const products = await getCatalogProducts();
+  return products.map((p) => ({ slug: p.slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
-  if (!product) return { title: "Product Not Found | LUMA" };
+  const product = await getCatalogProductBySlug(slug);
+  if (!product) return { title: "Product Not Found | Anashe" };
   return {
-    title: `${product.name} | LUMA`,
+    title: `${product.name} | Anashe`,
     description: product.description,
   };
 }
 
 export default async function ProductPage({ params }: Props) {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = await getCatalogProductBySlug(slug);
   if (!product) notFound();
 
   return (
