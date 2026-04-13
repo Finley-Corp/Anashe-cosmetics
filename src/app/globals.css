@@ -1,10 +1,24 @@
 @import "tailwindcss";
 
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-inter), 'Inter', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+}
+
+/* AEX display / accent font utilities */
+.font-display {
+  font-family: var(--font-oswald), 'Oswald', sans-serif;
+}
+.font-accent {
+  font-family: var(--font-playfair), 'Playfair Display', serif;
+}
+
+/* Hero entrance animation */
+@keyframes animationIn {
+  0%   { opacity: 0; transform: translateY(30px); filter: blur(8px); }
+  100% { opacity: 1; transform: translateY(0);    filter: blur(0px); }
 }
 
 /* Custom Scrollbar */
@@ -63,19 +77,6 @@ body {
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.5);
-}
-
-/* Mobile Menu */
-#mobile-menu {
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
-  transform: translateY(-20px);
-  opacity: 0;
-  pointer-events: none;
-}
-#mobile-menu.open {
-  transform: translateY(0);
-  opacity: 1;
-  pointer-events: auto;
 }
 
 /* Search Bar */
