@@ -4,9 +4,9 @@ import { useState, useMemo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Icon } from "@iconify/react";
-import { PRODUCTS } from "@/lib/products";
+import type { Product } from "@/lib/products";
 
-const CATEGORIES = ["All", "Furniture", "Lighting", "Accessories"];
+const CATEGORIES = ["All", "The Ordinary", "Black Girl Sunscreen", "CeraVe", "La Roche-Posay"];
 const SORT_OPTIONS = ["Featured", "Price: Low to High", "Price: High to Low", "Newest"];
 
 const BADGE_STYLES: Record<string, string> = {
@@ -14,18 +14,18 @@ const BADGE_STYLES: Record<string, string> = {
   Sale: "bg-red-500 text-white",
 };
 
-export default function ShopClient() {
+export default function ShopClient({ products }: { products: Product[] }) {
   const [activeCategory, setActiveCategory] = useState("All");
   const [sortBy, setSortBy] = useState("Featured");
   const [isSortOpen, setIsSortOpen] = useState(false);
 
   const filtered = useMemo(() => {
-    let list = activeCategory === "All" ? PRODUCTS : PRODUCTS.filter((p) => p.category === activeCategory);
+    let list = activeCategory === "All" ? products : products.filter((p) => p.category === activeCategory);
     if (sortBy === "Price: Low to High") list = [...list].sort((a, b) => a.price - b.price);
     if (sortBy === "Price: High to Low") list = [...list].sort((a, b) => b.price - a.price);
     if (sortBy === "Newest") list = [...list].sort((a, b) => (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0));
     return list;
-  }, [activeCategory, sortBy]);
+  }, [activeCategory, sortBy, products]);
 
   return (
     <>
@@ -145,7 +145,7 @@ export default function ShopClient() {
                     <p className="text-xs text-neutral-400 mt-0.5">{product.subtitle}</p>
                   </Link>
                   <span className="text-sm font-semibold text-neutral-900 ml-2 shrink-0">
-                    ${product.price.toLocaleString()}
+                    KSh {product.price.toLocaleString()}
                   </span>
                 </div>
                 <div className="mt-3">

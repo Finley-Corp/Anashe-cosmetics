@@ -8,8 +8,11 @@ import Journal from "@/components/Journal";
 import Newsletter from "@/components/Newsletter";
 import Footer from "@/components/Footer";
 import RevealObserver from "@/components/RevealObserver";
+import { getCatalogProducts } from "@/lib/catalog-db";
 
-export default function Home() {
+export default async function Home() {
+  const products = await getCatalogProducts();
+
   return (
     <>
       <Navbar />
@@ -17,7 +20,7 @@ export default function Home() {
         <Hero />
         <TrustBar />
         <NewArrivals />
-        <Shop />
+        <Shop products={products} />
         <Collections />
         <Journal />
         <Newsletter />

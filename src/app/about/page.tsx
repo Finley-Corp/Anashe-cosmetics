@@ -8,8 +8,8 @@ import Newsletter from "@/components/Newsletter";
 import RevealObserver from "@/components/RevealObserver";
 
 export const metadata: Metadata = {
-  title: "About | LUMA",
-  description: "Learn about LUMA's story, philosophy, and the team behind the collection.",
+  title: "About | Anashe",
+  description: "Learn about Anashe's story, philosophy, and the team behind the collection.",
 };
 
 const VALUES = [
@@ -67,11 +67,11 @@ const TEAM = [
 ];
 
 const TIMELINE = [
-  { year: "2017", event: "LUMA is founded in a small Copenhagen studio with a single lounge chair." },
+  { year: "2017", event: "Anashe is founded in a small Copenhagen studio with a single lounge chair." },
   { year: "2019", event: "Expanded to a full furniture collection; won the Scandinavian Design Award." },
   { year: "2021", event: "Launched our sustainability charter and carbon-neutral shipping program." },
   { year: "2023", event: "Opened our first flagship atelier in Stockholm, welcoming customers by appointment." },
-  { year: "2025", event: "Global expansion — LUMA pieces now ship to over 40 countries worldwide." },
+  { year: "2025", event: "Global expansion — Anashe pieces now ship to over 40 countries worldwide." },
 ];
 
 export default function AboutPage() {
@@ -84,7 +84,7 @@ export default function AboutPage() {
         <div className="relative w-full h-[60vh] lg:h-[75vh] overflow-hidden bg-neutral-900">
           <Image
             src="https://images.unsplash.com/photo-1631679706909-1844bbd07221?q=80&w=1992&auto=format&fit=crop"
-            alt="LUMA Studio"
+            alt="Anashe Studio"
             fill
             className="object-cover opacity-50"
             priority
@@ -111,7 +111,7 @@ export default function AboutPage() {
                 Fewer things,<br /> made better.
               </h2>
               <p className="text-neutral-500 leading-relaxed mb-6 text-sm lg:text-base">
-                LUMA was born from a frustration with throwaway culture. We
+                Anashe was born from a frustration with throwaway culture. We
                 watched beautiful objects be replaced every season—not because
                 they broke, but because the industry demanded it. We set out to
                 prove a different path was possible.
@@ -126,7 +126,7 @@ export default function AboutPage() {
             <div className="reveal delay-100 relative h-80 lg:h-[500px] rounded-2xl overflow-hidden">
               <Image
                 src="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=1200&q=80"
-                alt="LUMA atelier"
+                alt="Anashe atelier"
                 fill
                 className="object-cover"
               />

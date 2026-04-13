@@ -6,8 +6,8 @@ import ContactForm from "./ContactForm";
 import { Icon } from "@iconify/react";
 
 export const metadata: Metadata = {
-  title: "Contact | LUMA",
-  description: "Get in touch with the LUMA team — we'd love to hear from you.",
+  title: "Contact | Anashe",
+  description: "Get in touch with the Anashe team — we'd love to hear from you.",
 };
 
 const INFO = [
@@ -19,7 +19,7 @@ const INFO = [
   {
     icon: "lucide:mail",
     title: "Email Us",
-    lines: ["hello@luma.studio", "press@luma.studio"],
+    lines: ["hello@anashe.studio", "press@anashe.studio"],
   },
   {
     icon: "lucide:phone",
@@ -48,7 +48,7 @@ const FAQS = [
   },
   {
     q: "Do you offer trade or designer pricing?",
-    a: "Yes. We have a dedicated trade program for interior designers and architects. Apply through our trade portal or email trade@luma.studio.",
+    a: "Yes. We have a dedicated trade program for interior designers and architects. Apply through our trade portal or email trade@anashe.studio.",
   },
 ];
 

@@ -131,10 +131,10 @@ export default function ProductDetailClient() {
               <div>
                 <div className="flex items-baseline gap-3">
                   <span className="text-2xl font-medium text-[#1A1A1A]">
-                    ₹{currentSize.price.toLocaleString()}
+                  KSh {currentSize.price.toLocaleString()}
                   </span>
                   <span className="text-base text-[#9CA3AF] line-through font-light">
-                    ₹{currentSize.compareAt.toLocaleString()}
+                    KSh {currentSize.compareAt.toLocaleString()}
                   </span>
                   <span className="text-sm text-[#2F3E30] font-medium">
                     Inclusive of all taxes
@@ -191,7 +191,7 @@ export default function ProductDetailClient() {
                     </button>
                   </div>
                   <button className="flex-1 bg-[#2F3E30] hover:bg-[#243025] text-white font-medium rounded-lg h-12 shadow-sm transition-all duration-300 flex items-center justify-center gap-2 group">
-                    <span>Add to Cart • ₹{total.toLocaleString()}</span>
+                    <span>Add to Cart • KSh {total.toLocaleString()}</span>
                     <Icon
                       icon="lucide:arrow-right"
                       className="w-4 h-4 transition-transform group-hover:translate-x-1"
@@ -348,7 +348,7 @@ export default function ProductDetailClient() {
         <div className="flex gap-4 items-center">
           <div className="flex-1">
             <p className="text-xs text-[#5C5C5C]">A2 Gir Cow Ghee ({currentSize.label})</p>
-            <p className="font-medium text-[#1A1A1A]">₹{currentSize.price.toLocaleString()}</p>
+            <p className="font-medium text-[#1A1A1A]">KSh {currentSize.price.toLocaleString()}</p>
           </div>
           <button className="bg-[#2F3E30] text-white px-8 py-3 rounded-lg font-medium text-sm w-auto shadow-sm">
             Add to Cart

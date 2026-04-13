@@ -52,7 +52,7 @@ const SUGGESTED = [
 ];
 
 const PERKS = [
-  { icon: "lucide:truck", label: "Free shipping on orders over $500" },
+  { icon: "lucide:truck", label: "Free shipping on orders over KSh 500" },
   { icon: "lucide:shield-check", label: "5-year warranty on all items" },
   { icon: "lucide:refresh-ccw", label: "30-day hassle-free returns" },
 ];
@@ -81,7 +81,7 @@ export default function CartClient() {
   };
 
   const applyPromo = () => {
-    if (promoCode.trim().toLowerCase() === "luma10") {
+    if (promoCode.trim().toLowerCase() === "anashe10") {
       setPromoApplied(true);
       setPromoError(false);
     } else {
@@ -168,11 +168,11 @@ export default function CartClient() {
                     <p className="text-xs text-neutral-400 mt-0.5">{item.subtitle} · {item.color}</p>
                   </div>
                   <span className="text-sm font-semibold text-neutral-900 shrink-0">
-                    ${(item.price * item.qty).toLocaleString()}
+                    KSh {(item.price * item.qty).toLocaleString()}
                   </span>
                 </div>
 
-                <p className="text-xs text-neutral-400 mb-4">${item.price.toLocaleString()} each</p>
+                <p className="text-xs text-neutral-400 mb-4">KSh {item.price.toLocaleString()} each</p>
 
                 <div className="flex items-center justify-between">
                   {/* Qty stepper */}
@@ -231,25 +231,25 @@ export default function CartClient() {
             <div className="space-y-3 mb-6 text-sm">
               <div className="flex justify-between text-neutral-600">
                 <span>Subtotal ({itemCount} {itemCount === 1 ? "item" : "items"})</span>
-                <span className="font-medium text-neutral-900">${subtotal.toLocaleString()}</span>
+                <span className="font-medium text-neutral-900">KSh {subtotal.toLocaleString()}</span>
               </div>
               {promoApplied && (
                 <div className="flex justify-between text-green-600">
                   <span className="flex items-center gap-1">
-                    <Icon icon="lucide:tag" width={13} /> Promo (LUMA10)
+                    <Icon icon="lucide:tag" width={13} /> Promo (ANASHE10)
                   </span>
-                  <span className="font-semibold">−${discount.toLocaleString()}</span>
+                  <span className="font-semibold">−KSh {discount.toLocaleString()}</span>
                 </div>
               )}
               <div className="flex justify-between text-neutral-600">
                 <span>Shipping</span>
                 <span className={`font-medium ${shipping === 0 ? "text-green-600" : "text-neutral-900"}`}>
-                  {shipping === 0 ? "Free" : `$${shipping}`}
+                  {shipping === 0 ? "Free" : `KSh ${shipping}`}
                 </span>
               </div>
               {shipping > 0 && (
                 <p className="text-[11px] text-neutral-400">
-                  Add ${(500 - subtotal).toLocaleString()} more to unlock free shipping
+                  Add KSh {(500 - subtotal).toLocaleString()} more to unlock free shipping
                 </p>
               )}
             </div>
@@ -258,7 +258,7 @@ export default function CartClient() {
               <span className="text-sm font-semibold text-neutral-900">Total</span>
               <div className="text-right">
                 <span className="text-xl font-semibold tracking-tight text-neutral-900">
-                  ${total.toLocaleString()}
+                  KSh {total.toLocaleString()}
                 </span>
                 <p className="text-[11px] text-neutral-400 mt-0.5">Incl. taxes where applicable</p>
               </div>
@@ -272,7 +272,7 @@ export default function CartClient() {
               {promoApplied ? (
                 <div className="flex items-center gap-2 px-4 py-2.5 bg-green-50 border border-green-200 rounded-xl">
                   <Icon icon="lucide:check-circle" width={15} className="text-green-600 shrink-0" />
-                  <span className="text-xs font-semibold text-green-700">LUMA10 applied — 10% off!</span>
+                  <span className="text-xs font-semibold text-green-700">ANASHE10 applied — 10% off!</span>
                   <button
                     onClick={() => { setPromoApplied(false); setPromoCode(""); }}
                     className="ml-auto text-green-600 hover:text-green-800 transition-colors"
@@ -286,7 +286,7 @@ export default function CartClient() {
                     type="text"
                     value={promoCode}
                     onChange={(e) => { setPromoCode(e.target.value.toUpperCase()); setPromoError(false); }}
-                    placeholder="e.g. LUMA10"
+                    placeholder="e.g. ANASHE10"
                     className={`flex-1 border rounded-xl px-4 py-2.5 text-sm outline-none transition-all bg-white placeholder:text-neutral-400 ${
                       promoError ? "border-red-300 focus:border-red-400 focus:ring-red-100" : "border-neutral-200 focus:border-neutral-400 focus:ring-neutral-100"
                     } focus:ring-2`}
@@ -301,7 +301,7 @@ export default function CartClient() {
               )}
               {promoError && (
                 <p className="text-xs text-red-500 mt-1.5 flex items-center gap-1">
-                  <Icon icon="lucide:alert-circle" width={12} /> Invalid promo code. Try LUMA10.
+                  <Icon icon="lucide:alert-circle" width={12} /> Invalid promo code. Try ANASHE10.
                 </p>
               )}
             </div>
@@ -381,7 +381,7 @@ export default function CartClient() {
                   <h3 className="text-sm font-semibold text-neutral-900 tracking-tight">{product.name}</h3>
                   <p className="text-xs text-neutral-400 mt-0.5">{product.subtitle}</p>
                 </div>
-                <span className="text-sm font-semibold text-neutral-900">${product.price}</span>
+                <span className="text-sm font-semibold text-neutral-900">KSh {product.price}</span>
               </div>
             </div>
           ))}

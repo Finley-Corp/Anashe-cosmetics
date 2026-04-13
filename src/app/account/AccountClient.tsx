@@ -174,7 +174,7 @@ function Overview({ setTab }: { setTab: (t: Tab) => void }) {
               {order.status}
             </span>
             <span className="text-sm font-semibold text-neutral-900 hidden sm:block shrink-0">
-              ${order.total.toLocaleString()}
+              KSh {order.total.toLocaleString()}
             </span>
           </div>
         ))}
@@ -195,7 +195,7 @@ function Overview({ setTab }: { setTab: (t: Tab) => void }) {
                 <Image src={item.image} alt={item.name} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
               </div>
               <p className="text-xs font-semibold text-neutral-900 truncate">{item.name}</p>
-              <p className="text-xs text-neutral-400">${item.price.toLocaleString()}</p>
+              <p className="text-xs text-neutral-400">KSh {item.price.toLocaleString()}</p>
             </div>
           ))}
         </div>
@@ -233,7 +233,7 @@ function Orders() {
               <p className="text-xs text-neutral-400 mt-0.5">{order.date} · {order.items.length} {order.items.length === 1 ? "item" : "items"}</p>
             </div>
             <div className="text-right shrink-0 mr-2">
-              <p className="text-sm font-semibold text-neutral-900">${order.total.toLocaleString()}</p>
+              <p className="text-sm font-semibold text-neutral-900">KSh {order.total.toLocaleString()}</p>
             </div>
             <Icon
               icon="lucide:chevron-down"
@@ -254,7 +254,7 @@ function Orders() {
                     <p className="text-sm font-semibold text-neutral-900">{item.name}</p>
                     <p className="text-xs text-neutral-400">Qty: {item.qty}</p>
                   </div>
-                  <span className="text-sm font-semibold text-neutral-900 shrink-0">${(item.price * item.qty).toLocaleString()}</span>
+                  <span className="text-sm font-semibold text-neutral-900 shrink-0">KSh {(item.price * item.qty).toLocaleString()}</span>
                 </div>
               ))}
               <div className="pt-4 border-t border-neutral-100 flex flex-wrap gap-3 justify-between items-center">
@@ -274,7 +274,7 @@ function Orders() {
                   </button>
                 </div>
                 <p className="text-xs text-neutral-400">
-                  Order total: <span className="font-semibold text-neutral-900">${order.total.toLocaleString()}</span>
+                  Order total: <span className="font-semibold text-neutral-900">KSh {order.total.toLocaleString()}</span>
                 </p>
               </div>
             </div>
@@ -321,7 +321,7 @@ function Wishlist() {
                     <h3 className="text-sm font-semibold text-neutral-900">{item.name}</h3>
                     <p className="text-xs text-neutral-400 mt-0.5">{item.subtitle}</p>
                   </div>
-                  <span className="text-sm font-semibold text-neutral-900">${item.price.toLocaleString()}</span>
+                  <span className="text-sm font-semibold text-neutral-900">KSh {item.price.toLocaleString()}</span>
                 </div>
                 <button className="w-full h-9 bg-neutral-900 text-white text-xs font-semibold rounded-xl hover:bg-neutral-800 transition-colors flex items-center justify-center gap-2">
                   <Icon icon="lucide:shopping-bag" width={13} /> Move to Cart

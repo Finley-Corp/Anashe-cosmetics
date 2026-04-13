@@ -4,7 +4,7 @@ import Footer from "@/components/Footer";
 import ProductDetailClient from "./ProductDetailClient";
 
 export const metadata: Metadata = {
-  title: "Traditional A2 Gir Cow Ghee | LUMA",
+  title: "Traditional A2 Gir Cow Ghee | Anashe",
   description:
     "Hand-churned Bilona A2 Gir Cow Ghee with rich aroma, grainy texture, and pure farm-to-jar nutrition.",
 };

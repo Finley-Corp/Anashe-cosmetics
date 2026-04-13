@@ -8,7 +8,7 @@ import Newsletter from "@/components/Newsletter";
 import RevealObserver from "@/components/RevealObserver";
 
 export const metadata: Metadata = {
-  title: "Journal | LUMA",
+  title: "Journal | Anashe",
   description: "Stories, ideas, and perspectives on design and intentional living.",
 };
 

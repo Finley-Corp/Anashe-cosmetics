@@ -5,15 +5,12 @@ import Link from "next/link";
 import { Icon } from "@iconify/react";
 
 const MOBILE_LINKS: { href: string; label: string; accent?: boolean }[] = [
-  { href: "/shop", label: "New Arrivals", accent: true },
-  { href: "/shop", label: "Furniture" },
-  { href: "/shop", label: "Lighting" },
-  { href: "/shop", label: "Accessories" },
+  { href: "/new-in", label: "New In", accent: true },
+  { href: "/best-sellers", label: "Best Sellers" },
+  { href: "/shop", label: "Skincare" },
+  { href: "/by-concern", label: "By Concern" },
   { href: "/blog", label: "Journal" },
   { href: "/about", label: "About" },
-  { href: "/contact", label: "Contact" },
-  { href: "/account", label: "Account" },
-  { href: "/contact", label: "Trade Inquiries", accent: true },
 ];
 
 export default function Navbar() {
@@ -102,7 +99,7 @@ export default function Navbar() {
             className="hover:opacity-70 transition-opacity text-xl font-medium tracking-tighter"
             onClick={() => isMenuOpen && closeMenu()}
           >
-            LUMA
+            Anashe
           </Link>
         </div>
 
@@ -115,63 +112,57 @@ export default function Navbar() {
               href="/shop"
               className="hover:text-black transition-colors text-sm font-medium text-neutral-500"
             >
-              Shop
+              Skincare
             </Link>
             <div className="nav-dropdown absolute top-full left-0 w-[500px] bg-white border border-neutral-100 rounded-xl shadow-[0_16px_40px_-12px_rgba(0,0,0,0.1)] p-6 opacity-0 invisible translate-y-2 transition-all duration-200 ease-out cursor-default z-50">
               <div className="grid grid-cols-2 gap-8">
                 <div className="flex flex-col space-y-3">
                   <span className="text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-1">
-                    Browse
+                    Shop by
                   </span>
                   <Link
-                    href="/shop"
+                    href="/new-in"
                     className="hover:text-neutral-500 transition-colors text-sm font-medium text-neutral-900"
                   >
-                    All Products
+                    New In
                   </Link>
                   <Link
-                    href="/shop"
+                    href="/best-sellers"
                     className="hover:text-neutral-500 transition-colors flex items-center justify-between text-sm font-medium text-neutral-900"
                   >
-                    New Arrivals
+                    Best Sellers
                     <span className="text-[10px] text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded font-bold">
-                      NEW
+                      HOT
                     </span>
                   </Link>
                   <Link
                     href="/shop"
                     className="hover:text-neutral-500 transition-colors text-sm font-medium text-neutral-900"
                   >
-                    Best Sellers
-                  </Link>
-                  <Link
-                    href="/shop"
-                    className="text-sm font-medium text-red-600 hover:text-red-500 transition-colors"
-                  >
-                    Sale
+                    Skincare
                   </Link>
                 </div>
                 <div className="flex flex-col space-y-3">
                   <span className="text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-1">
-                    Categories
+                    By Concern
                   </span>
                   <Link
-                    href="/shop"
+                    href="/by-concern"
                     className="text-sm text-neutral-600 hover:text-black transition-colors flex items-center gap-2"
                   >
-                    <Icon icon="lucide:sofa" width={14} /> Furniture
+                    <Icon icon="lucide:sparkles" width={14} /> Glow
                   </Link>
                   <Link
-                    href="/shop"
+                    href="/by-concern"
                     className="text-sm text-neutral-600 hover:text-black transition-colors flex items-center gap-2"
                   >
-                    <Icon icon="lucide:lamp" width={14} /> Lighting
+                    <Icon icon="lucide:shield-alert" width={14} /> Acne
                   </Link>
                   <Link
-                    href="/shop"
+                    href="/by-concern"
                     className="text-sm text-neutral-600 hover:text-black transition-colors flex items-center gap-2"
                   >
-                    <Icon icon="lucide:flower-2" width={14} /> Accessories
+                    <Icon icon="lucide:clock-3" width={14} /> Anti-Aging
                   </Link>
                 </div>
               </div>
@@ -179,10 +170,22 @@ export default function Navbar() {
           </div>
 
           <Link
-            href="/about"
+            href="/new-in"
             className="hover:text-black transition-colors text-sm font-medium text-neutral-500"
           >
-            About
+            New In
+          </Link>
+          <Link
+            href="/best-sellers"
+            className="hover:text-black transition-colors text-sm font-medium text-neutral-500"
+          >
+            Best Sellers
+          </Link>
+          <Link
+            href="/by-concern"
+            className="hover:text-black transition-colors text-sm font-medium text-neutral-500"
+          >
+            By Concern
           </Link>
           <Link
             href="/blog"
@@ -191,10 +194,10 @@ export default function Navbar() {
             Journal
           </Link>
           <Link
-            href="/contact"
+            href="/about"
             className="hover:text-black transition-colors text-sm font-medium text-neutral-500"
           >
-            Contact
+            About
           </Link>
 
         </div>
@@ -253,7 +256,7 @@ export default function Navbar() {
               onClick={closeMenu}
               className="absolute left-1/2 -translate-x-1/2 text-lg font-semibold tracking-tighter text-neutral-900"
             >
-              LUMA
+              Anashe
             </Link>
             <div className="flex items-center gap-1">
               <Link
