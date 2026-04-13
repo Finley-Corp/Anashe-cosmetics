@@ -4,6 +4,18 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Icon } from "@iconify/react";
 
+const MOBILE_LINKS: { href: string; label: string; accent?: boolean }[] = [
+  { href: "/shop", label: "New Arrivals", accent: true },
+  { href: "/shop", label: "Furniture" },
+  { href: "/shop", label: "Lighting" },
+  { href: "/shop", label: "Accessories" },
+  { href: "/blog", label: "Journal" },
+  { href: "/about", label: "About" },
+  { href: "/contact", label: "Contact" },
+  { href: "/account", label: "Account" },
+  { href: "/contact", label: "Trade Inquiries", accent: true },
+];
+
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -17,16 +29,33 @@ export default function Navbar() {
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && isSearchOpen) setIsSearchOpen(false);
+      if (e.key === "Escape") {
+        if (isSearchOpen) setIsSearchOpen(false);
+        if (isMenuOpen) setIsMenuOpen(false);
+      }
     };
     document.addEventListener("keydown", handleKey);
     return () => document.removeEventListener("keydown", handleKey);
-  }, [isSearchOpen]);
+  }, [isSearchOpen, isMenuOpen]);
+
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isMenuOpen]);
+
+  const closeMenu = () => setIsMenuOpen(false);
 
   return (
-    <nav
-      className={`fixed top-0 left-0 w-full z-50 bg-white/85 backdrop-blur-md border-b border-neutral-100 transition-all duration-300${isScrolled ? " shadow-[0_4px_30px_-4px_rgba(0,0,0,0.03)]" : ""}`}
-    >
+    <>
+      <nav
+        className={`fixed top-0 left-0 w-full z-50 bg-white/85 backdrop-blur-md border-b border-neutral-100 transition-all duration-300${isScrolled ? " shadow-[0_4px_30px_-4px_rgba(0,0,0,0.03)]" : ""}`}
+      >
       <div className="flex h-16 max-w-[1440px] mr-auto ml-auto pr-6 pl-6 relative items-center justify-between">
 
         {/* Search Bar Overlay */}
@@ -60,7 +89,8 @@ export default function Navbar() {
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className="lg:hidden p-1 -ml-1 text-neutral-500 hover:text-black transition-colors focus:outline-none"
-            aria-label="Menu"
+            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={isMenuOpen}
           >
             <Icon
               icon={isMenuOpen ? "lucide:x" : "lucide:menu"}
@@ -70,6 +100,7 @@ export default function Navbar() {
           <Link
             href="/"
             className="hover:opacity-70 transition-opacity text-xl font-medium tracking-tighter"
+            onClick={() => isMenuOpen && closeMenu()}
           >
             LUMA
           </Link>
@@ -165,7 +196,7 @@ export default function Navbar() {
           >
             Contact
           </Link>
-        
+
         </div>
 
         {/* Right Icons */}
@@ -197,59 +228,81 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Menu */}
-      <div
-        id="mobile-menu"
-        className={`absolute top-16 left-0 w-full bg-white border-b border-neutral-100 px-6 py-8 lg:hidden shadow-xl h-[calc(100vh-64px)] overflow-y-auto transition-all duration-300${
-          isMenuOpen
-            ? " opacity-100 visible translate-y-0 pointer-events-auto"
-            : " opacity-0 invisible -translate-y-5 pointer-events-none"
-        }`}
-      >
-        <div className="flex flex-col space-y-6 max-w-[1440px] mx-auto">
-          <div className="space-y-3">
-            <Link
-              href="/shop"
-              onClick={() => setIsMenuOpen(false)}
-              className="text-2xl font-medium text-neutral-900 block tracking-tight"
+      </nav>
+
+      {/* Full-screen mobile menu (reference: MNADA-style overlay) */}
+      {isMenuOpen && (
+        <div
+          className="fixed inset-0 z-[9999] flex flex-col bg-[#F9F9F9] lg:hidden"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Mobile menu"
+        >
+          {/* Row: close | logo | account + cart */}
+          <div className="relative shrink-0 flex h-14 items-center justify-between px-4 sm:px-6 bg-white border-b border-neutral-200/80">
+            <button
+              type="button"
+              onClick={closeMenu}
+              className="flex h-10 w-10 items-center justify-center text-neutral-900 -ml-1"
+              aria-label="Close menu"
             >
-              Shop
+              <Icon icon="lucide:x" width={22} strokeWidth={1.75} />
+            </button>
+            <Link
+              href="/"
+              onClick={closeMenu}
+              className="absolute left-1/2 -translate-x-1/2 text-lg font-semibold tracking-tighter text-neutral-900"
+            >
+              LUMA
             </Link>
-            <div className="pl-4 space-y-3 border-l-2 border-neutral-100">
-              <Link href="/shop" className="block text-sm text-neutral-500" onClick={() => setIsMenuOpen(false)}>
-                New Arrivals
+            <div className="flex items-center gap-1">
+              <Link
+                href="/account"
+                onClick={closeMenu}
+                className="flex h-10 w-10 items-center justify-center text-neutral-600"
+                aria-label="Account"
+              >
+                <Icon icon="lucide:user" width={20} strokeWidth={1.5} />
               </Link>
-              <Link href="/shop" className="block text-sm text-neutral-500" onClick={() => setIsMenuOpen(false)}>
-                Categories
-              </Link>
-              <Link href="/shop" className="block text-sm text-red-500" onClick={() => setIsMenuOpen(false)}>
-                Sale
+              <Link
+                href="/cart"
+                onClick={closeMenu}
+                className="relative flex h-10 w-10 items-center justify-center text-neutral-600"
+                aria-label="Cart"
+              >
+                <Icon icon="lucide:shopping-bag" width={20} strokeWidth={1.5} />
+                <span className="absolute top-1.5 right-1.5 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-neutral-900 px-0.5 text-[8px] font-bold text-white ring-2 ring-white">
+                  2
+                </span>
               </Link>
             </div>
           </div>
-          <Link
-            href="/about"
-            onClick={() => setIsMenuOpen(false)}
-            className="text-2xl font-medium text-neutral-900 block tracking-tight"
-          >
-            About
-          </Link>
-          <Link
-            href="/blog"
-            onClick={() => setIsMenuOpen(false)}
-            className="text-2xl font-medium text-neutral-900 block tracking-tight"
-          >
-            Journal
-          </Link>
-          <Link
-            href="/contact"
-            onClick={() => setIsMenuOpen(false)}
-            className="text-2xl font-medium text-neutral-900 block tracking-tight"
-          >
-            Contact
-          </Link>
+
+          {/* Link list */}
+          <div className="flex-1 overflow-y-auto overscroll-contain bg-white">
+            <ul className="divide-y divide-neutral-200/90">
+              {MOBILE_LINKS.map(({ href, label, accent }) => (
+                <li key={`${href}-${label}`}>
+                  <Link
+                    href={href}
+                    onClick={closeMenu}
+                    className={`flex items-center justify-between px-6 py-5 text-[14px] font-extrabold uppercase tracking-[0.14em] ${
+                      accent ? "text-[#B5A284]" : "text-neutral-900"
+                    }`}
+                  >
+                    <span>{label}</span>
+                    <Icon
+                      icon="lucide:chevron-right"
+                      width={18}
+                      className="text-neutral-300"
+                    />
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
-      </div>
-    </nav>
+      )}
+    </>
   );
 }
