@@ -46,14 +46,22 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(url);
     }
 
-    // Check admin role
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single();
+    // Prefer auth metadata role (avoids profile policy recursion), then fallback to profile lookup.
+    const metadataRole =
+      (user.app_metadata as { role?: string } | undefined)?.role ??
+      (user.user_metadata as { role?: string } | undefined)?.role;
 
-    if (!profile || profile.role !== 'admin') {
+    let isAdmin = metadataRole === 'admin';
+    if (!isAdmin) {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .maybeSingle();
+      isAdmin = profile?.role === 'admin';
+    }
+
+    if (!isAdmin) {
       return NextResponse.redirect(new URL('/', request.url));
     }
   }

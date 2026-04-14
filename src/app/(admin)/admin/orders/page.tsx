@@ -1,19 +1,18 @@
-import Link from 'next/link';
-import { Download, Eye } from 'lucide-react';
-import { createClient } from '@/lib/supabase/server';
+import { Download } from 'lucide-react';
+import { createServiceClient } from '@/lib/supabase/service';
 
 const STATUS_BADGE: Record<string, string> = {
   pending_payment: 'bg-yellow-50 text-yellow-700 border-yellow-100',
   payment_confirmed: 'bg-blue-50 text-blue-700 border-blue-100',
   processing: 'bg-indigo-50 text-indigo-700 border-indigo-100',
   shipped: 'bg-purple-50 text-purple-700 border-purple-100',
-  delivered: 'bg-green-50 text-green-700 border-green-100',
+  delivered: 'bg-neutral-100 text-neutral-700 border-neutral-200',
   cancelled: 'bg-red-50 text-red-600 border-red-100',
   refunded: 'bg-gray-50 text-gray-600 border-gray-100',
 };
 
 export default async function AdminOrdersPage() {
-  const supabase = await createClient();
+  const supabase = createServiceClient();
   const { data: orders } = await supabase
     .from('orders')
     .select('id,order_number,user_id,total,status,mpesa_receipt,created_at,payment_phone,items:order_items(count)')
@@ -37,7 +36,7 @@ export default async function AdminOrdersPage() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-neutral-100 bg-neutral-50/50">
-                {['Order', 'Customer', 'Phone', 'Items', 'Total', 'M-Pesa Ref', 'Date', 'Status', 'Actions'].map((h) => (
+                {['Order', 'Customer', 'Phone', 'Items', 'Total', 'M-Pesa Ref', 'Date', 'Status'].map((h) => (
                   <th key={h} className="text-left px-4 py-3 text-xs font-semibold text-neutral-400 uppercase tracking-wider">{h}</th>
                 ))}
               </tr>
@@ -49,7 +48,7 @@ export default async function AdminOrdersPage() {
                     const itemCount = Array.isArray(order.items) ? (order.items[0]?.count ?? 0) : 0;
                     return (
                       <>
-                  <td className="px-4 py-3 font-bold text-green-700">{order.order_number}</td>
+                  <td className="px-4 py-3 font-bold text-neutral-900">{order.order_number}</td>
                   <td className="px-4 py-3 font-medium">{`Customer ${String(order.user_id).slice(0, 8)}`}</td>
                   <td className="px-4 py-3 text-neutral-500 text-xs">{order.payment_phone ?? '-'}</td>
                   <td className="px-4 py-3 text-neutral-600">{itemCount} items</td>
@@ -60,11 +59,6 @@ export default async function AdminOrdersPage() {
                     <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full border capitalize ${STATUS_BADGE[order.status] ?? 'bg-neutral-100 text-neutral-600 border-neutral-100'}`}>
                       {order.status.replace(/_/g, ' ')}
                     </span>
-                  </td>
-                  <td className="px-4 py-3">
-                    <Link href={`/admin/orders/${order.id}`} className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-neutral-100 text-neutral-400 hover:text-neutral-700 transition-colors">
-                      <Eye className="w-3.5 h-3.5" />
-                    </Link>
                   </td>
                       </>
                     );
