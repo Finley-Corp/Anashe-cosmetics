@@ -111,7 +111,7 @@ export function ReviewsModerationClient({ initialReviews }: { initialReviews: Ad
                       {review.title && <p className="text-sm font-semibold text-neutral-900">{review.title}</p>}
                       {review.body && <p className="text-sm text-neutral-600 mt-1">{review.body}</p>}
                       {product && (
-                        <Link href={`/products/${product.slug}`} className="text-xs text-green-700 hover:underline mt-2 inline-block">
+                        <Link href={`/products/${product.slug}`} className="text-xs text-neutral-700 hover:underline mt-2 inline-block">
                           View product: {product.name}
                         </Link>
                       )}
@@ -122,7 +122,7 @@ export function ReviewsModerationClient({ initialReviews }: { initialReviews: Ad
                           <button
                             onClick={() => void moderate(review.id, 'approve')}
                             disabled={busyId === review.id}
-                            className="h-9 px-3 rounded-lg bg-green-700 text-white text-xs font-semibold disabled:opacity-60 inline-flex items-center gap-1.5"
+                            className="h-9 px-3 rounded-lg bg-neutral-900 text-white text-xs font-semibold disabled:opacity-60 inline-flex items-center gap-1.5"
                           >
                             {busyId === review.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
                             Approve
