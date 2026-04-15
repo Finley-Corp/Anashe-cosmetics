@@ -261,7 +261,7 @@ export function ProductListingClient({ initialParams }: ProductListingClientProp
             <p className="text-sm text-neutral-500">No products found for the selected filters.</p>
           )}
           {!error && products.length > 0 && (
-            <div className="grid grid-cols-1 gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-2 gap-x-6 gap-y-12 lg:grid-cols-3">
               {products.map((product) => (
                 <article key={product.id} className="group relative flex flex-col">
                   <div className="aspect-[3/4] w-full overflow-hidden bg-zinc-100 relative">
