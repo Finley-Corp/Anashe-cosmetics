@@ -45,25 +45,6 @@ export async function middleware(request: NextRequest) {
       url.searchParams.set('redirect', pathname);
       return NextResponse.redirect(url);
     }
-
-    // Prefer auth metadata role (avoids profile policy recursion), then fallback to profile lookup.
-    const metadataRole =
-      (user.app_metadata as { role?: string } | undefined)?.role ??
-      (user.user_metadata as { role?: string } | undefined)?.role;
-
-    let isAdmin = metadataRole === 'admin';
-    if (!isAdmin) {
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', user.id)
-        .maybeSingle();
-      isAdmin = profile?.role === 'admin';
-    }
-
-    if (!isAdmin) {
-      return NextResponse.redirect(new URL('/', request.url));
-    }
   }
 
   return supabaseResponse;
