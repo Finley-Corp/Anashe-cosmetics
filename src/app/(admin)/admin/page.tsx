@@ -16,13 +16,12 @@ const STATUS_BADGE: Record<string, string> = {
 
 export default async function AdminDashboard() {
   const supabase = createServiceClient();
-  const [{ data: lowStockRows }, { data: recentOrders }, { data: revenueOrders }, { count: customerCount }] = await Promise.all([
+  const [{ data: productStockRows }, { data: recentOrders }, { data: revenueOrders }, { count: customerCount }] = await Promise.all([
     supabase
       .from('products')
-      .select('name,stock,sku,low_stock_threshold')
+      .select('stock')
       .eq('is_published', true)
-      .order('stock', { ascending: true })
-      .limit(6),
+      .order('stock', { ascending: true }),
     supabase
       .from('orders')
       .select('order_number,total,status,created_at,user_id')
@@ -38,7 +37,8 @@ export default async function AdminDashboard() {
       .eq('role', 'customer'),
   ]);
 
-  const LOW_STOCK = (lowStockRows ?? []).filter((row) => row.stock <= row.low_stock_threshold);
+  const inStockCount = (productStockRows ?? []).filter((row) => (row.stock ?? 0) > 0).length;
+  const outOfStockCount = (productStockRows ?? []).filter((row) => (row.stock ?? 0) <= 0).length;
   const totalOrders = revenueOrders?.length ?? 0;
   const totalRevenue = (revenueOrders ?? []).reduce((sum, row) => sum + Number(row.total ?? 0), 0);
   const aov = totalOrders > 0 ? totalRevenue / totalOrders : 0;
@@ -48,9 +48,6 @@ export default async function AdminDashboard() {
     month: 'long',
     day: 'numeric',
   });
-  const pendingPayments = (revenueOrders ?? []).filter((row) => row.status === 'pending_payment').length;
-  const awaitingDispatch = (revenueOrders ?? []).filter((row) => row.status === 'payment_confirmed' || row.status === 'processing').length;
-  const deliveredCount = (revenueOrders ?? []).filter((row) => row.status === 'delivered').length;
   const KPI_CARDS = [
     { label: 'Total Revenue (all)', value: formatPrice(totalRevenue), change: 'Live', up: true, icon: DollarSign, color: 'text-neutral-900 bg-neutral-100' },
     { label: 'Total Orders', value: String(totalOrders), change: 'Live', up: true, icon: ShoppingCart, color: 'text-blue-600 bg-blue-50' },
@@ -143,39 +140,22 @@ export default async function AdminDashboard() {
           </div>
         </div>
 
-        {/* Low Stock Alert */}
+        {/* Stock Status */}
         <div className="bg-white border border-neutral-100 rounded-2xl p-6">
           <div className="flex items-center justify-between mb-5">
             <h2 className="font-semibold text-neutral-900 flex items-center gap-2">
-              <Package className="w-4 h-4 text-amber-500" /> Low Stock
+              <Package className="w-4 h-4 text-neutral-700" /> Stock Status
             </h2>
             <a href="/admin/products" className="text-xs text-neutral-700 hover:text-neutral-900 font-medium">Manage</a>
           </div>
           <div className="space-y-3">
-            {LOW_STOCK.map((item) => (
-              <div key={item.sku} className="flex items-start justify-between p-3 bg-amber-50 rounded-xl">
-                <div>
-                  <p className="text-sm font-medium text-neutral-900 line-clamp-1">{item.name}</p>
-                  <p className="text-xs text-neutral-500 mt-0.5">{item.sku}</p>
-                </div>
-                <span className="text-xs font-bold bg-amber-500 text-white px-2 py-0.5 rounded-full ml-2 shrink-0">
-                  {item.stock} left
-                </span>
-              </div>
-            ))}
-          </div>
-
-          {/* Quick Stats */}
-          <div className="mt-6 space-y-3">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-neutral-400">Quick Stats</h3>
             {[
-              { label: 'Pending Payments', value: String(pendingPayments), color: 'text-yellow-600' },
-              { label: 'Awaiting Dispatch', value: String(awaitingDispatch), color: 'text-blue-600' },
-              { label: 'Delivered', value: String(deliveredCount), color: 'text-neutral-700' },
+              { label: 'In Stock', value: String(inStockCount), color: 'text-emerald-700 bg-emerald-50' },
+              { label: 'Out of Stock', value: String(outOfStockCount), color: 'text-red-700 bg-red-50' },
             ].map(({ label, value, color }) => (
-              <div key={label} className="flex justify-between items-center text-sm">
-                <span className="text-neutral-600">{label}</span>
-                <span className={`font-bold ${color}`}>{value}</span>
+              <div key={label} className="flex items-center justify-between rounded-xl border border-neutral-100 px-3 py-3">
+                <span className="text-sm text-neutral-700">{label}</span>
+                <span className={`rounded-full px-2.5 py-1 text-xs font-bold ${color}`}>{value}</span>
               </div>
             ))}
           </div>
