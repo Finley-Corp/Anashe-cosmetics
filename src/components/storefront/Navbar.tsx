@@ -10,6 +10,7 @@ import { SearchBar } from './SearchBar';
 
 const NAV_LINKS = [
   { label: 'Shop', href: '/products' },
+  { label: 'Services', href: '/services' },
   { label: 'Journal', href: '/blog' },
   { label: 'About', href: '/about' },
   { label: 'Contact', href: '/contact' },
@@ -126,6 +127,16 @@ export function Navbar() {
               <span className="block text-[24px] leading-none tracking-[0.22em] font-semibold uppercase text-[var(--primary)]">
                 Shop
               </span>
+            </div>
+
+            <div className="border-b border-neutral-200 py-6">
+              <Link
+                href="/services"
+                onClick={() => setIsMobileOpen(false)}
+                className="block text-[24px] leading-none tracking-[0.16em] font-semibold uppercase text-[var(--text-primary)]"
+              >
+                Services
+              </Link>
             </div>
 
             <div className="border-b border-neutral-200 py-6">
