@@ -373,32 +373,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* NEWSLETTER */}
-      <section className="py-16 bg-neutral-900 text-white">
-        <div className="max-w-screen-md mx-auto px-4 md:px-6 text-center reveal">
-          <div className="w-10 h-10 bg-[var(--accent)] rounded-full flex items-center justify-center mx-auto mb-4">
-            <Star className="w-5 h-5 text-[var(--primary)]" />
-          </div>
-          <h2 className="text-2xl lg:text-3xl font-medium tracking-tight mb-3 font-[family-name:var(--font-display)]">Get skincare tips and exclusive deals first</h2>
-          <p className="text-neutral-400 mb-6 max-w-sm mx-auto text-sm leading-relaxed">
-            Join 5,000+ Kenyans getting weekly skincare routines, new beauty drops, and exclusive offers.
-          </p>
-          <form className="flex flex-col sm:flex-row gap-2 max-w-sm mx-auto">
-            <input
-              type="email"
-              placeholder="your@email.com"
-              className="flex-1 bg-neutral-800 border border-neutral-700 text-white text-sm rounded-lg px-4 py-2.5 outline-none focus:border-[var(--primary)] transition-colors placeholder:text-neutral-500"
-            />
-            <button
-              type="submit"
-              className="bg-[var(--primary)] hover:bg-[var(--primary-hover)] text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition-colors"
-            >
-              Subscribe
-            </button>
-          </form>
-          <p className="text-neutral-600 text-xs mt-3">No spam. Unsubscribe anytime.</p>
-        </div>
-      </section>
     </>
   );
 }
