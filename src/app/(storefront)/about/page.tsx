@@ -212,10 +212,14 @@ export default function AboutPage() {
           </div>
           <Link
             href="/products"
-            className="inline-flex h-12 items-center gap-2 rounded-full bg-white px-7 text-sm font-semibold text-neutral-900 transition-colors hover:bg-neutral-100"
+            className="inline-flex min-h-[96px] min-w-[280px] items-center justify-between rounded-full bg-white px-9 py-5 text-neutral-900 transition-colors hover:bg-neutral-100"
           >
-            Browse Products
-            <ArrowRight className="h-4 w-4" />
+            <span className="text-[42px] leading-none">↗</span>
+            <span className="text-left text-[40px] font-semibold leading-[1.05] tracking-tight">
+              Browse
+              <br />
+              Products
+            </span>
           </Link>
         </div>
       </section>
