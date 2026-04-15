@@ -45,5 +45,10 @@ export async function initiateSTKPush({ phone, amount, orderId, callbackUrl }: S
     throw new Error(`STK Push failed: ${error}`);
   }
 
-  return res.json();
+  const payload = await res.json() as STKPushResponse;
+  if (payload.ResponseCode !== '0') {
+    throw new Error(payload.CustomerMessage || payload.ResponseDescription || 'STK push was rejected');
+  }
+
+  return payload;
 }
