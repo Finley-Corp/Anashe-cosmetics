@@ -17,7 +17,7 @@ export default function AboutPage() {
             alt="Beauty textures background"
             fill
             priority
-            className="object-cover grayscale"
+            className="object-cover"
           />
         </div>
         <div className="relative mx-auto flex h-full max-w-[1400px] flex-col justify-end px-4 pb-14 sm:px-6">
@@ -103,7 +103,7 @@ export default function AboutPage() {
               src="https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=1400&q=80"
               alt="Anashe team"
               fill
-              className="object-cover grayscale"
+              className="object-cover"
             />
           </div>
           <div className="relative h-[420px] overflow-hidden rounded-3xl bg-neutral-100">
@@ -111,7 +111,7 @@ export default function AboutPage() {
               src="https://images.unsplash.com/photo-1571781926291-c477ebfd024b?w=1400&q=80"
               alt="Skincare products"
               fill
-              className="object-cover grayscale"
+              className="object-cover"
             />
           </div>
         </div>
@@ -190,7 +190,7 @@ export default function AboutPage() {
                     src={src}
                     alt={`Anashe showcase ${index + 1}`}
                     fill
-                    className="object-cover grayscale transition-transform duration-700 group-hover:scale-105 group-hover:grayscale-0"
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                 </div>
               </div>
