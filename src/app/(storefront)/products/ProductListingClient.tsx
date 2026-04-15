@@ -7,6 +7,8 @@ import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { Filter, SlidersHorizontal, X, Search, Heart } from 'lucide-react';
 import type { Product } from '@/types';
 import { formatPrice } from '@/lib/utils';
+import { useCartStore } from '@/store/cart';
+import { useToast } from '@/components/shared/Toaster';
 
 const SORT_OPTIONS = [
   { value: 'newest', label: 'Newest First' },
@@ -46,8 +48,31 @@ export function ProductListingClient({ initialParams }: ProductListingClientProp
   const [selectedCategory, setSelectedCategory] = useState((initialParams.category as string) ?? '');
   const [selectedSort, setSelectedSort] = useState((initialParams.sort as string) ?? 'newest');
   const [searchTerm, setSearchTerm] = useState((initialParams.q as string) ?? '');
+  const [addingProductId, setAddingProductId] = useState<string | null>(null);
+  const { addItem } = useCartStore();
+  const { add: showToast } = useToast();
 
   const q = initialParams.q as string | undefined;
+
+  function handleAddToCart(product: Product) {
+    const primaryImage = product.images?.find((img) => img.is_primary)?.url ?? product.images?.[0]?.url;
+    setAddingProductId(product.id);
+    addItem({
+      productId: product.id,
+      variantId: null,
+      quantity: 1,
+      product: {
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        sale_price: product.sale_price,
+        slug: product.slug,
+        image: primaryImage,
+      },
+    });
+    showToast(`${product.name} added to cart`);
+    setTimeout(() => setAddingProductId((current) => (current === product.id ? null : current)), 500);
+  }
 
   function updateSearchParam(key: string, value: string | undefined, resetPage = true) {
     const params = new URLSearchParams(searchParams.toString());
@@ -279,9 +304,13 @@ export function ProductListingClient({ initialParams }: ProductListingClientProp
                         className="h-full w-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
                       />
                     </Link>
-                    <div className="absolute inset-x-0 bottom-0 p-4 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                      <button className="w-full bg-white/95 py-3 text-xs font-semibold uppercase tracking-widest text-zinc-900 shadow-lg backdrop-blur-sm hover:bg-zinc-900 hover:text-white transition-colors">
-                        Add to Cart
+                    <div className="absolute inset-x-0 bottom-0 p-3 opacity-100 transition-opacity duration-300 md:p-4 md:opacity-0 md:group-hover:opacity-100">
+                      <button
+                        onClick={() => handleAddToCart(product)}
+                        disabled={product.stock <= 0 || addingProductId === product.id}
+                        className="w-full bg-white/95 py-2.5 text-[10px] font-semibold uppercase tracking-widest text-zinc-900 shadow-lg backdrop-blur-sm transition-colors hover:bg-zinc-900 hover:text-white disabled:cursor-not-allowed disabled:opacity-70 md:py-3 md:text-xs"
+                      >
+                        {product.stock <= 0 ? 'Out of Stock' : addingProductId === product.id ? 'Adding...' : 'Add to Cart'}
                       </button>
                     </div>
                   </div>
