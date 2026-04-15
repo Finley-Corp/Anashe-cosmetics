@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { Truck, ShieldCheck, RefreshCw, Star, Users, Package, MapPin } from 'lucide-react';
+import { ArrowRight, CheckCircle2, MapPin, Package, ShieldCheck, Sparkles, Star, Truck, Users } from 'lucide-react';
 
 export const metadata = {
   title: 'About Us',
@@ -9,23 +9,40 @@ export const metadata = {
 
 export default function AboutPage() {
   return (
-    <div>
+    <div className="bg-[var(--canvas)]">
       {/* Hero */}
-      <section className="relative h-72 md:h-96 overflow-hidden">
-        <Image src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1400&q=80" alt="About Anashe" fill className="object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-black/30 flex items-center">
-          <div className="max-w-[1440px] mx-auto px-4 md:px-6 text-white">
-            <p className="text-xs font-bold uppercase tracking-widest text-green-400 mb-2">Our Story</p>
-            <h1 className="text-4xl md:text-5xl font-medium tracking-tight max-w-xl font-[family-name:var(--font-display)]">
-              Building Kenya&apos;s most trusted online marketplace
+      <section className="relative overflow-hidden border-b border-[var(--primary-100)] bg-white pt-20">
+        <div className="absolute right-0 top-0 h-[40vw] w-[40vw] max-h-[520px] max-w-[520px] rounded-full bg-[var(--accent)] blur-3xl" />
+        <div className="relative mx-auto grid max-w-7xl gap-10 px-4 pb-14 sm:px-6 lg:grid-cols-12 lg:gap-12">
+          <div className="lg:col-span-8">
+            <span className="inline-flex items-center gap-2 rounded-full border border-[var(--primary-100)] bg-[var(--accent)] px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-[var(--primary)]">
+              About Anashe
+            </span>
+            <h1 className="mt-6 font-[family-name:var(--font-display)] text-5xl font-medium leading-[0.95] tracking-tight text-[var(--text-primary)] sm:text-6xl lg:text-8xl">
+              Beauty built for
+              <br />
+              Kenya&apos;s everyday life
             </h1>
+            <p className="mt-6 max-w-xl text-base leading-relaxed text-[var(--text-body)]">
+              We make premium beauty shopping simple, local, and trusted. Authentic products, transparent prices, and
+              checkout that works the way Kenyans already pay.
+            </p>
+          </div>
+          <div className="flex items-end lg:col-span-4">
+            <div className="w-full rounded-3xl border border-[var(--primary-100)] bg-white p-6 shadow-sm">
+              <p className="text-xs uppercase tracking-[0.2em] text-zinc-400">Since</p>
+              <p className="mt-2 font-[family-name:var(--font-display)] text-4xl text-[var(--text-primary)]">2024</p>
+              <p className="mt-4 text-sm leading-relaxed text-[var(--text-body)]">
+                Nairobi-based team, curated catalogue, and customer support focused on speed, safety, and consistency.
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Stats */}
-      <div className="border-b border-neutral-100 py-10">
-        <div className="max-w-[1440px] mx-auto px-4 md:px-6 grid grid-cols-2 md:grid-cols-4 gap-8">
+      <section className="border-b border-[var(--primary-100)] bg-[var(--accent)] py-10">
+        <div className="mx-auto grid max-w-7xl grid-cols-2 gap-8 px-4 sm:px-6 lg:grid-cols-4">
           {[
             { icon: <Users className="w-5 h-5" />, value: '5,000+', label: 'Happy Customers' },
             { icon: <Package className="w-5 h-5" />, value: '500+', label: 'Products Listed' },
@@ -33,47 +50,132 @@ export default function AboutPage() {
             { icon: <Star className="w-5 h-5" />, value: '4.8/5', label: 'Average Rating' },
           ].map(({ icon, value, label }) => (
             <div key={label} className="text-center">
-              <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center text-green-700 mx-auto mb-3">{icon}</div>
-              <p className="text-2xl font-bold text-neutral-900 mb-1 font-[family-name:var(--font-display)]">{value}</p>
-              <p className="text-sm text-neutral-500">{label}</p>
+              <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-white text-[var(--primary)]">{icon}</div>
+              <p className="mb-1 font-[family-name:var(--font-display)] text-2xl font-medium text-[var(--text-primary)]">{value}</p>
+              <p className="text-sm text-[var(--text-body)]">{label}</p>
             </div>
           ))}
         </div>
-      </div>
+      </section>
 
       {/* Story */}
-      <section className="py-20 max-w-[1440px] mx-auto px-4 md:px-6">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
+      <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6">
+        <div className="grid items-center gap-14 lg:grid-cols-12">
           <div>
-            <p className="text-xs font-bold uppercase tracking-widest text-green-700 mb-4">Why We Built Anashe</p>
-            <h2 className="text-3xl font-medium tracking-tight mb-6 font-[family-name:var(--font-display)]">Shopping should be simple, safe, and local</h2>
-            <div className="space-y-4 text-neutral-600 text-sm leading-relaxed">
-              <p>Anashe was born out of frustration. Shopping online in Kenya shouldn&apos;t require a credit card or international payment method. Every Kenyan has M-Pesa — so why wasn&apos;t it everywhere?</p>
-              <p>We built Anashe to be the platform we always wanted: genuine products, honest prices, and the payment method 95% of Kenyans already use every day.</p>
-              <p>Our team is based in Nairobi, and we personally vet every seller and product on our platform. We know the Kenyan market, understand what customers need, and are committed to making online shopping as easy as buying from your local duka — but better.</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--primary)]">Our Story</p>
+            <h2 className="mt-4 font-[family-name:var(--font-display)] text-4xl font-medium tracking-tight text-[var(--text-primary)] sm:text-5xl">
+              Shopping should feel effortless, safe, and local.
+            </h2>
+            <div className="mt-6 space-y-4 text-sm leading-relaxed text-[var(--text-body)]">
+              <p>
+                Anashe started with one simple question: why should getting genuine beauty products in Kenya feel so hard?
+                We saw customers forced to choose between trust, convenience, and payment options.
+              </p>
+              <p>
+                So we built the experience ourselves. Curated catalogues, product verification, and M-Pesa-first checkout
+                that fits real daily shopping behavior.
+              </p>
+              <p>
+                Our team works from Nairobi and partners with verified suppliers so every order feels premium from browse
+                to doorstep.
+              </p>
             </div>
           </div>
-          <div className="relative h-80 rounded-2xl overflow-hidden">
-            <Image src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&q=80" alt="Team" fill className="object-cover" />
+          <div className="lg:col-span-7 lg:col-start-6">
+            <div className="relative h-80 overflow-hidden rounded-3xl border border-[var(--primary-100)] sm:h-[460px]">
+              <Image src="https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=1400&q=80" alt="Anashe team" fill className="object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/45 to-transparent" />
+              <div className="absolute bottom-0 left-0 p-6 text-white">
+                <p className="text-xs uppercase tracking-[0.2em] text-white/80">Nairobi, Kenya</p>
+                <p className="mt-2 text-lg font-semibold">Built by people who understand local beauty shoppers.</p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Values */}
-      <section className="py-20 bg-neutral-50 border-y border-neutral-100">
-        <div className="max-w-[1440px] mx-auto px-4 md:px-6">
-          <h2 className="text-3xl font-medium tracking-tight text-center mb-12 font-[family-name:var(--font-display)]">Our Commitments</h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+      {/* Commitments */}
+      <section className="border-y border-[var(--primary-100)] bg-[var(--accent)] py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+          <div className="mb-12 flex items-end justify-between gap-6">
+            <h2 className="font-[family-name:var(--font-display)] text-4xl font-medium tracking-tight text-[var(--text-primary)] sm:text-5xl">
+              What we stand for
+            </h2>
+            <span className="hidden rounded-full border border-[var(--primary-100)] bg-white px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--text-body)] md:inline-flex">
+              Trust, speed, quality
+            </span>
+          </div>
+          <div className="grid gap-px overflow-hidden rounded-3xl border border-[var(--primary-100)] bg-[var(--primary-100)] md:grid-cols-2">
             {[
               { icon: <ShieldCheck className="w-6 h-6" />, title: 'Authentic Products', desc: 'Every product is verified genuine. Zero tolerance for counterfeits.' },
               { icon: <Truck className="w-6 h-6" />, title: 'Fast Delivery', desc: 'Nairobi same-day, upcountry 2-3 days. We deliver to all 47 counties.' },
-              { icon: <RefreshCw className="w-6 h-6" />, title: 'Easy Returns', desc: '14-day hassle-free returns. No questions asked within policy.' },
+              { icon: <CheckCircle2 className="w-6 h-6" />, title: 'Easy Returns', desc: '14-day hassle-free returns. No questions asked within policy.' },
               { icon: <Star className="w-6 h-6" />, title: 'Customer First', desc: 'Our support team is available Mon–Sat, 8am–8pm EAT.' },
             ].map(({ icon, title, desc }) => (
-              <div key={title} className="bg-white p-6 rounded-2xl border border-neutral-100">
-                <div className="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center text-green-700 mb-4">{icon}</div>
-                <h3 className="font-semibold mb-2">{title}</h3>
-                <p className="text-sm text-neutral-500 leading-relaxed">{desc}</p>
+              <div key={title} className="group bg-white p-8 transition-colors hover:bg-[var(--accent)]">
+                <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--accent)] text-[var(--primary)]">{icon}</div>
+                <h3 className="mb-2 text-lg font-semibold text-[var(--text-primary)]">{title}</h3>
+                <p className="text-sm leading-relaxed text-[var(--text-body)]">{desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Journey */}
+      <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6">
+        <div className="grid gap-10 md:grid-cols-12">
+          <div className="md:col-span-5">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--primary)]">Journey</p>
+            <h2 className="mt-4 font-[family-name:var(--font-display)] text-4xl font-medium tracking-tight text-[var(--text-primary)]">
+              How Anashe keeps getting better
+            </h2>
+          </div>
+          <div className="md:col-span-7">
+            <div className="divide-y divide-[var(--primary-100)] border-y border-[var(--primary-100)]">
+              {[
+                { period: '2024', title: 'Platform launch', detail: 'Started with curated categories and local payments.' },
+                { period: '2025', title: 'Supplier verification', detail: 'Expanded trusted supplier and inventory checks.' },
+                { period: 'Now', title: 'Nationwide scale', detail: 'Serving customers across all 47 counties with faster delivery.' },
+              ].map((item) => (
+                <div key={item.period} className="flex items-center justify-between gap-6 py-6">
+                  <div>
+                    <p className="text-lg font-semibold text-[var(--text-primary)]">{item.title}</p>
+                    <p className="mt-1 text-sm text-[var(--text-body)]">{item.detail}</p>
+                  </div>
+                  <p className="font-[family-name:var(--font-display)] text-3xl tracking-tight text-[var(--primary)]">{item.period}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Showcase */}
+      <section className="border-t border-[var(--primary-100)] py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+          <div className="mb-10 flex items-end justify-between">
+            <h2 className="font-[family-name:var(--font-display)] text-4xl font-medium tracking-tight text-[var(--text-primary)] sm:text-5xl">
+              Built around real routines
+            </h2>
+            <span className="hidden items-center gap-2 text-sm text-[var(--text-body)] md:inline-flex">
+              <Sparkles className="h-4 w-4 text-[var(--primary)]" />
+              Curated, practical, consistent
+            </span>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {[
+              'https://images.unsplash.com/photo-1571781926291-c477ebfd024b?w=800&q=80',
+              'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=800&q=80',
+              'https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?w=800&q=80',
+            ].map((src, index) => (
+              <div key={src} className="group relative overflow-hidden rounded-3xl border border-[var(--primary-100)] bg-white">
+                <div className="relative h-72">
+                  <Image src={src} alt={`Anashe showcase ${index + 1}`} fill className="object-cover transition-transform duration-700 group-hover:scale-105" />
+                </div>
+                <div className="border-t border-[var(--primary-100)] p-4">
+                  <p className="text-sm text-[var(--text-body)]">Beauty selection, curated for quality and everyday use.</p>
+                </div>
               </div>
             ))}
           </div>
@@ -81,12 +183,21 @@ export default function AboutPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-20 text-center">
-        <div className="max-w-md mx-auto px-4">
-          <h2 className="text-3xl font-medium tracking-tight mb-4 font-[family-name:var(--font-display)]">Ready to start shopping?</h2>
-          <p className="text-neutral-500 text-sm mb-8">Join thousands of Kenyans who shop smarter with Anashe.</p>
-          <Link href="/products" className="inline-flex items-center gap-2 h-12 px-8 bg-green-700 text-white rounded-full text-sm font-semibold hover:bg-green-800 transition-colors">
+      <section className="bg-[var(--text-primary)] py-20 text-white">
+        <div className="mx-auto flex max-w-7xl flex-col gap-8 px-4 sm:px-6 md:flex-row md:items-end md:justify-between">
+          <div>
+            <p className="text-xs uppercase tracking-[0.2em] text-white/60">Let&apos;s get started</p>
+            <h2 className="mt-3 font-[family-name:var(--font-display)] text-4xl font-medium tracking-tight sm:text-5xl">Ready to shop with confidence?</h2>
+            <p className="mt-4 max-w-lg text-sm text-white/70">
+              Explore authenticated products, trusted brands, and fast delivery designed for Kenyan shoppers.
+            </p>
+          </div>
+          <Link
+            href="/products"
+            className="inline-flex h-12 items-center gap-2 rounded-full bg-[var(--primary)] px-8 text-sm font-semibold text-white transition-colors hover:bg-[var(--primary-hover)]"
+          >
             Browse Products
+            <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
       </section>
