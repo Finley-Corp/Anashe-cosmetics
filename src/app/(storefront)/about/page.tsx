@@ -1,48 +1,60 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight, CheckCircle2, MapPin, Package, ShieldCheck, Sparkles, Star, Truck, Users } from 'lucide-react';
+import { ArrowRight, CheckCircle2, MapPin, Package, ShieldCheck, Star, Truck, Users } from 'lucide-react';
 
 export const metadata = {
   title: 'About Us',
-  description: 'Learn about Anashe — Kenya\'s premier online store for premium curated products with M-Pesa checkout.',
+  description: "Learn about Anashe - Kenya's premier online store for premium curated products with M-Pesa checkout.",
 };
 
 export default function AboutPage() {
   return (
-    <div className="bg-[var(--canvas)]">
-      {/* Hero */}
-      <section className="relative overflow-hidden border-b border-[var(--primary-100)] bg-white pt-20">
-        <div className="absolute right-0 top-0 h-[40vw] w-[40vw] max-h-[520px] max-w-[520px] rounded-full bg-[var(--accent)] blur-3xl" />
-        <div className="relative mx-auto grid max-w-7xl gap-10 px-4 pb-14 sm:px-6 lg:grid-cols-12 lg:gap-12">
-          <div className="lg:col-span-8">
-            <span className="inline-flex items-center gap-2 rounded-full border border-[var(--primary-100)] bg-[var(--accent)] px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-[var(--primary)]">
-              About Anashe
-            </span>
-            <h1 className="mt-6 font-[family-name:var(--font-display)] text-5xl font-medium leading-[0.95] tracking-tight text-[var(--text-primary)] sm:text-6xl lg:text-8xl">
-              Beauty built for
-              <br />
-              Kenya&apos;s everyday life
-            </h1>
-            <p className="mt-6 max-w-xl text-base leading-relaxed text-[var(--text-body)]">
-              We make premium beauty shopping simple, local, and trusted. Authentic products, transparent prices, and
-              checkout that works the way Kenyans already pay.
-            </p>
+    <div className="bg-white text-neutral-900">
+      <section className="relative min-h-[86vh] overflow-hidden border-b border-neutral-200 pt-16">
+        <div className="absolute inset-0 opacity-[0.06]">
+          <Image
+            src="https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=2000&q=80"
+            alt="Beauty textures background"
+            fill
+            priority
+            className="object-cover grayscale"
+          />
+        </div>
+        <div className="relative mx-auto flex h-full max-w-[1400px] flex-col justify-end px-4 pb-14 sm:px-6">
+          <div className="mb-8 inline-flex w-fit items-center gap-2 text-xs uppercase tracking-[0.22em] text-neutral-500">
+            <span className="h-1.5 w-1.5 rounded-full bg-[var(--primary)]" />
+            About Anashe
           </div>
-          <div className="flex items-end lg:col-span-4">
-            <div className="w-full rounded-3xl border border-[var(--primary-100)] bg-white p-6 shadow-sm">
-              <p className="text-xs uppercase tracking-[0.2em] text-zinc-400">Since</p>
-              <p className="mt-2 font-[family-name:var(--font-display)] text-4xl text-[var(--text-primary)]">2024</p>
-              <p className="mt-4 text-sm leading-relaxed text-[var(--text-body)]">
-                Nairobi-based team, curated catalogue, and customer support focused on speed, safety, and consistency.
-              </p>
+          <h1 className="font-[family-name:var(--font-display)] text-[clamp(3.4rem,11vw,9rem)] leading-[0.9] tracking-[-0.03em] text-neutral-900">
+            Beauty.
+            <br />
+            Built for Kenya.
+          </h1>
+          <div className="mt-10 grid gap-6 border-t border-neutral-200 pt-8 md:grid-cols-2">
+            <p className="max-w-xl text-sm leading-relaxed text-neutral-500">
+              We curate authentic beauty products, pair them with transparent pricing, and make checkout simple with
+              M-Pesa-first flows designed for real Kenyan shoppers.
+            </p>
+            <div className="grid grid-cols-3 gap-5 text-sm">
+              <div>
+                <p className="text-[11px] uppercase tracking-[0.15em] text-neutral-400">Based in</p>
+                <p className="mt-2 font-medium text-neutral-900">Nairobi</p>
+              </div>
+              <div>
+                <p className="text-[11px] uppercase tracking-[0.15em] text-neutral-400">Since</p>
+                <p className="mt-2 font-medium text-neutral-900">2024</p>
+              </div>
+              <div>
+                <p className="text-[11px] uppercase tracking-[0.15em] text-neutral-400">Coverage</p>
+                <p className="mt-2 font-medium text-neutral-900">47 Counties</p>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Stats */}
-      <section className="border-b border-[var(--primary-100)] bg-[var(--accent)] py-10">
-        <div className="mx-auto grid max-w-7xl grid-cols-2 gap-8 px-4 sm:px-6 lg:grid-cols-4">
+      <section className="border-b border-neutral-200 py-12">
+        <div className="mx-auto grid max-w-[1400px] grid-cols-2 gap-x-6 gap-y-8 px-4 sm:px-6 lg:grid-cols-4">
           {[
             { icon: <Users className="w-5 h-5" />, value: '5,000+', label: 'Happy Customers' },
             { icon: <Package className="w-5 h-5" />, value: '500+', label: 'Products Listed' },
@@ -50,23 +62,26 @@ export default function AboutPage() {
             { icon: <Star className="w-5 h-5" />, value: '4.8/5', label: 'Average Rating' },
           ].map(({ icon, value, label }) => (
             <div key={label} className="text-center">
-              <div className="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-white text-[var(--primary)]">{icon}</div>
-              <p className="mb-1 font-[family-name:var(--font-display)] text-2xl font-medium text-[var(--text-primary)]">{value}</p>
-              <p className="text-sm text-[var(--text-body)]">{label}</p>
+              <div className="mx-auto mb-4 flex h-10 w-10 items-center justify-center rounded-full border border-neutral-300 text-neutral-700">
+                {icon}
+              </div>
+              <p className="font-[family-name:var(--font-display)] text-4xl tracking-tight text-neutral-900">{value}</p>
+              <p className="mt-2 text-sm text-neutral-500">{label}</p>
             </div>
           ))}
         </div>
       </section>
 
-      {/* Story */}
-      <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6">
-        <div className="grid items-center gap-14 lg:grid-cols-12">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--primary)]">Our Story</p>
-            <h2 className="mt-4 font-[family-name:var(--font-display)] text-4xl font-medium tracking-tight text-[var(--text-primary)] sm:text-5xl">
+      <section className="mx-auto max-w-[1400px] px-4 py-24 sm:px-6">
+        <div className="grid items-start gap-10 md:grid-cols-12">
+          <div className="md:col-span-7">
+            <p className="text-xs uppercase tracking-[0.2em] text-neutral-400">Our Story</p>
+            <h2 className="mt-5 font-[family-name:var(--font-display)] text-[clamp(2.2rem,6vw,4.7rem)] leading-[0.98] tracking-[-0.02em] text-neutral-900">
               Shopping should feel effortless, safe, and local.
             </h2>
-            <div className="mt-6 space-y-4 text-sm leading-relaxed text-[var(--text-body)]">
+          </div>
+          <div className="md:col-span-4 md:col-start-9">
+            <div className="space-y-4 text-sm leading-relaxed text-neutral-500">
               <p>
                 Anashe started with one simple question: why should getting genuine beauty products in Kenya feel so hard?
                 We saw customers forced to choose between trust, convenience, and payment options.
@@ -81,58 +96,63 @@ export default function AboutPage() {
               </p>
             </div>
           </div>
-          <div className="lg:col-span-7 lg:col-start-6">
-            <div className="relative h-80 overflow-hidden rounded-3xl border border-[var(--primary-100)] sm:h-[460px]">
-              <Image src="https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=1400&q=80" alt="Anashe team" fill className="object-cover" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/45 to-transparent" />
-              <div className="absolute bottom-0 left-0 p-6 text-white">
-                <p className="text-xs uppercase tracking-[0.2em] text-white/80">Nairobi, Kenya</p>
-                <p className="mt-2 text-lg font-semibold">Built by people who understand local beauty shoppers.</p>
-              </div>
-            </div>
+        </div>
+        <div className="mt-12 grid gap-4 md:grid-cols-2">
+          <div className="relative h-[420px] overflow-hidden rounded-3xl bg-neutral-100">
+            <Image
+              src="https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=1400&q=80"
+              alt="Anashe team"
+              fill
+              className="object-cover grayscale"
+            />
+          </div>
+          <div className="relative h-[420px] overflow-hidden rounded-3xl bg-neutral-100">
+            <Image
+              src="https://images.unsplash.com/photo-1571781926291-c477ebfd024b?w=1400&q=80"
+              alt="Skincare products"
+              fill
+              className="object-cover grayscale"
+            />
           </div>
         </div>
       </section>
 
-      {/* Commitments */}
-      <section className="border-y border-[var(--primary-100)] bg-[var(--accent)] py-20">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          <div className="mb-12 flex items-end justify-between gap-6">
-            <h2 className="font-[family-name:var(--font-display)] text-4xl font-medium tracking-tight text-[var(--text-primary)] sm:text-5xl">
-              What we stand for
+      <section className="border-y border-neutral-200 py-24">
+        <div className="mx-auto max-w-[1400px] px-4 sm:px-6">
+          <div className="mb-12">
+            <h2 className="font-[family-name:var(--font-display)] text-[clamp(2.2rem,6vw,4.7rem)] leading-[0.98] tracking-[-0.02em] text-neutral-900">
+              What we bring
             </h2>
-            <span className="hidden rounded-full border border-[var(--primary-100)] bg-white px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--text-body)] md:inline-flex">
-              Trust, speed, quality
-            </span>
           </div>
-          <div className="grid gap-px overflow-hidden rounded-3xl border border-[var(--primary-100)] bg-[var(--primary-100)] md:grid-cols-2">
+          <div className="grid gap-px rounded-3xl border border-neutral-200 bg-neutral-200 md:grid-cols-2">
             {[
-              { icon: <ShieldCheck className="w-6 h-6" />, title: 'Authentic Products', desc: 'Every product is verified genuine. Zero tolerance for counterfeits.' },
-              { icon: <Truck className="w-6 h-6" />, title: 'Fast Delivery', desc: 'Nairobi same-day, upcountry 2-3 days. We deliver to all 47 counties.' },
-              { icon: <CheckCircle2 className="w-6 h-6" />, title: 'Easy Returns', desc: '14-day hassle-free returns. No questions asked within policy.' },
-              { icon: <Star className="w-6 h-6" />, title: 'Customer First', desc: 'Our support team is available Mon–Sat, 8am–8pm EAT.' },
-            ].map(({ icon, title, desc }) => (
-              <div key={title} className="group bg-white p-8 transition-colors hover:bg-[var(--accent)]">
-                <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--accent)] text-[var(--primary)]">{icon}</div>
-                <h3 className="mb-2 text-lg font-semibold text-[var(--text-primary)]">{title}</h3>
-                <p className="text-sm leading-relaxed text-[var(--text-body)]">{desc}</p>
+              { icon: <ShieldCheck className="h-6 w-6" />, title: 'Authentic Products', desc: 'Every product is verified genuine. Zero tolerance for counterfeits.' },
+              { icon: <Truck className="h-6 w-6" />, title: 'Fast Delivery', desc: 'Nairobi same-day, upcountry 2-3 days. We deliver to all 47 counties.' },
+              { icon: <CheckCircle2 className="h-6 w-6" />, title: 'Easy Returns', desc: '14-day hassle-free returns. No questions asked within policy.' },
+              { icon: <Star className="h-6 w-6" />, title: 'Customer First', desc: 'Our support team is available Mon-Sat, 8am-8pm EAT.' },
+            ].map(({ icon, title, desc }, idx) => (
+              <div key={title} className={`${idx === 2 ? 'bg-neutral-950 text-white' : 'bg-white text-neutral-900'} p-10`}>
+                <div className={`mb-5 flex h-10 w-10 items-center justify-center rounded-full ${idx === 2 ? 'bg-white/10' : 'bg-neutral-100'}`}>
+                  {icon}
+                </div>
+                <h3 className="mb-2 text-xl font-semibold">{title}</h3>
+                <p className={`text-sm leading-relaxed ${idx === 2 ? 'text-neutral-400' : 'text-neutral-500'}`}>{desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Journey */}
-      <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6">
+      <section className="mx-auto max-w-[1400px] px-4 py-24 sm:px-6">
         <div className="grid gap-10 md:grid-cols-12">
           <div className="md:col-span-5">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--primary)]">Journey</p>
-            <h2 className="mt-4 font-[family-name:var(--font-display)] text-4xl font-medium tracking-tight text-[var(--text-primary)]">
+            <p className="text-xs uppercase tracking-[0.2em] text-neutral-400">Journey</p>
+            <h2 className="mt-4 font-[family-name:var(--font-display)] text-[clamp(2.2rem,6vw,4.7rem)] leading-[0.98] tracking-[-0.02em] text-neutral-900">
               How Anashe keeps getting better
             </h2>
           </div>
           <div className="md:col-span-7">
-            <div className="divide-y divide-[var(--primary-100)] border-y border-[var(--primary-100)]">
+            <div className="divide-y divide-neutral-200 border-y border-neutral-200">
               {[
                 { period: '2024', title: 'Platform launch', detail: 'Started with curated categories and local payments.' },
                 { period: '2025', title: 'Supplier verification', detail: 'Expanded trusted supplier and inventory checks.' },
@@ -140,10 +160,10 @@ export default function AboutPage() {
               ].map((item) => (
                 <div key={item.period} className="flex items-center justify-between gap-6 py-6">
                   <div>
-                    <p className="text-lg font-semibold text-[var(--text-primary)]">{item.title}</p>
-                    <p className="mt-1 text-sm text-[var(--text-body)]">{item.detail}</p>
+                    <p className="text-lg font-semibold text-neutral-900">{item.title}</p>
+                    <p className="mt-1 text-sm text-neutral-500">{item.detail}</p>
                   </div>
-                  <p className="font-[family-name:var(--font-display)] text-3xl tracking-tight text-[var(--primary)]">{item.period}</p>
+                  <p className="font-[family-name:var(--font-display)] text-4xl tracking-tight text-neutral-300">{item.period}</p>
                 </div>
               ))}
             </div>
@@ -151,30 +171,27 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Showcase */}
-      <section className="border-t border-[var(--primary-100)] py-20">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          <div className="mb-10 flex items-end justify-between">
-            <h2 className="font-[family-name:var(--font-display)] text-4xl font-medium tracking-tight text-[var(--text-primary)] sm:text-5xl">
+      <section className="border-t border-neutral-200 py-24">
+        <div className="mx-auto max-w-[1400px] px-4 sm:px-6">
+          <div className="mb-10">
+            <h2 className="font-[family-name:var(--font-display)] text-[clamp(2.2rem,6vw,4.7rem)] leading-[0.98] tracking-[-0.02em] text-neutral-900">
               Built around real routines
             </h2>
-            <span className="hidden items-center gap-2 text-sm text-[var(--text-body)] md:inline-flex">
-              <Sparkles className="h-4 w-4 text-[var(--primary)]" />
-              Curated, practical, consistent
-            </span>
           </div>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
             {[
               'https://images.unsplash.com/photo-1571781926291-c477ebfd024b?w=800&q=80',
               'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=800&q=80',
               'https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?w=800&q=80',
             ].map((src, index) => (
-              <div key={src} className="group relative overflow-hidden rounded-3xl border border-[var(--primary-100)] bg-white">
+              <div key={src} className="group relative overflow-hidden rounded-3xl bg-neutral-100">
                 <div className="relative h-72">
-                  <Image src={src} alt={`Anashe showcase ${index + 1}`} fill className="object-cover transition-transform duration-700 group-hover:scale-105" />
-                </div>
-                <div className="border-t border-[var(--primary-100)] p-4">
-                  <p className="text-sm text-[var(--text-body)]">Beauty selection, curated for quality and everyday use.</p>
+                  <Image
+                    src={src}
+                    alt={`Anashe showcase ${index + 1}`}
+                    fill
+                    className="object-cover grayscale transition-transform duration-700 group-hover:scale-105 group-hover:grayscale-0"
+                  />
                 </div>
               </div>
             ))}
@@ -182,19 +199,20 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="bg-[var(--text-primary)] py-20 text-white">
-        <div className="mx-auto flex max-w-7xl flex-col gap-8 px-4 sm:px-6 md:flex-row md:items-end md:justify-between">
+      <section className="bg-neutral-950 py-24 text-white">
+        <div className="mx-auto flex max-w-[1400px] flex-col gap-8 px-4 sm:px-6 md:flex-row md:items-end md:justify-between">
           <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-white/60">Let&apos;s get started</p>
-            <h2 className="mt-3 font-[family-name:var(--font-display)] text-4xl font-medium tracking-tight sm:text-5xl">Ready to shop with confidence?</h2>
-            <p className="mt-4 max-w-lg text-sm text-white/70">
+            <p className="text-xs uppercase tracking-[0.2em] text-white/60">Lets get started</p>
+            <h2 className="mt-3 font-[family-name:var(--font-display)] text-[clamp(2.3rem,6vw,5.8rem)] leading-[0.92] tracking-[-0.03em]">
+              Ready to shop with confidence?
+            </h2>
+            <p className="mt-5 max-w-lg text-sm leading-relaxed text-white/70">
               Explore authenticated products, trusted brands, and fast delivery designed for Kenyan shoppers.
             </p>
           </div>
           <Link
             href="/products"
-            className="inline-flex h-12 items-center gap-2 rounded-full bg-[var(--primary)] px-8 text-sm font-semibold text-white transition-colors hover:bg-[var(--primary-hover)]"
+            className="inline-flex h-12 items-center gap-2 rounded-full bg-white px-7 text-sm font-semibold text-neutral-900 transition-colors hover:bg-neutral-100"
           >
             Browse Products
             <ArrowRight className="h-4 w-4" />
