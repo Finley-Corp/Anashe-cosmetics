@@ -31,8 +31,8 @@ npm install @supabase/supabase-js @supabase/ssr \
 ```
 
 **Acceptance Criteria:**
-- [ ] `npm run dev` starts without errors
-- [ ] TypeScript strict mode enabled in `tsconfig.json`
+- [x] `npm run dev` starts without errors
+- [x] TypeScript strict mode enabled in `tsconfig.json`
 - [ ] TailwindCSS applied (test with a colored div)
 - [ ] No unused template files remain
 
@@ -72,10 +72,10 @@ export const config = { matcher: ['/((?!_next/static|_next/image|favicon.ico).*)
 ```
 
 **Acceptance Criteria:**
-- [ ] Supabase client initializes without errors
-- [ ] Session refresh works across page navigation
-- [ ] `/account/*` redirects to login when unauthenticated
-- [ ] `/admin/*` returns redirect for non-admin users
+- [x] Supabase client initializes without errors
+- [x] Session refresh works across page navigation
+- [x] `/account/*` redirects to login when unauthenticated
+- [x] `/admin/*` returns redirect for non-admin users
 
 ---
 
@@ -93,14 +93,14 @@ npx shadcn-ui@latest add accordion tabs
 ```
 
 **Acceptance Criteria:**
-- [ ] `components/ui/` directory created
+- [x] `components/ui/` directory created
 - [ ] All added components render without console errors
-- [ ] Accordion component available (used for ingredients list)
+- [x] Accordion component available (used for ingredients list)
 
 ---
 
 ### TASK-004: Configure Brand Theme
-**Status:** `[ ]`  
+**Status:** `[x]`  
 **Priority:** P0
 
 Add Anashe brand colors to `tailwind.config.ts`:
@@ -121,10 +121,10 @@ Also configure `globals.css` with:
 - Custom scrollbar
 
 **Acceptance Criteria:**
-- [ ] Brand colors applied to CSS variables
-- [ ] Primary button uses brand color
-- [ ] Inter + Crimson Pro fonts loaded via `next/font/google`
-- [ ] Reveal animation class works on scroll
+- [x] Brand colors applied to CSS variables
+- [x] Primary button uses brand color
+- [x] Inter + Crimson Pro fonts loaded via `next/font/google`
+- [x] Reveal animation class works on scroll
 
 ---
 
@@ -473,13 +473,13 @@ FOR EACH ROW EXECUTE FUNCTION handle_new_user();
 
 **Acceptance Criteria:**
 - [ ] Migration runs without SQL errors
-- [ ] All 20+ tables exist in Supabase Studio
-- [ ] `products` table has `skin_type`, `concerns`, `ingredients`, `volume_ml`, `finish`, `shade`, `shade_hex`, `spf`, `is_vegan`, `is_cruelty_free`, `is_natural` columns
-- [ ] `profiles` table has `skin_type` and `skin_concerns` columns
-- [ ] `reviews` table has `skin_type` column
-- [ ] Search vector trigger fires on product insert
-- [ ] GIN indexes on `skin_type` and `concerns` arrays created
-- [ ] Rating trigger updates product on review insert
+- [x] All 20+ tables exist in Supabase Studio
+- [x] `products` table has `skin_type`, `concerns`, `ingredients`, `volume_ml`, `finish`, `shade`, `shade_hex`, `spf`, `is_vegan`, `is_cruelty_free`, `is_natural` columns
+- [x] `profiles` table has `skin_type` and `skin_concerns` columns
+- [x] `reviews` table has `skin_type` column
+- [x] Search vector trigger fires on product insert
+- [x] GIN indexes on `skin_type` and `concerns` arrays created
+- [x] Rating trigger updates product on review insert
 
 ---
 
@@ -737,16 +737,16 @@ AND products.is_cruelty_free = TRUE
 ```
 
 **Acceptance Criteria:**
-- [ ] Products render in responsive grid (1→2→3→4 columns)
+- [x] Products render in responsive grid (1→2→3→4 columns)
 - [ ] Skin type filter returns only products matching that skin type
 - [ ] Concern filter returns only matching products
 - [ ] Certification filter (vegan, cruelty-free) works
 - [ ] SPF filter works on sunscreen products
 - [ ] Search by ingredient name returns relevant results (e.g. search "niacinamide")
-- [ ] URL reflects all active filters (shareable URLs)
-- [ ] Empty state shown when no results match
-- [ ] Pagination works (12 products per page)
-- [ ] Loading state with skeleton cards
+- [x] URL reflects all active filters (shareable URLs)
+- [x] Empty state shown when no results match
+- [x] Pagination works (12 products per page)
+- [x] Loading state with skeleton cards
 
 ---
 
@@ -858,13 +858,13 @@ const schema = {
 - [ ] SPF badge shows for sunscreen products, hidden for others
 - [ ] JSON-LD validates in Google Rich Results Test
 - [ ] `generateMetadata` includes skin type and key ingredient in description
-- [ ] Page is SSR (view-source shows product content)
-- [ ] Out-of-stock product disables Add to Cart button
+- [x] Page is SSR (view-source shows product content)
+- [x] Out-of-stock product disables Add to Cart button
 
 ---
 
 ### TASK-010: Search Autocomplete
-**Status:** `[ ]`  
+**Status:** `[x]`  
 **Priority:** P2
 
 **File:** `components/storefront/SearchBar.tsx`
@@ -892,11 +892,11 @@ LIMIT 5;
 ```
 
 **Acceptance Criteria:**
-- [ ] Autocomplete appears after 2+ characters
-- [ ] Searching ingredient name (e.g. "retinol") returns relevant products
-- [ ] Searching concern (e.g. "acne") returns products targeting acne
-- [ ] Skin type mini-badges show in dropdown result
-- [ ] Keyboard navigation works
+- [x] Autocomplete appears after 2+ characters
+- [x] Searching ingredient name (e.g. "retinol") returns relevant products
+- [x] Searching concern (e.g. "acne") returns products targeting acne
+- [x] Skin type mini-badges show in dropdown result
+- [x] Keyboard navigation works
 
 ---
 
@@ -931,10 +931,10 @@ const faqs = [
 ```
 
 **Acceptance Criteria:**
-- [ ] Category pages render correct products
-- [ ] Skincare filters work within category pages
-- [ ] Non-existent slug returns 404
-- [ ] FAQ JSON-LD included for serums and sunscreen categories
+- [x] Category pages render correct products
+- [x] Skincare filters work within category pages
+- [x] Non-existent slug returns 404
+- [x] FAQ JSON-LD included for serums and sunscreen categories
 - [ ] FAQs validate in Google Rich Results Test
 
 ---
@@ -1040,11 +1040,11 @@ const faqs = [
 - Optimistic updates with rollback on error
 
 **Acceptance Criteria:**
-- [ ] Add to cart works (with shade/variant)
-- [ ] Cart persists across page refresh
+- [x] Add to cart works (with shade/variant)
+- [x] Cart persists across page refresh
 - [ ] Guest cart items survive login (merged)
 - [ ] Quantity validation respects stock limit
-- [ ] Cart total calculated correctly
+- [x] Cart total calculated correctly
 
 ---
 
@@ -1061,10 +1061,10 @@ const faqs = [
 - Empty cart state with "Continue Shopping" link
 
 **Acceptance Criteria:**
-- [ ] Drawer opens on cart icon click
-- [ ] Items render with image, name, and shade name (if color cosmetic)
-- [ ] Quantity stepper updates cart
-- [ ] Checkout button navigates to /checkout
+- [x] Drawer opens on cart icon click
+- [x] Items render with image, name, and shade name (if color cosmetic)
+- [x] Quantity stepper updates cart
+- [x] Checkout button navigates to /checkout
 
 ---
 
@@ -1124,12 +1124,12 @@ Multi-step checkout:
 - "Continue Shopping" CTA
 
 **Acceptance Criteria:**
-- [ ] Empty cart redirects to /cart
-- [ ] Address validation works
-- [ ] Coupon validation rejects expired/invalid codes
-- [ ] Shade name shows in order review for color cosmetics
-- [ ] Phone number formatted correctly before STK push
-- [ ] Success page shows M-Pesa receipt number
+- [x] Empty cart redirects to /cart
+- [x] Address validation works
+- [x] Coupon validation rejects expired/invalid codes
+- [x] Shade name shows in order review for color cosmetics
+- [x] Phone number formatted correctly before STK push
+- [x] Success page shows M-Pesa receipt number
 
 ---
 
@@ -1152,9 +1152,9 @@ Account reference: `'ANASHE-{orderId}'`
 **Acceptance Criteria:**
 - [ ] Token generation succeeds with production credentials
 - [ ] STK Push sends prompt to Kenyan phone number
-- [ ] Order record created in DB before STK call
-- [ ] `CheckoutRequestID` stored in `payments` table
-- [ ] Phone validation: must be Kenyan format (07XX or 254XX)
+- [x] Order record created in DB before STK call
+- [x] `CheckoutRequestID` stored in `payments` table
+- [x] Phone validation: must be Kenyan format (07XX or 254XX)
 
 ---
 
@@ -1183,12 +1183,12 @@ On failure:
 Always return HTTP 200 to Safaricom.
 
 **Acceptance Criteria:**
-- [ ] Success callback updates order to `payment_confirmed`
-- [ ] Failure callback updates order to `cancelled`
-- [ ] Stock decremented correctly on success
-- [ ] Order confirmation email triggered
-- [ ] Always returns HTTP 200
-- [ ] `MpesaReceiptNumber` stored on order
+- [x] Success callback updates order to `payment_confirmed`
+- [x] Failure callback updates order to `cancelled`
+- [x] Stock decremented correctly on success
+- [x] Order confirmation email triggered
+- [x] Always returns HTTP 200
+- [x] `MpesaReceiptNumber` stored on order
 
 ---
 
@@ -1610,9 +1610,9 @@ Rate limiting:
 Standard security headers: `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, `X-XSS-Protection`.
 
 **Acceptance Criteria:**
-- [ ] Security headers present (check securityheaders.com)
-- [ ] Admin API routes return 401 for unauthenticated requests
-- [ ] M-Pesa callback validates `CheckoutRequestID` before processing
+- [x] Security headers present (check securityheaders.com)
+- [x] Admin API routes return 401 for unauthenticated requests
+- [x] M-Pesa callback validates `CheckoutRequestID` before processing
 
 ---
 
