@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import { Toaster } from '@/components/shared/Toaster';
+import { PerformanceMeasureGuard } from '@/components/PerformanceMeasureGuard';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -41,6 +42,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className="scroll-smooth">
       <body className={`${inter.variable} ${interDisplay.variable} bg-white text-neutral-900 selection:bg-[var(--primary)] selection:text-white relative`}>
+        <PerformanceMeasureGuard />
         {children}
         <Toaster />
       </body>
