@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import {
-  LayoutDashboard, Package, ShoppingCart, Star, LogOut, Store, Command,
+  LayoutDashboard, Package, ShoppingCart, Star, LogOut, Store, Command, CalendarClock,
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 
@@ -12,6 +12,7 @@ const NAV = [
   { label: 'Dashboard', href: '/admin', icon: LayoutDashboard },
   { label: 'Products', href: '/admin/products', icon: Package },
   { label: 'Orders', href: '/admin/orders', icon: ShoppingCart },
+  { label: 'Services', href: '/admin/services', icon: CalendarClock },
   { label: 'Reviews', href: '/admin/reviews', icon: Star },
 ];
 
