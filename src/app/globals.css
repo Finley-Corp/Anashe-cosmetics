@@ -14,14 +14,14 @@
   --primary: #e33a90;
   --primary-hover: #cc1f7a;
   --accent: #fdf2f8;
-  --font-inter: 'Poppins', sans-serif;
-  --font-display: 'Roboto', sans-serif;
+  --font-inter: 'Inter', sans-serif;
+  --font-display: 'Inter', sans-serif;
 }
 
 body {
   background: var(--canvas);
   color: var(--text-body);
-  font-family: var(--font-inter), 'Poppins', sans-serif;
+  font-family: var(--font-inter), 'Inter', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
@@ -29,7 +29,7 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
   color: var(--text-primary);
-  font-family: var(--font-display), 'Roboto', sans-serif;
+  font-family: var(--font-display), 'Inter', sans-serif;
 }
 
 /* Global brand remap: keep existing utility usage but enforce magenta palette */
