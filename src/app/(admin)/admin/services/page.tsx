@@ -14,10 +14,10 @@ type ServiceBookingRow = {
 };
 
 const STATUS_BADGE: Record<string, string> = {
-  pending: 'bg-yellow-50 text-yellow-700 border-yellow-100',
-  confirmed: 'bg-blue-50 text-blue-700 border-blue-100',
-  completed: 'bg-emerald-50 text-emerald-700 border-emerald-100',
-  cancelled: 'bg-red-50 text-red-600 border-red-100',
+  pending: 'bg-yellow-500/15 text-yellow-300 border-yellow-500/20',
+  confirmed: 'bg-blue-500/15 text-blue-300 border-blue-500/20',
+  completed: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/20',
+  cancelled: 'bg-red-500/15 text-red-300 border-red-500/20',
 };
 
 export default async function AdminServicesPage() {
@@ -35,18 +35,18 @@ export default async function AdminServicesPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold font-[family-name:var(--font-display)]">Services</h1>
-          <p className="mt-1 text-sm text-neutral-500">{bookings.length} booking requests</p>
+          <h1 className="text-2xl font-bold text-white font-[family-name:var(--font-display)]">Services</h1>
+          <p className="mt-1 text-sm text-gray-500">{bookings.length} booking requests</p>
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-2xl border border-neutral-100 bg-white">
+      <div className="overflow-hidden rounded-2xl border border-white/5 bg-[#1A1D21]">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-neutral-100 bg-neutral-50/50">
+              <tr className="border-b border-white/5 bg-white/[0.02]">
                 {['Client', 'Contact', 'Service', 'Coming Date', 'Status', 'Booked On'].map((heading) => (
-                  <th key={heading} className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-neutral-400">
+                  <th key={heading} className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
                     {heading}
                   </th>
                 ))}
@@ -54,31 +54,31 @@ export default async function AdminServicesPage() {
             </thead>
             <tbody>
               {bookings.map((booking) => (
-                <tr key={booking.id} className="border-b border-neutral-50 hover:bg-neutral-50/50 transition-colors">
+                <tr key={booking.id} className="border-b border-white/5 hover:bg-white/[0.03] transition-colors">
                   <td className="px-4 py-3">
-                    <p className="font-semibold text-neutral-900">{booking.full_name}</p>
+                    <p className="font-semibold text-white">{booking.full_name}</p>
                   </td>
-                  <td className="px-4 py-3 text-neutral-600">
+                  <td className="px-4 py-3 text-gray-300">
                     <p>{booking.phone}</p>
-                    <p className="text-xs text-neutral-500">{booking.email}</p>
+                    <p className="text-xs text-gray-500">{booking.email}</p>
                   </td>
-                  <td className="px-4 py-3 text-neutral-700 capitalize">{booking.service_type.replace(/-/g, ' ')}</td>
+                  <td className="px-4 py-3 text-gray-300 capitalize">{booking.service_type.replace(/-/g, ' ')}</td>
                   <td className="px-4 py-3">
-                    <span className="inline-flex items-center gap-1.5 rounded-full border border-neutral-200 bg-neutral-50 px-2.5 py-1 text-xs font-medium text-neutral-700">
-                      <CalendarClock className="h-3.5 w-3.5 text-neutral-500" />
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1 text-xs font-medium text-gray-300">
+                      <CalendarClock className="h-3.5 w-3.5 text-gray-400" />
                       {booking.preferred_date} {booking.preferred_time}
                     </span>
                   </td>
                   <td className="px-4 py-3">
                     <span
                       className={`rounded-full border px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider ${
-                        STATUS_BADGE[booking.status] ?? 'bg-neutral-100 text-neutral-600 border-neutral-100'
+                        STATUS_BADGE[booking.status] ?? 'bg-white/10 text-gray-300 border-white/10'
                       }`}
                     >
                       {booking.status}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-xs text-neutral-500">
+                  <td className="px-4 py-3 text-xs text-gray-500">
                     {new Date(booking.created_at).toLocaleDateString('en-KE')}
                   </td>
                 </tr>
