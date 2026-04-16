@@ -22,7 +22,7 @@ const STATUS_BADGE: Record<string, string> = {
 
 export default async function AdminServicesPage() {
   const supabase = createServiceClient();
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from('service_bookings')
     .select('id,full_name,email,phone,service_type,preferred_date,preferred_time,status,created_at')
     .order('preferred_date', { ascending: true })
@@ -39,6 +39,14 @@ export default async function AdminServicesPage() {
           <p className="mt-1 text-sm text-gray-500">{bookings.length} booking requests</p>
         </div>
       </div>
+
+      {error && (
+        <div className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+          {error.message.includes('service_bookings')
+            ? 'Service bookings table is missing. Run the latest Supabase migration (or full_setup.sql) and refresh.'
+            : error.message}
+        </div>
+      )}
 
       <div className="overflow-hidden rounded-2xl border border-white/5 bg-[#1A1D21]">
         <div className="overflow-x-auto">
