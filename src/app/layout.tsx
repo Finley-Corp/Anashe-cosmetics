@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Delius, Inter } from 'next/font/google';
+import { Inter } from 'next/font/google';
 import './globals.css';
 import { Toaster } from '@/components/shared/Toaster';
 
@@ -14,13 +14,6 @@ const interDisplay = Inter({
   subsets: ['latin'],
   weight: ['400', '600', '700'],
   variable: '--font-display',
-  display: 'swap',
-});
-
-const delius = Delius({
-  subsets: ['latin'],
-  weight: ['400'],
-  variable: '--font-delius',
   display: 'swap',
 });
 
@@ -47,7 +40,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="scroll-smooth">
-      <body className={`${inter.variable} ${interDisplay.variable} ${delius.variable} bg-white text-neutral-900 selection:bg-[var(--primary)] selection:text-white relative`}>
+      <body className={`${inter.variable} ${interDisplay.variable} bg-white text-neutral-900 selection:bg-[var(--primary)] selection:text-white relative`}>
         {children}
         <Toaster />
       </body>

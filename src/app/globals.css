@@ -61,38 +61,32 @@ h1, h2, h3, h4, h5, h6 {
 .focus\:border-green-500:focus { border-color: var(--primary) !important; }
 .focus-within\:border-green-500:focus-within { border-color: var(--primary) !important; }
 
-.poppins-thin { font-family: var(--font-inter), "Poppins", sans-serif; font-weight: 100; font-style: normal; }
-.poppins-extralight { font-family: var(--font-inter), "Poppins", sans-serif; font-weight: 200; font-style: normal; }
-.poppins-light { font-family: var(--font-inter), "Poppins", sans-serif; font-weight: 300; font-style: normal; }
-.poppins-regular { font-family: var(--font-inter), "Poppins", sans-serif; font-weight: 400; font-style: normal; }
-.poppins-medium { font-family: var(--font-inter), "Poppins", sans-serif; font-weight: 500; font-style: normal; }
-.poppins-semibold { font-family: var(--font-inter), "Poppins", sans-serif; font-weight: 600; font-style: normal; }
-.poppins-bold { font-family: var(--font-inter), "Poppins", sans-serif; font-weight: 700; font-style: normal; }
-.poppins-extrabold { font-family: var(--font-inter), "Poppins", sans-serif; font-weight: 800; font-style: normal; }
-.poppins-black { font-family: var(--font-inter), "Poppins", sans-serif; font-weight: 900; font-style: normal; }
+.poppins-thin { font-family: var(--font-inter), "Inter", sans-serif; font-weight: 100; font-style: normal; }
+.poppins-extralight { font-family: var(--font-inter), "Inter", sans-serif; font-weight: 200; font-style: normal; }
+.poppins-light { font-family: var(--font-inter), "Inter", sans-serif; font-weight: 300; font-style: normal; }
+.poppins-regular { font-family: var(--font-inter), "Inter", sans-serif; font-weight: 400; font-style: normal; }
+.poppins-medium { font-family: var(--font-inter), "Inter", sans-serif; font-weight: 500; font-style: normal; }
+.poppins-semibold { font-family: var(--font-inter), "Inter", sans-serif; font-weight: 600; font-style: normal; }
+.poppins-bold { font-family: var(--font-inter), "Inter", sans-serif; font-weight: 700; font-style: normal; }
+.poppins-extrabold { font-family: var(--font-inter), "Inter", sans-serif; font-weight: 800; font-style: normal; }
+.poppins-black { font-family: var(--font-inter), "Inter", sans-serif; font-weight: 900; font-style: normal; }
 
-.poppins-thin-italic { font-family: var(--font-inter), "Poppins", sans-serif; font-weight: 100; font-style: italic; }
-.poppins-extralight-italic { font-family: var(--font-inter), "Poppins", sans-serif; font-weight: 200; font-style: italic; }
-.poppins-light-italic { font-family: var(--font-inter), "Poppins", sans-serif; font-weight: 300; font-style: italic; }
-.poppins-regular-italic { font-family: var(--font-inter), "Poppins", sans-serif; font-weight: 400; font-style: italic; }
-.poppins-medium-italic { font-family: var(--font-inter), "Poppins", sans-serif; font-weight: 500; font-style: italic; }
-.poppins-semibold-italic { font-family: var(--font-inter), "Poppins", sans-serif; font-weight: 600; font-style: italic; }
-.poppins-bold-italic { font-family: var(--font-inter), "Poppins", sans-serif; font-weight: 700; font-style: italic; }
-.poppins-extrabold-italic { font-family: var(--font-inter), "Poppins", sans-serif; font-weight: 800; font-style: italic; }
-.poppins-black-italic { font-family: var(--font-inter), "Poppins", sans-serif; font-weight: 900; font-style: italic; }
+.poppins-thin-italic { font-family: var(--font-inter), "Inter", sans-serif; font-weight: 100; font-style: italic; }
+.poppins-extralight-italic { font-family: var(--font-inter), "Inter", sans-serif; font-weight: 200; font-style: italic; }
+.poppins-light-italic { font-family: var(--font-inter), "Inter", sans-serif; font-weight: 300; font-style: italic; }
+.poppins-regular-italic { font-family: var(--font-inter), "Inter", sans-serif; font-weight: 400; font-style: italic; }
+.poppins-medium-italic { font-family: var(--font-inter), "Inter", sans-serif; font-weight: 500; font-style: italic; }
+.poppins-semibold-italic { font-family: var(--font-inter), "Inter", sans-serif; font-weight: 600; font-style: italic; }
+.poppins-bold-italic { font-family: var(--font-inter), "Inter", sans-serif; font-weight: 700; font-style: italic; }
+.poppins-extrabold-italic { font-family: var(--font-inter), "Inter", sans-serif; font-weight: 800; font-style: italic; }
+.poppins-black-italic { font-family: var(--font-inter), "Inter", sans-serif; font-weight: 900; font-style: italic; }
 
-.roboto-thin { font-family: var(--font-display), "Roboto", sans-serif; font-weight: 100; font-style: normal; font-optical-sizing: auto; font-variation-settings: "wdth" 100; }
-.roboto-light { font-family: var(--font-display), "Roboto", sans-serif; font-weight: 300; font-style: normal; font-optical-sizing: auto; font-variation-settings: "wdth" 100; }
-.roboto-regular { font-family: var(--font-display), "Roboto", sans-serif; font-weight: 400; font-style: normal; font-optical-sizing: auto; font-variation-settings: "wdth" 100; }
-.roboto-medium { font-family: var(--font-display), "Roboto", sans-serif; font-weight: 500; font-style: normal; font-optical-sizing: auto; font-variation-settings: "wdth" 100; }
-.roboto-bold { font-family: var(--font-display), "Roboto", sans-serif; font-weight: 700; font-style: normal; font-optical-sizing: auto; font-variation-settings: "wdth" 100; }
-.roboto-black { font-family: var(--font-display), "Roboto", sans-serif; font-weight: 900; font-style: normal; font-optical-sizing: auto; font-variation-settings: "wdth" 100; }
-
-.delius-regular {
-  font-family: var(--font-delius), "Delius", cursive;
-  font-weight: 400;
-  font-style: normal;
-}
+.roboto-thin { font-family: var(--font-display), "Inter", sans-serif; font-weight: 100; font-style: normal; }
+.roboto-light { font-family: var(--font-display), "Inter", sans-serif; font-weight: 300; font-style: normal; }
+.roboto-regular { font-family: var(--font-display), "Inter", sans-serif; font-weight: 400; font-style: normal; }
+.roboto-medium { font-family: var(--font-display), "Inter", sans-serif; font-weight: 500; font-style: normal; }
+.roboto-bold { font-family: var(--font-display), "Inter", sans-serif; font-weight: 700; font-style: normal; }
+.roboto-black { font-family: var(--font-display), "Inter", sans-serif; font-weight: 900; font-style: normal; }
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar { width: 8px; }
