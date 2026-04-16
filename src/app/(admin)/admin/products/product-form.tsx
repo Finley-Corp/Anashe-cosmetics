@@ -2,6 +2,8 @@
 
 import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import { createClient } from '@/lib/supabase/client';
 
 type CategoryOption = { id: string; name: string };
 
@@ -42,6 +44,9 @@ export function ProductForm({
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(initialValues?.image_url ?? null);
+  const [imagePreviewObjectUrl, setImagePreviewObjectUrl] = useState<string | null>(null);
 
   const defaults = useMemo<ProductFormValues>(
     () =>
@@ -73,6 +78,26 @@ export function ProductForm({
     setBusy(true);
 
     try {
+      let uploadedImageUrl: string | null = null;
+      if (imageFile) {
+        const supabase = createClient();
+        const fileExt = imageFile.name.split('.').pop() || 'jpg';
+        const pathSafeSlug = (values.slug.trim() || slugify(values.name) || 'product').slice(0, 80);
+        const objectPath = `products/${pathSafeSlug}/${crypto.randomUUID()}.${fileExt}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from('product-images')
+          .upload(objectPath, imageFile, { upsert: true, contentType: imageFile.type || undefined });
+
+        if (uploadError) {
+          setError(uploadError.message);
+          return;
+        }
+
+        const { data } = supabase.storage.from('product-images').getPublicUrl(objectPath);
+        uploadedImageUrl = data.publicUrl ?? null;
+      }
+
       const payload = {
         ...values,
         slug: values.slug.trim() || slugify(values.name),
@@ -81,7 +106,7 @@ export function ProductForm({
         sku: values.sku || null,
         short_description: values.short_description || null,
         description: values.description || null,
-        image_url: values.image_url || null,
+        image_url: uploadedImageUrl ?? values.image_url || null,
       };
 
       const endpoint = mode === 'create' ? '/api/admin/products' : `/api/admin/products/${productId}`;
@@ -193,16 +218,36 @@ export function ProductForm({
         </label>
       </div>
 
-      <label className="space-y-1.5 block">
-        <span className="text-xs font-semibold uppercase tracking-wider text-neutral-500">Primary Image URL</span>
-        <input
-          type="url"
-          value={values.image_url}
-          onChange={(e) => update('image_url', e.target.value)}
-          placeholder="https://..."
-          className="w-full h-10 rounded-xl border border-neutral-200 px-3 text-sm outline-none focus:border-neutral-400"
-        />
-      </label>
+      <div className="space-y-2">
+        <span className="text-xs font-semibold uppercase tracking-wider text-neutral-500">Primary Image</span>
+        <div className="flex items-start gap-4">
+          <div className="relative h-20 w-20 overflow-hidden rounded-xl border border-neutral-200 bg-neutral-50">
+            {imagePreview ? (
+              <Image src={imagePreview} alt="Product image preview" fill className="object-cover" />
+            ) : null}
+          </div>
+          <div className="flex-1">
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                const file = e.target.files?.[0] ?? null;
+                setImageFile(file);
+                if (file) {
+                  if (imagePreviewObjectUrl) URL.revokeObjectURL(imagePreviewObjectUrl);
+                  const url = URL.createObjectURL(file);
+                  setImagePreviewObjectUrl(url);
+                  setImagePreview(url);
+                }
+              }}
+              className="block w-full text-sm text-neutral-700 file:mr-4 file:rounded-lg file:border-0 file:bg-neutral-900 file:px-4 file:py-2 file:text-xs file:font-semibold file:text-white hover:file:bg-neutral-800"
+            />
+            <p className="mt-2 text-xs text-neutral-500">
+              Upload an image. It will be stored in Supabase Storage and saved as the product&apos;s primary image.
+            </p>
+          </div>
+        </div>
+      </div>
 
       <label className="space-y-1.5 block">
         <span className="text-xs font-semibold uppercase tracking-wider text-neutral-500">Short Description</span>
