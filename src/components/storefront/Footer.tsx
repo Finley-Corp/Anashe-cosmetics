@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Instagram, MessageCircle, Mail, MapPin, Phone } from 'lucide-react';
+import { Camera, MessageCircle, Mail, MapPin, Phone } from 'lucide-react';
 
 export function Footer() {
   return (
@@ -29,7 +29,7 @@ export function Footer() {
                 aria-label="Visit our Instagram"
                 className="w-9 h-9 flex items-center justify-center bg-neutral-800 hover:bg-green-700 rounded-full transition-colors"
               >
-                <Instagram className="w-4 h-4" />
+                <Camera className="w-4 h-4" />
               </a>
             </div>
           </div>
