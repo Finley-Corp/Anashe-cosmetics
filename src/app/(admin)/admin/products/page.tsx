@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { Plus } from 'lucide-react';
 import { createServiceClient } from '@/lib/supabase/service';
 import { ProductRowActions } from './product-row-actions';
+import { DeleteAllProductsButton } from './delete-all-products-button';
 
 export default async function AdminProductsPage() {
   const supabase = createServiceClient();
@@ -23,12 +24,15 @@ export default async function AdminProductsPage() {
           <h1 className="text-2xl font-bold text-white font-[family-name:var(--font-display)]">Products</h1>
           <p className="text-sm text-gray-500 mt-1">{products?.length ?? 0} total products</p>
         </div>
-        <Link
-          href="/admin/products/new"
-          className="flex items-center gap-2 h-10 px-5 bg-white text-black text-sm font-semibold rounded-xl hover:bg-gray-200 transition-colors"
-        >
-          <Plus className="w-4 h-4" /> Add Product
-        </Link>
+        <div className="flex items-center gap-2">
+          <DeleteAllProductsButton />
+          <Link
+            href="/admin/products/new"
+            className="flex items-center gap-2 h-10 px-5 bg-white text-black text-sm font-semibold rounded-xl hover:bg-gray-200 transition-colors"
+          >
+            <Plus className="w-4 h-4" /> Add Product
+          </Link>
+        </div>
       </div>
 
       <div className="bg-[#1A1D21] border border-white/5 rounded-2xl overflow-hidden">
