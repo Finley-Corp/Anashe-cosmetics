@@ -9,7 +9,7 @@ export function AccordionItem({ className, ...props }: React.HTMLAttributes<HTML
   return <details className={cn('rounded-md border border-neutral-200', className)} {...props} />;
 }
 
-export function AccordionTrigger({ className, ...props }: React.HTMLAttributes<HTMLSummaryElement>) {
+export function AccordionTrigger({ className, ...props }: React.HTMLAttributes<HTMLElement>) {
   return (
     <summary
       className={cn('cursor-pointer list-none select-none px-4 py-3 text-sm font-medium hover:bg-neutral-50', className)}
