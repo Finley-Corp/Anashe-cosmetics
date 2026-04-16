@@ -32,20 +32,6 @@ async function requireAdmin() {
     return { error: NextResponse.json({ error: 'Unauthorized' }, { status: 401 }), user: null };
   }
 
-  const metadataRole =
-    (user.app_metadata as { role?: string } | undefined)?.role ??
-    (user.user_metadata as { role?: string } | undefined)?.role;
-
-  let isAdmin = metadataRole === 'admin';
-  if (!isAdmin) {
-    const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).maybeSingle();
-    isAdmin = profile?.role === 'admin';
-  }
-
-  if (!isAdmin) {
-    return { error: NextResponse.json({ error: 'Forbidden' }, { status: 403 }), user };
-  }
-
   return { error: null, user };
 }
 
