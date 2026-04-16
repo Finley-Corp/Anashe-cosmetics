@@ -1,22 +1,97 @@
 @import "tailwindcss";
 
 :root {
-  --primary: #16a34a;
-  --primary-hover: #15803d;
-  --accent: #f59e0b;
-  --font-inter: 'Inter', sans-serif;
-  --font-display: 'Crimson Pro', serif;
+  --primary-50: #fdf2f8;
+  --primary-100: #fce7f3;
+  --primary-500: #e33a90;
+  --primary-600: #cc1f7a;
+  --primary-700: #a31962;
+  --primary-900: #6e1143;
+  --accent-soft: #fdf2f8;
+  --text-primary: #1a1a1a;
+  --text-body: #4b5563;
+  --canvas: #ffffff;
+  --primary: #e33a90;
+  --primary-hover: #cc1f7a;
+  --accent: #fdf2f8;
+  --font-inter: 'Poppins', sans-serif;
+  --font-display: 'Roboto', sans-serif;
 }
 
 body {
-  font-family: var(--font-inter), 'Inter', sans-serif;
+  background: var(--canvas);
+  color: var(--text-body);
+  font-family: var(--font-inter), 'Poppins', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-display), 'Crimson Pro', serif;
+  color: var(--text-primary);
+  font-family: var(--font-display), 'Roboto', sans-serif;
+}
+
+/* Global brand remap: keep existing utility usage but enforce magenta palette */
+.bg-green-50 { background-color: var(--accent) !important; }
+.bg-green-100 { background-color: var(--accent) !important; }
+.bg-green-400 { background-color: var(--primary-500) !important; }
+.bg-green-500 { background-color: var(--primary) !important; }
+.bg-green-600 { background-color: var(--primary-hover) !important; }
+.bg-green-700 { background-color: var(--primary) !important; }
+.bg-green-800 { background-color: var(--primary-hover) !important; }
+
+.text-green-400 { color: var(--primary-500) !important; }
+.text-green-500 { color: var(--primary) !important; }
+.text-green-600 { color: var(--primary) !important; }
+.text-green-700 { color: var(--primary) !important; }
+.text-green-800 { color: var(--primary-hover) !important; }
+
+.border-green-50 { border-color: var(--accent) !important; }
+.border-green-100 { border-color: var(--primary-100) !important; }
+.border-green-500 { border-color: var(--primary) !important; }
+.border-green-700 { border-color: var(--primary) !important; }
+
+.hover\:bg-green-600:hover { background-color: var(--primary-hover) !important; }
+.hover\:bg-green-700:hover { background-color: var(--primary-hover) !important; }
+.hover\:bg-green-800:hover { background-color: var(--primary-700) !important; }
+.hover\:text-green-700:hover { color: var(--primary) !important; }
+.hover\:text-green-800:hover { color: var(--primary-hover) !important; }
+
+.focus\:border-green-500:focus { border-color: var(--primary) !important; }
+.focus-within\:border-green-500:focus-within { border-color: var(--primary) !important; }
+
+.poppins-thin { font-family: var(--font-inter), "Poppins", sans-serif; font-weight: 100; font-style: normal; }
+.poppins-extralight { font-family: var(--font-inter), "Poppins", sans-serif; font-weight: 200; font-style: normal; }
+.poppins-light { font-family: var(--font-inter), "Poppins", sans-serif; font-weight: 300; font-style: normal; }
+.poppins-regular { font-family: var(--font-inter), "Poppins", sans-serif; font-weight: 400; font-style: normal; }
+.poppins-medium { font-family: var(--font-inter), "Poppins", sans-serif; font-weight: 500; font-style: normal; }
+.poppins-semibold { font-family: var(--font-inter), "Poppins", sans-serif; font-weight: 600; font-style: normal; }
+.poppins-bold { font-family: var(--font-inter), "Poppins", sans-serif; font-weight: 700; font-style: normal; }
+.poppins-extrabold { font-family: var(--font-inter), "Poppins", sans-serif; font-weight: 800; font-style: normal; }
+.poppins-black { font-family: var(--font-inter), "Poppins", sans-serif; font-weight: 900; font-style: normal; }
+
+.poppins-thin-italic { font-family: var(--font-inter), "Poppins", sans-serif; font-weight: 100; font-style: italic; }
+.poppins-extralight-italic { font-family: var(--font-inter), "Poppins", sans-serif; font-weight: 200; font-style: italic; }
+.poppins-light-italic { font-family: var(--font-inter), "Poppins", sans-serif; font-weight: 300; font-style: italic; }
+.poppins-regular-italic { font-family: var(--font-inter), "Poppins", sans-serif; font-weight: 400; font-style: italic; }
+.poppins-medium-italic { font-family: var(--font-inter), "Poppins", sans-serif; font-weight: 500; font-style: italic; }
+.poppins-semibold-italic { font-family: var(--font-inter), "Poppins", sans-serif; font-weight: 600; font-style: italic; }
+.poppins-bold-italic { font-family: var(--font-inter), "Poppins", sans-serif; font-weight: 700; font-style: italic; }
+.poppins-extrabold-italic { font-family: var(--font-inter), "Poppins", sans-serif; font-weight: 800; font-style: italic; }
+.poppins-black-italic { font-family: var(--font-inter), "Poppins", sans-serif; font-weight: 900; font-style: italic; }
+
+.roboto-thin { font-family: var(--font-display), "Roboto", sans-serif; font-weight: 100; font-style: normal; font-optical-sizing: auto; font-variation-settings: "wdth" 100; }
+.roboto-light { font-family: var(--font-display), "Roboto", sans-serif; font-weight: 300; font-style: normal; font-optical-sizing: auto; font-variation-settings: "wdth" 100; }
+.roboto-regular { font-family: var(--font-display), "Roboto", sans-serif; font-weight: 400; font-style: normal; font-optical-sizing: auto; font-variation-settings: "wdth" 100; }
+.roboto-medium { font-family: var(--font-display), "Roboto", sans-serif; font-weight: 500; font-style: normal; font-optical-sizing: auto; font-variation-settings: "wdth" 100; }
+.roboto-bold { font-family: var(--font-display), "Roboto", sans-serif; font-weight: 700; font-style: normal; font-optical-sizing: auto; font-variation-settings: "wdth" 100; }
+.roboto-black { font-family: var(--font-display), "Roboto", sans-serif; font-weight: 900; font-style: normal; font-optical-sizing: auto; font-variation-settings: "wdth" 100; }
+
+.delius-regular {
+  font-family: var(--font-delius), "Delius", cursive;
+  font-weight: 400;
+  font-style: normal;
 }
 
 /* Custom Scrollbar */
@@ -67,6 +142,14 @@ h1, h2, h3, h4, h5, h6 {
   border: 1px solid rgba(255, 255, 255, 0.5);
 }
 
+.btn-primary {
+  background: var(--primary);
+  color: #fff;
+}
+.btn-primary:hover {
+  background: var(--primary-hover);
+}
+
 /* Nav Dropdown */
 .nav-item:hover .nav-dropdown {
   opacity: 1;
@@ -89,7 +172,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Star rating */
-.stars { color: #f59e0b; }
+.stars { color: var(--primary-500); }
 
 /* Product card hover */
 .product-card-img { transition: transform 0.7s ease; }

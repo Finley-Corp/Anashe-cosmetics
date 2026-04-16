@@ -120,6 +120,9 @@ export default async function HomePage() {
             alt="Anashe beauty hero"
             fill
             priority
+            fetchPriority="high"
+            quality={86}
+            sizes="100vw"
             className="w-full h-full object-cover object-center brightness-[0.82]"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />
@@ -130,7 +133,7 @@ export default async function HomePage() {
             <span className="inline-block py-1 px-3 border border-white/30 rounded-full bg-white/10 backdrop-blur-sm text-xs font-medium text-white mb-6">
               Skincare & Cosmetics / 2026
             </span>
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-medium tracking-tighter text-white mb-6 leading-[0.95] font-[family-name:var(--font-display)]">
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-medium tracking-tighter !text-white mb-6 leading-[0.95] font-[family-name:var(--font-display)]">
               Your skincare routine,
               <br />
               Kenyan prices.
@@ -139,7 +142,7 @@ export default async function HomePage() {
               Shop skincare and cosmetics formulated for your skin goals with easy M-Pesa checkout and fast delivery across Kenya.
             </p>
             <div className="flex flex-wrap gap-4">
-              <Link href="/products?sort=newest" className="bg-white text-zinc-950 px-8 py-3 rounded text-sm font-medium hover:bg-zinc-100 transition-all flex items-center gap-2">
+              <Link href="/products?sort=newest" className="bg-[var(--primary)] text-white px-8 py-3 rounded text-sm font-medium hover:bg-[var(--primary-hover)] transition-all flex items-center gap-2">
                 Shop New Arrivals <ArrowRight className="w-4 h-4" />
               </Link>
               <Link href="/products?sort=popular" className="border border-white/30 text-white px-8 py-3 rounded text-sm font-medium hover:bg-white/10 transition-colors backdrop-blur-sm">
@@ -151,7 +154,7 @@ export default async function HomePage() {
       </section>
 
       {/* TRUST BAR */}
-      <div className="border-y border-neutral-100 bg-neutral-50/60 py-5">
+      <div className="border-y border-neutral-100 bg-[var(--accent)] py-5">
         <div className="max-w-[1440px] mx-auto px-4 md:px-6">
           <div className="flex flex-wrap justify-center gap-6 md:gap-10 text-xs font-semibold text-neutral-400 uppercase tracking-widest">
             {[
@@ -184,7 +187,14 @@ export default async function HomePage() {
                 href={cat.href}
                 className={`reveal group relative overflow-hidden rounded-xl aspect-square bg-neutral-100 ${i < 2 ? '' : `delay-${Math.min(i, 3) * 100}`}`}
               >
-                <Image src={cat.image} alt={cat.name} fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
+                <Image
+                  src={cat.image}
+                  alt={cat.name}
+                  fill
+                  quality={82}
+                  sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 16vw"
+                  className="object-cover transition-transform duration-700 group-hover:scale-110"
+                />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
                 <div className="absolute bottom-3 left-3">
                   <p className="text-white text-sm font-semibold">{cat.name}</p>
@@ -200,7 +210,7 @@ export default async function HomePage() {
         <div className="max-w-[1440px] mx-auto px-4 md:px-6">
           <div className="flex justify-between items-end mb-10 reveal">
             <div>
-              <p className="text-xs font-bold uppercase tracking-widest text-green-700 mb-1">Just Landed</p>
+              <p className="text-xs font-bold uppercase tracking-widest text-[var(--primary)] mb-1">Just Landed</p>
               <h2 className="text-3xl lg:text-4xl font-medium tracking-tight font-[family-name:var(--font-display)]">New Arrivals</h2>
             </div>
             <Link href="/products?sort=newest" className="hidden md:flex items-center gap-1 text-sm font-medium text-neutral-500 hover:text-neutral-900 transition-colors group border-b border-transparent hover:border-neutral-900 pb-0.5">
@@ -214,13 +224,15 @@ export default async function HomePage() {
                 src="/images/black-woman.jpg"
                 alt="Skincare collection"
                 fill
+                quality={84}
+                sizes="(max-width: 768px) 100vw, 66vw"
                 className="object-cover transition-transform duration-700 group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
               <div className="absolute bottom-8 left-8 text-white">
-                <span className="text-xs font-bold uppercase tracking-wider mb-2 block opacity-80">Featured Collection</span>
-                <h3 className="text-3xl font-medium tracking-tight mb-2 font-[family-name:var(--font-display)]">Glow Essentials</h3>
-                <p className="text-white/80 text-sm max-w-sm">Hydration, brightening, and SPF must-haves for everyday routines.</p>
+                <span className="text-xs font-bold uppercase tracking-wider mb-2 block opacity-80 !text-white">Featured Collection</span>
+                <h3 className="text-3xl font-medium tracking-tight mb-2 font-[family-name:var(--font-display)] !text-white">Glow Essentials</h3>
+                <p className="text-sm max-w-sm !text-white">Hydration, brightening, and SPF must-haves for everyday routines.</p>
               </div>
               <Link href="/products?sort=newest" className="absolute top-6 right-6 w-12 h-12 bg-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-300 shadow-xl text-neutral-900">
                 <ArrowRight className="w-5 h-5" />
@@ -232,10 +244,17 @@ export default async function HomePage() {
                 { title: 'Natural Skincare', img: '/images/orange%20(2).jpg' },
               ].map((item, i) => (
                 <div key={item.title} className={`relative group overflow-hidden rounded-xl bg-neutral-100 reveal delay-${(i + 1) * 100}`}>
-                  <Image src={item.img} alt={item.title} fill className="object-cover transition-transform duration-700 group-hover:scale-105" />
+                  <Image
+                    src={item.img}
+                    alt={item.title}
+                    fill
+                    quality={82}
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-                  <div className="absolute bottom-5 left-5 text-white">
-                    <h3 className="text-lg font-medium font-[family-name:var(--font-display)]">{item.title}</h3>
+                  <div className="absolute bottom-5 left-5">
+                    <h3 className="text-lg font-medium font-[family-name:var(--font-display)] !text-white">{item.title}</h3>
                   </div>
                 </div>
               ))}
@@ -256,7 +275,7 @@ export default async function HomePage() {
               {['All', 'Skincare', 'Makeup', 'Body Care', 'Natural'].map((f, i) => (
                 <button
                   key={f}
-                  className={`px-4 py-2 rounded-full text-xs font-semibold transition-colors ${i === 0 ? 'bg-neutral-900 text-white shadow-lg' : 'bg-white border border-neutral-200 text-neutral-600 hover:border-neutral-400 hover:text-neutral-900'}`}
+                  className={`px-4 py-2 rounded-full text-xs font-semibold transition-colors ${i === 0 ? 'bg-[var(--primary)] text-white shadow-lg' : 'bg-white border border-neutral-200 text-neutral-600 hover:border-[var(--primary)] hover:text-[var(--primary)]'}`}
                 >
                   {f}
                 </button>
@@ -264,7 +283,7 @@ export default async function HomePage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
             {products.map((product, i) => (
               <div key={product.id} className={`reveal delay-${Math.min(i, 3) * 75}`}>
                 <ProductCard product={product} priority={i < 2} />
@@ -275,7 +294,7 @@ export default async function HomePage() {
           <div className="text-center mt-14">
             <Link
               href="/products"
-              className="inline-flex items-center gap-2 h-12 px-8 border border-neutral-300 text-neutral-900 text-sm font-semibold rounded-full hover:bg-neutral-900 hover:text-white hover:border-neutral-900 transition-all duration-300 group"
+              className="inline-flex items-center gap-2 h-12 px-8 border border-[var(--primary)] text-[var(--primary)] text-sm font-semibold rounded-full hover:bg-[var(--primary)] hover:text-white hover:border-[var(--primary)] transition-all duration-300 group"
             >
               View All Products
               <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
@@ -291,12 +310,14 @@ export default async function HomePage() {
             src="/images/black-woman-4.jpg"
             alt="Quality products"
             fill
+            quality={84}
+            sizes="(max-width: 1024px) 100vw, 50vw"
             className="object-cover transition-transform duration-[2s] group-hover:scale-105"
           />
         </div>
         <div className="flex flex-col justify-center px-6 py-16 lg:px-20 bg-white">
           <div className="reveal max-w-lg">
-            <p className="text-xs font-bold uppercase tracking-widest text-green-700 mb-4">Why Anashe</p>
+            <p className="text-xs font-bold uppercase tracking-widest text-[var(--primary)] mb-4">Why Anashe</p>
             <h2 className="text-3xl lg:text-4xl font-medium tracking-tight mb-6 leading-snug font-[family-name:var(--font-display)]">
               Quality products,<br />Kenyan convenience.
             </h2>
@@ -311,8 +332,8 @@ export default async function HomePage() {
                 '14-day hassle-free returns policy',
               ].map((item) => (
                 <li key={item} className="flex items-start gap-3 text-sm font-medium text-neutral-800">
-                  <span className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center shrink-0 mt-0.5">
-                    <ShieldCheck className="w-3 h-3 text-green-700" />
+                  <span className="w-5 h-5 rounded-full bg-[var(--accent)] flex items-center justify-center shrink-0 mt-0.5">
+                    <ShieldCheck className="w-3 h-3 text-[var(--primary)]" />
                   </span>
                   {item}
                 </li>
@@ -352,32 +373,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* NEWSLETTER */}
-      <section className="py-24 bg-neutral-900 text-white">
-        <div className="max-w-screen-md mx-auto px-4 md:px-6 text-center reveal">
-          <div className="w-12 h-12 bg-green-700/20 rounded-full flex items-center justify-center mx-auto mb-6">
-            <Star className="w-6 h-6 text-green-400" />
-          </div>
-          <h2 className="text-3xl lg:text-4xl font-medium tracking-tight mb-4 font-[family-name:var(--font-display)]">Get skincare tips and exclusive deals first</h2>
-          <p className="text-neutral-400 mb-10 max-w-sm mx-auto text-sm leading-relaxed">
-            Join 5,000+ Kenyans getting weekly skincare routines, new beauty drops, and exclusive offers.
-          </p>
-          <form className="flex flex-col sm:flex-row gap-2 max-w-sm mx-auto">
-            <input
-              type="email"
-              placeholder="your@email.com"
-              className="flex-1 bg-neutral-800 border border-neutral-700 text-white text-sm rounded-xl px-4 py-3 outline-none focus:border-green-500 transition-colors placeholder:text-neutral-500"
-            />
-            <button
-              type="submit"
-              className="bg-green-700 hover:bg-green-600 text-white text-sm font-bold px-6 py-3 rounded-xl transition-colors"
-            >
-              Subscribe
-            </button>
-          </form>
-          <p className="text-neutral-600 text-xs mt-4">No spam. Unsubscribe anytime.</p>
-        </div>
-      </section>
     </>
   );
 }

@@ -12,9 +12,9 @@ export async function GET(req: Request) {
   const supabase = createServiceClient();
   const { data, error } = await supabase
     .from('products')
-    .select('id, name, slug, price, sale_price, images:product_images(url,is_primary)')
+    .select('id, name, slug, price, sale_price, skin_type, concerns, images:product_images(url,is_primary)')
     .eq('is_published', true)
-    .or(`name.ilike.%${q}%,brand.ilike.%${q}%,ingredients.ilike.%${q}%`)
+    .or(`name.ilike.%${q}%,brand.ilike.%${q}%,ingredients.ilike.%${q}%,short_description.ilike.%${q}%,concerns.cs.{${q.toLowerCase()}}`)
     .limit(5);
 
   if (error) {
@@ -30,6 +30,7 @@ export async function GET(req: Request) {
       price: item.price,
       sale_price: item.sale_price,
       image: primary?.url ?? null,
+      skin_type: item.skin_type ?? [],
     };
   });
 

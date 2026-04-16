@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import {
-  LayoutDashboard, Package, ShoppingCart, Star, LogOut, Store
+  LayoutDashboard, Package, ShoppingCart, Star, LogOut, Store, Command,
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 
@@ -27,51 +27,51 @@ export function AdminSidebar() {
   }
 
   return (
-    <aside className="fixed left-0 top-0 h-full w-64 bg-white border-r border-neutral-100 flex flex-col z-40">
-      {/* Logo */}
-      <div className="px-6 py-5 border-b border-neutral-100">
-        <Link href="/home" className="flex items-center gap-2 text-lg font-bold tracking-tighter font-[family-name:var(--font-display)]">
-          <span className="w-8 h-8 bg-neutral-900 rounded-lg flex items-center justify-center text-white text-xs font-bold">A</span>
-          ANASHE
+    <aside className="fixed left-0 top-0 z-40 hidden h-full w-16 flex-col items-center border-r border-white/5 bg-[#0c0c0e] py-6 sm:flex">
+      <div className="mb-2 text-white">
+        <Link
+          href="/admin"
+          className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/5 transition-colors hover:bg-white/10"
+          title="Admin home"
+        >
+          <Command className="h-4.5 w-4.5" />
         </Link>
-        <p className="text-[10px] text-neutral-400 mt-0.5 ml-10">Admin Dashboard</p>
       </div>
 
-      {/* Navigation */}
-      <nav className="flex-1 px-3 py-4 overflow-y-auto">
-        <div className="space-y-1">
-          {NAV.map(({ label, href, icon: Icon }) => {
-            const isActive = pathname === href || (href !== '/admin' && pathname.startsWith(href));
-            return (
-              <Link
-                key={href}
-                href={href}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all ${
-                  isActive
-                    ? 'bg-neutral-900 text-white'
-                    : 'text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900'
-                }`}
-              >
-                <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-neutral-400'}`} />
-                {label}
-              </Link>
-            );
-          })}
-        </div>
+      <nav className="mt-4 flex flex-1 flex-col items-center gap-4">
+        {NAV.map(({ label, href, icon: Icon }) => {
+          const isActive = pathname === href || (href !== '/admin' && pathname.startsWith(href));
+          return (
+            <Link
+              key={href}
+              href={href}
+              title={label}
+              className={`rounded-lg p-2.5 transition-all duration-300 ${
+                isActive
+                  ? 'bg-white/10 text-white ring-1 ring-white/10'
+                  : 'text-gray-500 hover:bg-white/5 hover:text-white'
+              }`}
+            >
+              <Icon className="h-5 w-5" />
+            </Link>
+          );
+        })}
       </nav>
 
-      {/* Footer */}
-      <div className="px-3 py-4 border-t border-neutral-100 space-y-1">
-        <Link href="/home" className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900 transition-colors">
-          <Store className="w-4 h-4 text-neutral-400" />
-          View Storefront
+      <div className="mt-auto flex flex-col items-center gap-3">
+        <Link
+          href="/home"
+          title="View storefront"
+          className="rounded-lg p-2.5 text-gray-500 transition-all duration-300 hover:bg-white/5 hover:text-white"
+        >
+          <Store className="h-5 w-5" />
         </Link>
         <button
           onClick={() => void handleSignOut()}
-          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-neutral-600 hover:bg-red-50 hover:text-red-600 transition-colors"
+          title="Sign out"
+          className="rounded-lg p-2.5 text-gray-500 transition-all duration-300 hover:bg-red-500/10 hover:text-red-400"
         >
-          <LogOut className="w-4 h-4 text-neutral-400" />
-          Sign Out
+          <LogOut className="h-5 w-5" />
         </button>
       </div>
     </aside>

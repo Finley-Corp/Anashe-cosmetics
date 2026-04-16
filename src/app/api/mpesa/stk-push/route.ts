@@ -109,19 +109,48 @@ export async function POST(req: Request) {
     let checkoutRequestId = '';
     let merchantRequestId = '';
 
-    if (process.env.MPESA_CONSUMER_KEY && process.env.MPESA_CONSUMER_KEY !== 'your-consumer-key') {
+    const hasMpesaCreds = Boolean(
+      process.env.MPESA_CONSUMER_KEY &&
+      process.env.MPESA_CONSUMER_SECRET &&
+      process.env.MPESA_SHORTCODE &&
+      process.env.MPESA_PASSKEY &&
+      process.env.MPESA_CONSUMER_KEY !== 'your-consumer-key'
+    );
+
+    const callbackFromEnv = process.env.MPESA_CALLBACK_URL;
+    const appCallbackBase = process.env.NEXT_PUBLIC_APP_URL;
+    const callbackFromAppBase = appCallbackBase ? `${appCallbackBase}/api/mpesa/callback` : undefined;
+    const callbackUrl = callbackFromEnv || callbackFromAppBase;
+
+    if (hasMpesaCreds) {
+      if (!callbackUrl) {
+        await supabase.from('orders').update({ status: 'cancelled' }).eq('id', order.id);
+        return NextResponse.json({ error: 'M-Pesa callback URL is not configured. Set MPESA_CALLBACK_URL.' }, { status: 500 });
+      }
+
+      if (callbackUrl.includes('localhost') || callbackUrl.includes('127.0.0.1')) {
+        await supabase.from('orders').update({ status: 'cancelled' }).eq('id', order.id);
+        return NextResponse.json({
+          error: 'M-Pesa callback URL cannot be localhost. Use a public HTTPS URL for MPESA_CALLBACK_URL.',
+        }, { status: 500 });
+      }
+
       try {
         const stkResponse = await initiateSTKPush({
           phone,
           amount,
           orderId: order.id,
-          callbackUrl: `${process.env.NEXT_PUBLIC_APP_URL}/api/mpesa/callback`,
+          callbackUrl,
         });
         checkoutRequestId = stkResponse.CheckoutRequestID;
         merchantRequestId = stkResponse.MerchantRequestID;
       } catch (mpesaError) {
         console.error('[STK Push Error]', mpesaError);
-        return NextResponse.json({ error: 'Failed to initiate M-Pesa payment. Please try again.' }, { status: 502 });
+        await supabase.from('orders').update({ status: 'cancelled' }).eq('id', order.id);
+        return NextResponse.json(
+          { error: mpesaError instanceof Error ? mpesaError.message : 'Failed to initiate M-Pesa payment. Please try again.' },
+          { status: 502 }
+        );
       }
     } else {
       checkoutRequestId = `demo-${Date.now()}`;

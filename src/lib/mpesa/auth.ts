@@ -6,8 +6,11 @@ const MPESA_BASE_URL =
 export { MPESA_BASE_URL };
 
 export async function getMpesaToken(): Promise<string> {
-  const consumerKey = process.env.MPESA_CONSUMER_KEY!;
-  const consumerSecret = process.env.MPESA_CONSUMER_SECRET!;
+  const consumerKey = process.env.MPESA_CONSUMER_KEY;
+  const consumerSecret = process.env.MPESA_CONSUMER_SECRET;
+  if (!consumerKey || !consumerSecret) {
+    throw new Error('Missing M-Pesa consumer credentials');
+  }
   const credentials = Buffer.from(`${consumerKey}:${consumerSecret}`).toString('base64');
 
   const res = await fetch(`${MPESA_BASE_URL}/oauth/v1/generate?grant_type=client_credentials`, {
@@ -36,7 +39,10 @@ export function getMpesaTimestamp(): string {
 }
 
 export function getMpesaPassword(timestamp: string): string {
-  const shortcode = process.env.MPESA_SHORTCODE!;
-  const passkey = process.env.MPESA_PASSKEY!;
+  const shortcode = process.env.MPESA_SHORTCODE;
+  const passkey = process.env.MPESA_PASSKEY;
+  if (!shortcode || !passkey) {
+    throw new Error('Missing M-Pesa shortcode/passkey');
+  }
   return Buffer.from(`${shortcode}${passkey}${timestamp}`).toString('base64');
 }

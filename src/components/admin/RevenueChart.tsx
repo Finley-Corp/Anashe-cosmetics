@@ -25,30 +25,31 @@ export function RevenueChart() {
       <AreaChart data={data} margin={{ top: 5, right: 10, left: 0, bottom: 0 }}>
         <defs>
           <linearGradient id="revenueGradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor="#16a34a" stopOpacity={0.15} />
-            <stop offset="95%" stopColor="#16a34a" stopOpacity={0} />
+            <stop offset="5%" stopColor="#38bdf8" stopOpacity={0.25} />
+            <stop offset="95%" stopColor="#38bdf8" stopOpacity={0} />
           </linearGradient>
         </defs>
-        <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" vertical={false} />
-        <XAxis dataKey="day" tick={{ fontSize: 11, fill: '#9ca3af' }} axisLine={false} tickLine={false} />
+        <CartesianGrid strokeDasharray="3 3" stroke="#27272a" vertical={false} />
+        <XAxis dataKey="day" tick={{ fontSize: 11, fill: '#71717a' }} axisLine={false} tickLine={false} />
         <YAxis
-          tick={{ fontSize: 11, fill: '#9ca3af' }}
+          tick={{ fontSize: 11, fill: '#71717a' }}
           axisLine={false}
           tickLine={false}
           tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`}
         />
         <Tooltip
-          contentStyle={{ background: '#fff', border: '1px solid #e5e7eb', borderRadius: '12px', fontSize: '12px' }}
+          contentStyle={{ background: '#18181b', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '10px', fontSize: '12px', color: '#fff' }}
+          labelStyle={{ color: '#d4d4d8' }}
           formatter={(v) => [`KES ${Number(v).toLocaleString()}`, 'Revenue']}
         />
         <Area
           type="monotone"
           dataKey="revenue"
-          stroke="#16a34a"
+          stroke="#38bdf8"
           strokeWidth={2.5}
           fill="url(#revenueGradient)"
           dot={false}
-          activeDot={{ r: 5, fill: '#16a34a' }}
+          activeDot={{ r: 5, fill: '#38bdf8' }}
         />
       </AreaChart>
     </ResponsiveContainer>
