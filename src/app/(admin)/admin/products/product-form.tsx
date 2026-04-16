@@ -106,7 +106,7 @@ export function ProductForm({
         sku: values.sku || null,
         short_description: values.short_description || null,
         description: values.description || null,
-        image_url: uploadedImageUrl ?? values.image_url || null,
+        image_url: uploadedImageUrl ?? (values.image_url || null),
       };
 
       const endpoint = mode === 'create' ? '/api/admin/products' : `/api/admin/products/${productId}`;
