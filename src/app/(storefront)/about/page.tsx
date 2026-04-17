@@ -4,7 +4,7 @@ import { ArrowRight, CheckCircle2, MapPin, Package, ShieldCheck, Star, Truck, Us
 
 export const metadata = {
   title: 'About Us',
-  description: "Learn about Anashe - Kenya's premier online store for premium curated products with M-Pesa checkout.",
+  description: "Learn about Anashe - Kenya's premier online store for premium curated products with secure order checkout.",
 };
 
 export default function AboutPage() {
@@ -33,7 +33,7 @@ export default function AboutPage() {
           <div className="mt-10 grid gap-6 border-t border-neutral-200 pt-8 md:grid-cols-2">
             <p className="max-w-xl text-sm leading-relaxed text-neutral-500">
               We curate authentic beauty products, pair them with transparent pricing, and make checkout simple with
-              M-Pesa-first flows designed for real Kenyan shoppers.
+              Customer-first ordering designed for real Kenyan shoppers.
             </p>
             <div className="grid grid-cols-3 gap-5 text-sm">
               <div>
@@ -87,7 +87,7 @@ export default function AboutPage() {
                 We saw customers forced to choose between trust, convenience, and payment options.
               </p>
               <p>
-                So we built the experience ourselves. Curated catalogues, product verification, and M-Pesa-first checkout
+                So we built the experience ourselves. Curated catalogues, product verification, and streamlined ordering
                 that fits real daily shopping behavior.
               </p>
               <p>

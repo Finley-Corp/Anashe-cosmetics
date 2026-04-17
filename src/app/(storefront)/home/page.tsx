@@ -139,7 +139,7 @@ export default async function HomePage() {
               Kenyan prices.
             </h1>
             <p className="text-zinc-200 text-sm md:text-base font-normal max-w-md mb-8 leading-relaxed">
-              Shop skincare and cosmetics formulated for your skin goals with easy M-Pesa checkout and fast delivery across Kenya.
+              Shop skincare and cosmetics formulated for your skin goals with easy ordering and fast delivery across Kenya.
             </p>
             <div className="flex flex-wrap gap-4">
               <Link href="/products?sort=newest" className="bg-[var(--primary)] text-white px-8 py-3 rounded text-sm font-medium hover:bg-[var(--primary-hover)] transition-all flex items-center gap-2">
@@ -159,7 +159,7 @@ export default async function HomePage() {
           <div className="flex flex-wrap justify-center gap-6 md:gap-10 text-xs font-semibold text-neutral-400 uppercase tracking-widest">
             {[
               { icon: <Truck className="w-3.5 h-3.5" />, text: 'Free Delivery Over KES 2,000' },
-              { icon: <ShieldCheck className="w-3.5 h-3.5" />, text: 'M-Pesa Secure Checkout' },
+              { icon: <ShieldCheck className="w-3.5 h-3.5" />, text: 'Secure Order Checkout' },
               { icon: <RefreshCw className="w-3.5 h-3.5" />, text: '14-Day Easy Returns' },
               { icon: <Star className="w-3.5 h-3.5" />, text: '5,000+ Happy Customers' },
             ].map(({ icon, text }) => (
@@ -322,11 +322,11 @@ export default async function HomePage() {
               Quality products,<br />Kenyan convenience.
             </h2>
             <p className="text-neutral-500 leading-relaxed mb-8 text-sm">
-              We partner with trusted skincare and cosmetic brands to bring you authentic products at fair Kenyan prices. With M-Pesa as our primary payment method, beauty shopping online has never been this easy.
+              We partner with trusted skincare and cosmetic brands to bring you authentic products at fair Kenyan prices. With a simple order flow and quick confirmation, beauty shopping online has never been this easy.
             </p>
             <ul className="space-y-4 mb-10">
               {[
-                'M-Pesa STK Push — pay straight from your phone',
+                'Simple online ordering with fast confirmation',
                 'Authentic skincare and cosmetic products only',
                 'Fast delivery across all 47 counties in Kenya',
                 '14-day hassle-free returns policy',

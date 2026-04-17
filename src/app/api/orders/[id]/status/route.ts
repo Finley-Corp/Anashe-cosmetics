@@ -14,7 +14,7 @@ export async function GET(_: Request, { params }: { params: Promise<{ id: string
 
   const { data: order, error } = await supabase
     .from('orders')
-    .select('id,status,order_number,mpesa_receipt,created_at')
+    .select('id,status,order_number,created_at')
     .eq('id', id)
     .eq('user_id', user.id)
     .single();

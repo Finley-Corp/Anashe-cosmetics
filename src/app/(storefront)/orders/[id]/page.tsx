@@ -17,7 +17,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
 
   const { data: order } = await supabase
     .from('orders')
-    .select('id,order_number,status,total,shipping_address,mpesa_receipt,created_at')
+    .select('id,order_number,status,total,shipping_address,created_at')
     .eq('id', id)
     .eq('user_id', user.id)
     .maybeSingle();
@@ -59,7 +59,6 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
           <h2 className="font-semibold">Summary</h2>
           <p className="text-sm">Status: <span className="font-medium capitalize">{order.status.replace('_', ' ')}</span></p>
           <p className="text-sm">Total: <span className="font-semibold">{formatPrice(Number(order.total ?? 0))}</span></p>
-          <p className="text-sm">M-Pesa Receipt: <span className="font-medium">{order.mpesa_receipt ?? 'Pending'}</span></p>
         </div>
       </div>
     </div>

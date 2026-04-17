@@ -15,7 +15,7 @@ export default async function AdminOrdersPage() {
   const supabase = createServiceClient();
   const { data: orders } = await supabase
     .from('orders')
-    .select('id,order_number,user_id,total,status,mpesa_receipt,created_at,payment_phone,items:order_items(count)')
+    .select('id,order_number,user_id,total,status,created_at,payment_phone,items:order_items(count)')
     .order('created_at', { ascending: false })
     .limit(100);
 
@@ -36,7 +36,7 @@ export default async function AdminOrdersPage() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-white/5 bg-white/[0.02]">
-                {['Order', 'Customer', 'Phone', 'Items', 'Total', 'M-Pesa Ref', 'Date', 'Status'].map((h) => (
+                {['Order', 'Customer', 'Phone', 'Items', 'Total', 'Date', 'Status'].map((h) => (
                   <th key={h} className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">{h}</th>
                 ))}
               </tr>
@@ -53,7 +53,6 @@ export default async function AdminOrdersPage() {
                   <td className="px-4 py-3 text-gray-500 text-xs">{order.payment_phone ?? '-'}</td>
                   <td className="px-4 py-3 text-gray-400">{itemCount} items</td>
                   <td className="px-4 py-3 font-semibold text-white">KES {Number(order.total).toLocaleString()}</td>
-                  <td className="px-4 py-3 text-xs font-mono text-gray-500">{order.mpesa_receipt ?? '-'}</td>
                   <td className="px-4 py-3 text-gray-500 text-xs">{new Date(order.created_at).toLocaleDateString('en-KE')}</td>
                   <td className="px-4 py-3">
                     <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full border capitalize ${STATUS_BADGE[order.status] ?? 'bg-neutral-100 text-neutral-600 border-neutral-100'}`}>

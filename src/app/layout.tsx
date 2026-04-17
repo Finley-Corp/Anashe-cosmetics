@@ -24,8 +24,8 @@ export const metadata: Metadata = {
     template: '%s | Anashe',
   },
   description:
-    'Anashe is Kenya\'s premier online store for curated premium essentials. Quality products, M-Pesa payments, fast delivery.',
-  keywords: ['Kenya', 'online store', 'M-Pesa', 'shopping', 'premium products'],
+    'Anashe is Kenya\'s premier online store for curated premium essentials. Quality products, secure ordering, fast delivery.',
+  keywords: ['Kenya', 'online store', 'shopping', 'premium products', 'order management'],
   openGraph: {
     type: 'website',
     locale: 'en_KE',
