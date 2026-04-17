@@ -45,6 +45,7 @@ export function ProductCard({ product, priority = false, initialWishlisted = fal
 
   async function handleAddToCart(e: React.MouseEvent) {
     e.preventDefault();
+    e.stopPropagation();
     setIsAdding(true);
     addItem({
       productId: product.id,
@@ -65,6 +66,7 @@ export function ProductCard({ product, priority = false, initialWishlisted = fal
 
   async function toggleWishlist(e: React.MouseEvent) {
     e.preventDefault();
+    e.stopPropagation();
     if (isTogglingWishlist) return;
     setIsTogglingWishlist(true);
 
@@ -166,6 +168,7 @@ export function ProductCard({ product, priority = false, initialWishlisted = fal
 
         {/* Wishlist */}
         <button
+          type="button"
           onClick={toggleWishlist}
           disabled={isTogglingWishlist}
           className="absolute top-3 right-3 z-20 w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:scale-110"
@@ -179,6 +182,7 @@ export function ProductCard({ product, priority = false, initialWishlisted = fal
         {product.stock > 0 && (
           <div className="absolute bottom-3 left-3 right-3 z-20 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
             <button
+              type="button"
               onClick={handleAddToCart}
               disabled={isAdding}
               className="w-full h-10 bg-white/95 backdrop-blur text-neutral-900 text-xs font-bold rounded-lg shadow-lg hover:bg-neutral-900 hover:text-white transition-colors flex items-center justify-center gap-2 disabled:opacity-70"
