@@ -5,7 +5,32 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { X, Plus, Minus, ShoppingBag, ArrowRight } from 'lucide-react';
 import { useCartStore } from '@/store/cart';
-import { formatPrice } from '@/lib/utils';
+import { formatPrice, isSupabaseStorageUrl, resolveProductImageUrl, shouldUnoptimizeImage } from '@/lib/utils';
+
+function CartItemImage({ image, name }: { image?: string; name: string }) {
+  const resolved = resolveProductImageUrl(image);
+  if (!resolved) {
+    return <div className="w-full h-full bg-neutral-200" />;
+  }
+
+  if (isSupabaseStorageUrl(resolved)) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img src={resolved} alt={name} className="w-full h-full object-cover" loading="lazy" />
+    );
+  }
+
+  return (
+    <Image
+      src={resolved}
+      alt={name}
+      width={80}
+      height={80}
+      className="w-full h-full object-cover"
+      unoptimized={shouldUnoptimizeImage(resolved)}
+    />
+  );
+}
 
 export function CartDrawer() {
   const { items, isOpen, closeCart, removeItem, updateQuantity, getSubtotal } = useCartStore();
@@ -74,17 +99,7 @@ export function CartDrawer() {
                 return (
                   <div key={`${item.productId}-${item.variantId}`} className="flex gap-3">
                     <div className="w-20 h-20 bg-neutral-100 rounded-lg overflow-hidden shrink-0">
-                      {item.product.image ? (
-                        <Image
-                          src={item.product.image}
-                          alt={item.product.name}
-                          width={80}
-                          height={80}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full bg-neutral-200" />
-                      )}
+                      <CartItemImage image={item.product.image} name={item.product.name} />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex justify-between gap-2">

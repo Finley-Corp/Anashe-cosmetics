@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server';
 import { createServiceClient } from '@/lib/supabase/service';
 import { generateOrderNumber } from '@/lib/utils';
 import { sendSmsNotification } from '@/lib/sms/tilil';
+import { sendOrderConfirmationEmail } from '@/lib/email/resend';
 
 const schema = z.object({
   phone: z.string().regex(/^(\+?254|0)[17]\d{8}$/, 'Invalid Kenyan phone number'),
@@ -22,6 +23,7 @@ const schema = z.object({
     country: z.string().optional(),
   }),
   couponCode: z.string().optional(),
+  contactEmail: z.string().email().optional().nullable(),
 });
 
 export async function POST(req: Request) {
@@ -38,7 +40,7 @@ export async function POST(req: Request) {
     } = await supabase.auth.getUser();
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const { phone, cartItems, shippingAddress, couponCode } = parsed.data;
+    const { phone, cartItems, shippingAddress, couponCode, contactEmail } = parsed.data;
     if (cartItems.length === 0) {
       return NextResponse.json({ error: 'Cart is empty' }, { status: 422 });
     }
@@ -94,16 +96,25 @@ export async function POST(req: Request) {
     let shipping = subtotal >= 2000 ? 0 : 250;
     let couponId: string | null = null;
 
-    if (couponCode) {
+    if (couponCode?.trim()) {
+      const normalizedCouponCode = couponCode.trim().toUpperCase();
       const { data: coupon } = await service
         .from('coupons')
         .select('*')
-        .eq('code', couponCode.toUpperCase())
+        .eq('code', normalizedCouponCode)
         .eq('is_active', true)
         .maybeSingle();
       if (coupon) {
-        couponId = coupon.id;
-        if (subtotal >= Number(coupon.min_order_value ?? 0)) {
+        const now = new Date();
+        const startsAtValid = !coupon.starts_at || new Date(coupon.starts_at) <= now;
+        const expiresAtValid = !coupon.expires_at || new Date(coupon.expires_at) >= now;
+        const maxUsesValid =
+          typeof coupon.max_uses !== 'number' ||
+          coupon.max_uses <= 0 ||
+          Number(coupon.used_count ?? 0) < coupon.max_uses;
+
+        if (startsAtValid && expiresAtValid && maxUsesValid && subtotal >= Number(coupon.min_order_value ?? 0)) {
+          couponId = coupon.id;
           if (coupon.type === 'percentage') {
             discount = Math.round((subtotal * Number(coupon.value)) / 100);
           } else if (coupon.type === 'fixed') {
@@ -155,19 +166,54 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: itemInsertError.message }, { status: 500 });
     }
 
-    // Fire-and-forget customer SMS confirmation (does not block order success)
-    await sendSmsNotification({
-      to: phone,
-      body: `Anashe: Your order ${order.order_number} has been received. Total ${Math.round(
-        Number(order.total)
-      ).toLocaleString('en-KE')} KES. We will contact you shortly.`,
-    });
+    if (couponId) {
+      const { data: couponRow } = await service.from('coupons').select('used_count').eq('id', couponId).maybeSingle();
+      const nextUsedCount = Number(couponRow?.used_count ?? 0) + 1;
+      await service.from('coupons').update({ used_count: nextUsedCount }).eq('id', couponId);
+    }
+
+    const emailToUse = contactEmail?.trim() || user.email || null;
+    const ownerPhone = process.env.OWNER_PHONE;
+
+    const [smsResult, , emailResult] = await Promise.all([
+      sendSmsNotification({
+        to: phone,
+        body: `Anashe: Your order ${order.order_number} has been placed. Total KES ${Math.round(Number(order.total)).toLocaleString('en-KE')}. We will contact you shortly.`,
+      }),
+      ownerPhone
+        ? sendSmsNotification({
+            to: ownerPhone,
+            body: `Anashe NEW ORDER: ${order.order_number} | KES ${Math.round(Number(order.total)).toLocaleString('en-KE')} | ${orderItemsPayload.length} item(s) | Phone: ${phone}`,
+          })
+        : Promise.resolve({ success: false, skipped: true }),
+      emailToUse
+        ? sendOrderConfirmationEmail({
+            to: emailToUse,
+            customerName: user.user_metadata?.full_name ?? null,
+            orderNumber: order.order_number,
+            total: Number(order.total),
+            items: orderItemsPayload.map((i) => ({
+              product_name: i.product_name,
+              quantity: i.quantity,
+              unit_price: i.unit_price,
+            })),
+          })
+        : Promise.resolve({ success: false, skipped: true }),
+    ]);
 
     return NextResponse.json({
       success: true,
       orderId: order.id,
       orderNumber: order.order_number,
       total: Number(order.total),
+      smsSent: smsResult.success,
+      smsSkipped: smsResult.skipped ?? false,
+      smsError: smsResult.error ?? null,
+      smsMessageId: smsResult.messageId ?? null,
+      smsTo: phone,
+      emailSent: Boolean(emailResult.success),
+      emailSkipped: Boolean(emailResult.skipped),
+      emailError: emailResult.error ?? null,
       message: 'Order placed successfully',
     });
   } catch (error) {

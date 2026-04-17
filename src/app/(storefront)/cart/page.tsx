@@ -4,24 +4,82 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ShoppingBag, Minus, Plus, X, ArrowRight, Tag } from 'lucide-react';
 import { useCartStore } from '@/store/cart';
-import { formatPrice } from '@/lib/utils';
-import { useState } from 'react';
+import { formatPrice, isSupabaseStorageUrl, resolveProductImageUrl, shouldUnoptimizeImage } from '@/lib/utils';
+import { useMemo, useState } from 'react';
+
+function CartProductImage({ image, name }: { image?: string | null; name: string }) {
+  const [failed, setFailed] = useState(false);
+  const resolved = useMemo(() => resolveProductImageUrl(image), [image]);
+
+  if (!resolved || failed) {
+    return <div className="w-full h-full bg-neutral-200" />;
+  }
+
+  if (isSupabaseStorageUrl(resolved)) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img src={resolved} alt={name} className="w-full h-full object-cover" loading="lazy" onError={() => setFailed(true)} />
+    );
+  }
+
+  return (
+    <Image
+      src={resolved}
+      alt={name}
+      width={96}
+      height={96}
+      className="w-full h-full object-cover"
+      unoptimized={shouldUnoptimizeImage(resolved)}
+      onError={() => setFailed(true)}
+    />
+  );
+}
 
 export default function CartPage() {
   const { items, removeItem, updateQuantity, getSubtotal, clearCart } = useCartStore();
   const [couponCode, setCouponCode] = useState('');
   const [discount, setDiscount] = useState(0);
+  const [shippingDiscount, setShippingDiscount] = useState(0);
   const subtotal = getSubtotal();
-  const shipping = subtotal >= 2000 ? 0 : 250;
+  const shippingBase = subtotal >= 2000 ? 0 : 250;
+  const shipping = Math.max(0, shippingBase - shippingDiscount);
   const total = subtotal - discount + shipping;
 
-  function applyCoupon() {
-    if (couponCode.toUpperCase() === 'WELCOME10') {
-      setDiscount(Math.round(subtotal * 0.1));
-    } else if (couponCode.toUpperCase() === 'SAVE200' && subtotal >= 1000) {
-      setDiscount(200);
-    } else {
-      alert('Invalid or expired coupon code.');
+  async function applyCoupon() {
+    const code = couponCode.trim().toUpperCase();
+    if (!code) {
+      alert('Enter a coupon code first.');
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/coupons/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          code,
+          subtotal,
+          shipping: shippingBase,
+        }),
+      });
+      const payload = (await res.json().catch(() => ({}))) as {
+        error?: string;
+        data?: { discount?: number; shippingDiscount?: number };
+      };
+      if (!res.ok || !payload.data) {
+        setDiscount(0);
+        setShippingDiscount(0);
+        alert(payload.error ?? 'Invalid or expired coupon code.');
+        return;
+      }
+
+      setCouponCode(code);
+      setDiscount(Number(payload.data.discount ?? 0));
+      setShippingDiscount(Number(payload.data.shippingDiscount ?? 0));
+    } catch {
+      setDiscount(0);
+      setShippingDiscount(0);
+      alert('Unable to validate coupon right now.');
     }
   }
 
@@ -53,11 +111,7 @@ export default function CartPage() {
             return (
               <div key={`${item.productId}-${item.variantId}`} className="flex gap-4 p-4 bg-white border border-neutral-100 rounded-2xl">
                 <div className="w-24 h-24 bg-neutral-100 rounded-xl overflow-hidden shrink-0">
-                  {item.product.image ? (
-                    <Image src={item.product.image} alt={item.product.name} width={96} height={96} className="w-full h-full object-cover" />
-                  ) : (
-                    <div className="w-full h-full bg-neutral-200" />
-                  )}
+                  <CartProductImage image={item.product.image} name={item.product.name} />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex justify-between gap-2">
@@ -126,6 +180,12 @@ export default function CartPage() {
                 <div className="flex justify-between text-green-700">
                   <span>Discount</span>
                   <span>-{formatPrice(discount)}</span>
+                </div>
+              )}
+              {shippingDiscount > 0 && (
+                <div className="flex justify-between text-green-700">
+                  <span>Shipping Discount</span>
+                  <span>-{formatPrice(shippingDiscount)}</span>
                 </div>
               )}
               <div className="flex justify-between">
