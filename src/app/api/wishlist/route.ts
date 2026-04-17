@@ -1,21 +1,22 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/service';
 
 const addWishlistSchema = z.object({
   product_id: z.string().uuid(),
 });
 
 async function ensureWishlistId(userId: string) {
-  const supabase = await createClient();
-  const { data: existing } = await supabase
+  const service = createServiceClient();
+  const { data: existing } = await service
     .from('wishlists')
     .select('id')
     .eq('user_id', userId)
     .maybeSingle();
   if (existing?.id) return existing.id;
 
-  const { data: created, error } = await supabase
+  const { data: created, error } = await service
     .from('wishlists')
     .insert({ user_id: userId })
     .select('id')
@@ -28,6 +29,7 @@ async function ensureWishlistId(userId: string) {
 
 export async function GET() {
   const supabase = await createClient();
+  const service = createServiceClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -36,7 +38,7 @@ export async function GET() {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const { data: wishlist } = await supabase
+  const { data: wishlist } = await service
     .from('wishlists')
     .select('id')
     .eq('user_id', user.id)
@@ -45,7 +47,7 @@ export async function GET() {
     return NextResponse.json({ data: [] });
   }
 
-  const { data, error } = await supabase
+  const { data, error } = await service
     .from('wishlist_items')
     .select('product_id')
     .eq('wishlist_id', wishlist.id);
@@ -58,6 +60,7 @@ export async function GET() {
 
 export async function POST(req: Request) {
   const supabase = await createClient();
+  const service = createServiceClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -73,7 +76,7 @@ export async function POST(req: Request) {
 
   try {
     const wishlistId = await ensureWishlistId(user.id);
-    const { error } = await supabase.from('wishlist_items').insert({
+    const { error } = await service.from('wishlist_items').insert({
       wishlist_id: wishlistId,
       product_id: parsed.data.product_id,
     });

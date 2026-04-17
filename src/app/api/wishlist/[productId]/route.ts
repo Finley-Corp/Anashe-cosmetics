@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/service';
 
 export async function DELETE(
   _: Request,
@@ -7,6 +8,7 @@ export async function DELETE(
 ) {
   const { productId } = await params;
   const supabase = await createClient();
+  const service = createServiceClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -15,7 +17,7 @@ export async function DELETE(
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const { data: wishlist } = await supabase
+  const { data: wishlist } = await service
     .from('wishlists')
     .select('id')
     .eq('user_id', user.id)
@@ -24,7 +26,7 @@ export async function DELETE(
     return NextResponse.json({ success: true });
   }
 
-  const { error } = await supabase
+  const { error } = await service
     .from('wishlist_items')
     .delete()
     .eq('wishlist_id', wishlist.id)
