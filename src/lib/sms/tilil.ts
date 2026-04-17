@@ -75,10 +75,11 @@ export async function sendSmsNotification(payload: SmsPayload): Promise<{
     }
 
     if (first.status_code === '1000') {
+      console.log(`[TILIL SMS] ✓ Sent to ${first.mobile_number} | msgId=${first.message_id} | cost=${first.message_cost} | balance=${first.credit_balance}`);
       return { success: true, messageId: first.message_id };
     }
 
-    console.error('[TILIL SMS] API error:', first.status_code, first.status_desc);
+    console.error(`[TILIL SMS] ✗ Failed to ${mobile} | code=${first.status_code} | reason=${first.status_desc}`);
     return { success: false, error: `${first.status_code}: ${first.status_desc}` };
   } catch (err) {
     console.error('[TILIL SMS] Network error:', err);

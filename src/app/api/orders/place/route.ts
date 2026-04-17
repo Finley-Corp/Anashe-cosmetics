@@ -173,11 +173,19 @@ export async function POST(req: Request) {
     }
 
     const emailToUse = contactEmail?.trim() || user.email || null;
-    const [smsResult, emailResult] = await Promise.all([
+    const ownerPhone = process.env.OWNER_PHONE;
+
+    const [smsResult, , emailResult] = await Promise.all([
       sendSmsNotification({
         to: phone,
         body: `Anashe: Your order ${order.order_number} has been placed. Total KES ${Math.round(Number(order.total)).toLocaleString('en-KE')}. We will contact you shortly.`,
       }),
+      ownerPhone
+        ? sendSmsNotification({
+            to: ownerPhone,
+            body: `Anashe NEW ORDER: ${order.order_number} | KES ${Math.round(Number(order.total)).toLocaleString('en-KE')} | ${orderItemsPayload.length} item(s) | Phone: ${phone}`,
+          })
+        : Promise.resolve({ success: false, skipped: true }),
       emailToUse
         ? sendOrderConfirmationEmail({
             to: emailToUse,

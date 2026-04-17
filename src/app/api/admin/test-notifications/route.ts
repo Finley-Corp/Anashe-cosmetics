@@ -27,6 +27,9 @@ export async function GET() {
     TILIL_SHORTCODE: process.env.TILIL_SHORTCODE
       ? `✓ set ("${process.env.TILIL_SHORTCODE}")`
       : '✗ MISSING',
+    OWNER_PHONE: process.env.OWNER_PHONE
+      ? `✓ set ("${process.env.OWNER_PHONE}")`
+      : '✗ not set (owner will not receive order alerts)',
   };
 
   const resend = {
