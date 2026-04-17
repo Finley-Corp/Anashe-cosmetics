@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { createServiceClient } from '@/lib/supabase/service';
 import { sendSmsNotification } from '@/lib/sms/tilil';
+import { sendBookingConfirmationEmail } from '@/lib/email/resend';
 
 const serviceBookingSchema = z.object({
   full_name: z.string().trim().min(2).max(120),
@@ -43,11 +44,19 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  // Notify customer via SMS after successful booking creation.
-  await sendSmsNotification({
-    to: payload.phone,
-    body: `Anashe: Hi ${payload.full_name}, your ${payload.service_type} booking for ${payload.preferred_date} at ${payload.preferred_time} is received. We will confirm shortly.`,
-  });
+  await Promise.all([
+    sendSmsNotification({
+      to: payload.phone,
+      body: `Anashe: Hi ${payload.full_name}, your ${payload.service_type} booking for ${payload.preferred_date} at ${payload.preferred_time} has been received. We will confirm shortly.`,
+    }),
+    sendBookingConfirmationEmail({
+      to: payload.email,
+      customerName: payload.full_name,
+      serviceType: payload.service_type,
+      preferredDate: payload.preferred_date,
+      preferredTime: payload.preferred_time,
+    }),
+  ]);
 
   return NextResponse.json({ success: true });
 }

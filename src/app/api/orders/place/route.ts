@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server';
 import { createServiceClient } from '@/lib/supabase/service';
 import { generateOrderNumber } from '@/lib/utils';
 import { sendSmsNotification } from '@/lib/sms/tilil';
+import { sendOrderConfirmationEmail } from '@/lib/email/resend';
 
 const schema = z.object({
   phone: z.string().regex(/^(\+?254|0)[17]\d{8}$/, 'Invalid Kenyan phone number'),
@@ -170,12 +171,25 @@ export async function POST(req: Request) {
       await service.from('coupons').update({ used_count: nextUsedCount }).eq('id', couponId);
     }
 
-    const smsResult = await sendSmsNotification({
-      to: phone,
-      body: `Anashe: Your order ${order.order_number} has been received. Total ${Math.round(
-        Number(order.total)
-      ).toLocaleString('en-KE')} KES. We will contact you shortly.`,
-    });
+    const [smsResult] = await Promise.all([
+      sendSmsNotification({
+        to: phone,
+        body: `Anashe: Your order ${order.order_number} has been placed. Total KES ${Math.round(Number(order.total)).toLocaleString('en-KE')}. We will contact you shortly.`,
+      }),
+      user.email
+        ? sendOrderConfirmationEmail({
+            to: user.email,
+            customerName: user.user_metadata?.full_name ?? null,
+            orderNumber: order.order_number,
+            total: Number(order.total),
+            items: orderItemsPayload.map((i) => ({
+              product_name: i.product_name,
+              quantity: i.quantity,
+              unit_price: i.unit_price,
+            })),
+          })
+        : Promise.resolve({ success: false, skipped: true }),
+    ]);
 
     return NextResponse.json({
       success: true,
