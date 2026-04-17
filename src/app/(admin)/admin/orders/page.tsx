@@ -1,5 +1,6 @@
 import { Download } from 'lucide-react';
 import { createServiceClient } from '@/lib/supabase/service';
+import { OrderStatusActions } from './order-status-actions';
 
 const STATUS_BADGE: Record<string, string> = {
   pending_payment: 'bg-yellow-500/15 text-yellow-300 border-yellow-500/20',
@@ -36,7 +37,7 @@ export default async function AdminOrdersPage() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-white/5 bg-white/[0.02]">
-                {['Order', 'Customer', 'Phone', 'Items', 'Total', 'Date', 'Status'].map((h) => (
+                {['Order', 'Customer', 'Phone', 'Items', 'Total', 'Date', 'Status', 'Actions'].map((h) => (
                   <th key={h} className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">{h}</th>
                 ))}
               </tr>
@@ -58,6 +59,9 @@ export default async function AdminOrdersPage() {
                     <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full border capitalize ${STATUS_BADGE[order.status] ?? 'bg-neutral-100 text-neutral-600 border-neutral-100'}`}>
                       {order.status.replace(/_/g, ' ')}
                     </span>
+                  </td>
+                  <td className="px-4 py-3">
+                    <OrderStatusActions orderId={order.id} currentStatus={order.status} />
                   </td>
                       </>
                     );
