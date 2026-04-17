@@ -26,6 +26,54 @@ const schema = z.object({
   contactEmail: z.string().email().optional().nullable(),
 });
 
+function buildOwnerOrderSms(input: {
+  orderNumber: string;
+  total: number;
+  customerName: string | null;
+  customerEmail: string | null;
+  customerPhone: string;
+  items: Array<{ product_name: string; variant_name: string | null; quantity: number }>;
+  shippingAddress: {
+    line1: string;
+    line2: string | null;
+    city: string;
+    county: string | null;
+    country?: string;
+  };
+}): string {
+  const itemSummary = input.items
+    .slice(0, 4)
+    .map((item) => {
+      const itemName = item.variant_name ? `${item.product_name} (${item.variant_name})` : item.product_name;
+      return `${item.quantity}x ${itemName}`;
+    })
+    .join('; ');
+
+  const hasMoreItems = input.items.length > 4;
+  const locationParts = [
+    input.shippingAddress.line1,
+    input.shippingAddress.line2,
+    input.shippingAddress.city,
+    input.shippingAddress.county,
+    input.shippingAddress.country ?? 'Kenya',
+  ].filter(Boolean);
+
+  const lines = [
+    `Anashe NEW ORDER`,
+    `Ref: ${input.orderNumber}`,
+    `Total: KES ${Math.round(Number(input.total)).toLocaleString('en-KE')}`,
+    `Customer: ${input.customerName ?? 'Not provided'}`,
+    `Email: ${input.customerEmail ?? 'Not provided'}`,
+    `Phone: ${input.customerPhone}`,
+    `Items: ${itemSummary}${hasMoreItems ? `; +${input.items.length - 4} more` : ''}`,
+    `Delivery: ${locationParts.join(', ')}`,
+  ];
+
+  const fullBody = lines.join('\n');
+  if (fullBody.length <= 900) return fullBody;
+  return `${fullBody.slice(0, 897)}...`;
+}
+
 export async function POST(req: Request) {
   try {
     const parsed = schema.safeParse(await req.json());
@@ -175,6 +223,24 @@ export async function POST(req: Request) {
     const emailToUse = contactEmail?.trim() || user.email || null;
     const ownerPhone = process.env.OWNER_PHONE;
 
+    const customerName =
+      typeof user.user_metadata?.full_name === 'string' && user.user_metadata.full_name.trim()
+        ? user.user_metadata.full_name.trim()
+        : null;
+    const ownerOrderSmsBody = buildOwnerOrderSms({
+      orderNumber: order.order_number,
+      total: Number(order.total),
+      customerName,
+      customerEmail: emailToUse,
+      customerPhone: phone,
+      items: orderItemsPayload.map((item) => ({
+        product_name: item.product_name,
+        variant_name: item.variant_name,
+        quantity: item.quantity,
+      })),
+      shippingAddress,
+    });
+
     const [smsResult, , emailResult] = await Promise.all([
       sendSmsNotification({
         to: phone,
@@ -183,7 +249,7 @@ export async function POST(req: Request) {
       ownerPhone
         ? sendSmsNotification({
             to: ownerPhone,
-            body: `Anashe NEW ORDER: ${order.order_number} | KES ${Math.round(Number(order.total)).toLocaleString('en-KE')} | ${orderItemsPayload.length} item(s) | Phone: ${phone}`,
+            body: ownerOrderSmsBody,
           })
         : Promise.resolve({ success: false, skipped: true }),
       emailToUse
