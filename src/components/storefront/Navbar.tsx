@@ -124,9 +124,13 @@ export function Navbar() {
         <div className="lg:hidden fixed inset-x-0 top-16 bottom-0 z-[70] border-t border-neutral-200 bg-white shadow-2xl">
           <div className="px-8 py-8 max-h-[calc(100vh-64px)] overflow-y-auto">
             <div className="border-b border-neutral-200 pb-6">
-              <span className="block text-[24px] leading-none tracking-[0.22em] font-semibold uppercase text-[var(--primary)]">
+              <Link
+                href="/products"
+                onClick={() => setIsMobileOpen(false)}
+                className="block text-[24px] leading-none tracking-[0.22em] font-semibold uppercase text-[var(--primary)]"
+              >
                 Shop
-              </span>
+              </Link>
             </div>
 
             <div className="border-b border-neutral-200 py-6">

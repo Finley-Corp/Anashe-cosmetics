@@ -38,10 +38,10 @@ export const useCartStore = create<CartStore>()(
               ...updated[existingIndex],
               quantity: updated[existingIndex].quantity + newItem.quantity,
             };
-            return { items: updated, isOpen: true };
+            return { items: updated };
           }
 
-          return { items: [...state.items, newItem], isOpen: true };
+          return { items: [...state.items, newItem] };
         });
       },
 
