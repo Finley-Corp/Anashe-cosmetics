@@ -201,19 +201,25 @@ export async function POST(req: Request) {
         : Promise.resolve({ success: false, skipped: true }),
     ]);
 
+    const smsSkipped = 'skipped' in smsResult ? Boolean(smsResult.skipped) : false;
+    const smsError = 'error' in smsResult ? smsResult.error ?? null : null;
+    const smsMessageId = 'messageId' in smsResult ? smsResult.messageId ?? null : null;
+    const emailSkipped = 'skipped' in emailResult ? Boolean(emailResult.skipped) : false;
+    const emailError = 'error' in emailResult ? emailResult.error ?? null : null;
+
     return NextResponse.json({
       success: true,
       orderId: order.id,
       orderNumber: order.order_number,
       total: Number(order.total),
       smsSent: smsResult.success,
-      smsSkipped: smsResult.skipped ?? false,
-      smsError: smsResult.error ?? null,
-      smsMessageId: smsResult.messageId ?? null,
+      smsSkipped,
+      smsError,
+      smsMessageId,
       smsTo: phone,
       emailSent: Boolean(emailResult.success),
-      emailSkipped: Boolean(emailResult.skipped),
-      emailError: emailResult.error ?? null,
+      emailSkipped,
+      emailError,
       message: 'Order placed successfully',
     });
   } catch (error) {
