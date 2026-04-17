@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { CheckCircle, Loader2 } from 'lucide-react';
@@ -9,6 +9,20 @@ import { useToast } from '@/components/shared/Toaster';
 import { formatPrice, isValidKenyanPhone } from '@/lib/utils';
 
 type Step = 'form' | 'success';
+type ProfilePrefill = {
+  full_name: string | null;
+  phone: string | null;
+  email: string | null;
+};
+type AddressPrefill = {
+  id: string;
+  line1: string;
+  line2: string | null;
+  city: string;
+  county: string | null;
+  country: string;
+  is_default: boolean;
+};
 
 export default function CheckoutPage() {
   const { items, getSubtotal, clearCart } = useCartStore();
@@ -31,6 +45,7 @@ export default function CheckoutPage() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [orderId, setOrderId] = useState<string>('');
   const [orderNumber, setOrderNumber] = useState<string>('');
+  const didPrefill = useRef(false);
 
   const subtotal = getSubtotal();
   const shippingBase = subtotal >= 2000 ? 0 : 250;
@@ -141,6 +156,51 @@ export default function CheckoutPage() {
       setIsProcessing(false);
     }
   }
+
+  useEffect(() => {
+    if (didPrefill.current) return;
+    didPrefill.current = true;
+
+    const autofillFromAccount = async () => {
+      try {
+        const [profileRes, addressesRes] = await Promise.all([
+          fetch('/api/account/profile', { cache: 'no-store' }),
+          fetch('/api/account/addresses', { cache: 'no-store' }),
+        ]);
+
+        if (!profileRes.ok || !addressesRes.ok) {
+          return;
+        }
+
+        const profilePayload = (await profileRes.json().catch(() => ({}))) as { data?: ProfilePrefill };
+        const addressesPayload = (await addressesRes.json().catch(() => ({}))) as { data?: AddressPrefill[] };
+
+        const profile = profilePayload.data;
+        const addresses = Array.isArray(addressesPayload.data) ? addressesPayload.data : [];
+        const preferredAddress = addresses.find((entry) => entry.is_default) ?? addresses[0];
+
+        const fullName = profile?.full_name?.trim() ?? '';
+        const [prefillFirstName = '', ...restNameParts] = fullName ? fullName.split(/\s+/) : [];
+        const prefillLastName = restNameParts.join(' ');
+
+        setContact((current) => current || profile?.email?.trim() || '');
+        setFirstName((current) => current || prefillFirstName);
+        setLastName((current) => current || prefillLastName);
+        setPhone((current) => current || profile?.phone?.trim() || '');
+
+        if (preferredAddress) {
+          setAddress((current) => current || preferredAddress.line1 || '');
+          setApartment((current) => current || preferredAddress.line2 || '');
+          setCity((current) => current || preferredAddress.city || '');
+          setCounty((current) => current || preferredAddress.county || '');
+        }
+      } catch {
+        // Checkout works without autofill; ignore background prefill failures.
+      }
+    };
+
+    void autofillFromAccount();
+  }, []);
 
   useEffect(() => {
     if (items.length === 0 && step !== 'success') {
