@@ -4,8 +4,36 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ShoppingBag, Minus, Plus, X, ArrowRight, Tag } from 'lucide-react';
 import { useCartStore } from '@/store/cart';
-import { formatPrice } from '@/lib/utils';
-import { useState } from 'react';
+import { formatPrice, isSupabaseStorageUrl, resolveProductImageUrl, shouldUnoptimizeImage } from '@/lib/utils';
+import { useMemo, useState } from 'react';
+
+function CartProductImage({ image, name }: { image?: string | null; name: string }) {
+  const [failed, setFailed] = useState(false);
+  const resolved = useMemo(() => resolveProductImageUrl(image), [image]);
+
+  if (!resolved || failed) {
+    return <div className="w-full h-full bg-neutral-200" />;
+  }
+
+  if (isSupabaseStorageUrl(resolved)) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img src={resolved} alt={name} className="w-full h-full object-cover" loading="lazy" onError={() => setFailed(true)} />
+    );
+  }
+
+  return (
+    <Image
+      src={resolved}
+      alt={name}
+      width={96}
+      height={96}
+      className="w-full h-full object-cover"
+      unoptimized={shouldUnoptimizeImage(resolved)}
+      onError={() => setFailed(true)}
+    />
+  );
+}
 
 export default function CartPage() {
   const { items, removeItem, updateQuantity, getSubtotal, clearCart } = useCartStore();
@@ -83,11 +111,7 @@ export default function CartPage() {
             return (
               <div key={`${item.productId}-${item.variantId}`} className="flex gap-4 p-4 bg-white border border-neutral-100 rounded-2xl">
                 <div className="w-24 h-24 bg-neutral-100 rounded-xl overflow-hidden shrink-0">
-                  {item.product.image ? (
-                    <Image src={item.product.image} alt={item.product.name} width={96} height={96} className="w-full h-full object-cover" />
-                  ) : (
-                    <div className="w-full h-full bg-neutral-200" />
-                  )}
+                  <CartProductImage image={item.product.image} name={item.product.name} />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex justify-between gap-2">

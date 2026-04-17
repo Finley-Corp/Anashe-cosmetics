@@ -93,6 +93,7 @@ export default function CheckoutPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           phone,
+          contactEmail: contact.includes('@') ? contact.trim() : undefined,
           couponCode: couponCode || undefined,
           shippingAddress: {
             line1: `${address}${apartment ? `, ${apartment}` : ''}`,
@@ -117,7 +118,20 @@ export default function CheckoutPage() {
         showToast(
           payload.smsSkipped
             ? 'Order placed, but SMS is not configured yet.'
-            : 'Order placed, but SMS delivery failed.',
+            : `Order placed, but SMS delivery failed${payload.smsError ? `: ${payload.smsError}` : '.'}`,
+          'info'
+        );
+      } else {
+        showToast(
+          `SMS queued to ${payload.smsTo ?? phone}${payload.smsMessageId ? ` (ID: ${payload.smsMessageId})` : ''}.`,
+          'success'
+        );
+      }
+      if (!payload.emailSent) {
+        showToast(
+          payload.emailSkipped
+            ? 'Order placed, but email was skipped (no customer email found).'
+            : `Order placed, but email delivery failed${payload.emailError ? `: ${payload.emailError}` : '.'}`,
           'info'
         );
       }

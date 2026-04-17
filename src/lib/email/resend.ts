@@ -2,7 +2,7 @@ import { Resend } from 'resend';
 
 const resendApiKey = process.env.RESEND_API_KEY;
 const resend = resendApiKey ? new Resend(resendApiKey) : null;
-const FROM = 'Anashe <hello@siscom.africa>';
+const FROM = process.env.RESEND_FROM_EMAIL?.trim() || 'Anashe <onboarding@resend.dev>';
 
 function baseTemplate(body: string) {
   return `<!DOCTYPE html>

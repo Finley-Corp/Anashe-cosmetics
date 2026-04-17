@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 import {
   LayoutDashboard, Package, ShoppingCart, Star, LogOut, Store, Command, CalendarClock,
-  Tags, Users, Percent,
+  Tags, Users, Percent, Settings,
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 
@@ -18,6 +18,7 @@ const NAV = [
   { label: 'Orders', href: '/admin/orders', icon: ShoppingCart },
   { label: 'Services', href: '/admin/services', icon: CalendarClock },
   { label: 'Reviews', href: '/admin/reviews', icon: Star },
+  { label: 'Settings', href: '/admin/settings', icon: Settings },
 ];
 
 export function AdminSidebar() {

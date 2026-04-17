@@ -23,6 +23,7 @@ const schema = z.object({
     country: z.string().optional(),
   }),
   couponCode: z.string().optional(),
+  contactEmail: z.string().email().optional().nullable(),
 });
 
 export async function POST(req: Request) {
@@ -39,7 +40,7 @@ export async function POST(req: Request) {
     } = await supabase.auth.getUser();
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const { phone, cartItems, shippingAddress, couponCode } = parsed.data;
+    const { phone, cartItems, shippingAddress, couponCode, contactEmail } = parsed.data;
     if (cartItems.length === 0) {
       return NextResponse.json({ error: 'Cart is empty' }, { status: 422 });
     }
@@ -171,14 +172,15 @@ export async function POST(req: Request) {
       await service.from('coupons').update({ used_count: nextUsedCount }).eq('id', couponId);
     }
 
-    const [smsResult] = await Promise.all([
+    const emailToUse = contactEmail?.trim() || user.email || null;
+    const [smsResult, emailResult] = await Promise.all([
       sendSmsNotification({
         to: phone,
         body: `Anashe: Your order ${order.order_number} has been placed. Total KES ${Math.round(Number(order.total)).toLocaleString('en-KE')}. We will contact you shortly.`,
       }),
-      user.email
+      emailToUse
         ? sendOrderConfirmationEmail({
-            to: user.email,
+            to: emailToUse,
             customerName: user.user_metadata?.full_name ?? null,
             orderNumber: order.order_number,
             total: Number(order.total),
@@ -198,6 +200,12 @@ export async function POST(req: Request) {
       total: Number(order.total),
       smsSent: smsResult.success,
       smsSkipped: smsResult.skipped ?? false,
+      smsError: smsResult.error ?? null,
+      smsMessageId: smsResult.messageId ?? null,
+      smsTo: phone,
+      emailSent: Boolean(emailResult.success),
+      emailSkipped: Boolean(emailResult.skipped),
+      emailError: emailResult.error ?? null,
       message: 'Order placed successfully',
     });
   } catch (error) {
