@@ -11,17 +11,47 @@ export default function CartPage() {
   const { items, removeItem, updateQuantity, getSubtotal, clearCart } = useCartStore();
   const [couponCode, setCouponCode] = useState('');
   const [discount, setDiscount] = useState(0);
+  const [shippingDiscount, setShippingDiscount] = useState(0);
   const subtotal = getSubtotal();
-  const shipping = subtotal >= 2000 ? 0 : 250;
+  const shippingBase = subtotal >= 2000 ? 0 : 250;
+  const shipping = Math.max(0, shippingBase - shippingDiscount);
   const total = subtotal - discount + shipping;
 
-  function applyCoupon() {
-    if (couponCode.toUpperCase() === 'WELCOME10') {
-      setDiscount(Math.round(subtotal * 0.1));
-    } else if (couponCode.toUpperCase() === 'SAVE200' && subtotal >= 1000) {
-      setDiscount(200);
-    } else {
-      alert('Invalid or expired coupon code.');
+  async function applyCoupon() {
+    const code = couponCode.trim().toUpperCase();
+    if (!code) {
+      alert('Enter a coupon code first.');
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/coupons/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          code,
+          subtotal,
+          shipping: shippingBase,
+        }),
+      });
+      const payload = (await res.json().catch(() => ({}))) as {
+        error?: string;
+        data?: { discount?: number; shippingDiscount?: number };
+      };
+      if (!res.ok || !payload.data) {
+        setDiscount(0);
+        setShippingDiscount(0);
+        alert(payload.error ?? 'Invalid or expired coupon code.');
+        return;
+      }
+
+      setCouponCode(code);
+      setDiscount(Number(payload.data.discount ?? 0));
+      setShippingDiscount(Number(payload.data.shippingDiscount ?? 0));
+    } catch {
+      setDiscount(0);
+      setShippingDiscount(0);
+      alert('Unable to validate coupon right now.');
     }
   }
 
@@ -126,6 +156,12 @@ export default function CartPage() {
                 <div className="flex justify-between text-green-700">
                   <span>Discount</span>
                   <span>-{formatPrice(discount)}</span>
+                </div>
+              )}
+              {shippingDiscount > 0 && (
+                <div className="flex justify-between text-green-700">
+                  <span>Shipping Discount</span>
+                  <span>-{formatPrice(shippingDiscount)}</span>
                 </div>
               )}
               <div className="flex justify-between">

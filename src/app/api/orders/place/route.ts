@@ -94,16 +94,25 @@ export async function POST(req: Request) {
     let shipping = subtotal >= 2000 ? 0 : 250;
     let couponId: string | null = null;
 
-    if (couponCode) {
+    if (couponCode?.trim()) {
+      const normalizedCouponCode = couponCode.trim().toUpperCase();
       const { data: coupon } = await service
         .from('coupons')
         .select('*')
-        .eq('code', couponCode.toUpperCase())
+        .eq('code', normalizedCouponCode)
         .eq('is_active', true)
         .maybeSingle();
       if (coupon) {
-        couponId = coupon.id;
-        if (subtotal >= Number(coupon.min_order_value ?? 0)) {
+        const now = new Date();
+        const startsAtValid = !coupon.starts_at || new Date(coupon.starts_at) <= now;
+        const expiresAtValid = !coupon.expires_at || new Date(coupon.expires_at) >= now;
+        const maxUsesValid =
+          typeof coupon.max_uses !== 'number' ||
+          coupon.max_uses <= 0 ||
+          Number(coupon.used_count ?? 0) < coupon.max_uses;
+
+        if (startsAtValid && expiresAtValid && maxUsesValid && subtotal >= Number(coupon.min_order_value ?? 0)) {
+          couponId = coupon.id;
           if (coupon.type === 'percentage') {
             discount = Math.round((subtotal * Number(coupon.value)) / 100);
           } else if (coupon.type === 'fixed') {
@@ -155,8 +164,13 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: itemInsertError.message }, { status: 500 });
     }
 
-    // Fire-and-forget customer SMS confirmation (does not block order success)
-    await sendSmsNotification({
+    if (couponId) {
+      const { data: couponRow } = await service.from('coupons').select('used_count').eq('id', couponId).maybeSingle();
+      const nextUsedCount = Number(couponRow?.used_count ?? 0) + 1;
+      await service.from('coupons').update({ used_count: nextUsedCount }).eq('id', couponId);
+    }
+
+    const smsResult = await sendSmsNotification({
       to: phone,
       body: `Anashe: Your order ${order.order_number} has been received. Total ${Math.round(
         Number(order.total)
@@ -168,6 +182,8 @@ export async function POST(req: Request) {
       orderId: order.id,
       orderNumber: order.order_number,
       total: Number(order.total),
+      smsSent: smsResult.success,
+      smsSkipped: smsResult.skipped ?? false,
       message: 'Order placed successfully',
     });
   } catch (error) {
