@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { createServiceClient } from '@/lib/supabase/service';
 import { sendSmsNotification } from '@/lib/sms/tilil';
 import { sendBookingConfirmationEmail } from '@/lib/email/resend';
+import { isValidKenyanPhone } from '@/lib/utils';
 
 const serviceBookingSchema = z.object({
   full_name: z.string().trim().min(2).max(120),
@@ -23,6 +24,12 @@ export async function POST(req: Request) {
 
   const admin = createServiceClient();
   const payload = parsed.data;
+  if (!isValidKenyanPhone(payload.phone)) {
+    return NextResponse.json(
+      { error: 'Please enter a valid Kenyan phone number (e.g. 0712345678).' },
+      { status: 422 }
+    );
+  }
 
   const { error } = await admin.from('service_bookings').insert({
     full_name: payload.full_name,
@@ -44,7 +51,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  await Promise.all([
+  const [smsResult, emailResult] = await Promise.all([
     sendSmsNotification({
       to: payload.phone,
       body: `Anashe: Hi ${payload.full_name}, your ${payload.service_type} booking for ${payload.preferred_date} at ${payload.preferred_time} has been received. We will confirm shortly.`,
@@ -58,5 +65,18 @@ export async function POST(req: Request) {
     }),
   ]);
 
-  return NextResponse.json({ success: true });
+  const smsSkipped = 'skipped' in smsResult ? Boolean(smsResult.skipped) : false;
+  const smsError = 'error' in smsResult ? smsResult.error ?? null : null;
+  const emailSkipped = 'skipped' in emailResult ? Boolean(emailResult.skipped) : false;
+  const emailError = 'error' in emailResult ? emailResult.error ?? null : null;
+
+  return NextResponse.json({
+    success: true,
+    smsSent: Boolean(smsResult.success),
+    smsSkipped,
+    smsError,
+    emailSent: Boolean(emailResult.success),
+    emailSkipped,
+    emailError,
+  });
 }

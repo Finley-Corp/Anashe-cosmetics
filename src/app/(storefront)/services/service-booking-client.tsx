@@ -48,6 +48,7 @@ const SERVICE_IMAGES = [
 export function ServiceBookingClient() {
   const { add: showToast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmittingFeedback, setIsSubmittingFeedback] = useState(false);
   const [form, setForm] = useState({
     full_name: '',
     email: '',
@@ -56,6 +57,12 @@ export function ServiceBookingClient() {
     preferred_date: '',
     preferred_time: '',
     notes: '',
+  });
+  const [feedbackForm, setFeedbackForm] = useState({
+    full_name: '',
+    email: '',
+    rating: 5,
+    message: '',
   });
 
   async function handleSubmit(e: React.FormEvent) {
@@ -67,11 +74,24 @@ export function ServiceBookingClient() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
       });
-      const payload = await res.json();
+      const payload = (await res.json().catch(() => ({}))) as {
+        error?: string;
+        smsSent?: boolean;
+        smsSkipped?: boolean;
+        smsError?: string | null;
+      };
       if (!res.ok) {
         throw new Error(payload.error ?? 'Failed to submit booking request');
       }
       showToast('Booking request submitted. We will contact you shortly.');
+      if (!payload.smsSent) {
+        showToast(
+          payload.smsSkipped
+            ? 'Booking saved, but SMS is not configured yet.'
+            : `Booking saved, but SMS delivery failed${payload.smsError ? `: ${payload.smsError}` : '.'}`,
+          'info'
+        );
+      }
       setForm({
         full_name: '',
         email: '',
@@ -85,6 +105,33 @@ export function ServiceBookingClient() {
       showToast(err instanceof Error ? err.message : 'Failed to submit booking request', 'error');
     } finally {
       setIsSubmitting(false);
+    }
+  }
+
+  async function handleFeedbackSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setIsSubmittingFeedback(true);
+    try {
+      const res = await fetch('/api/services/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(feedbackForm),
+      });
+      const payload = (await res.json().catch(() => ({}))) as { error?: string };
+      if (!res.ok) {
+        throw new Error(payload.error ?? 'Failed to submit feedback');
+      }
+      showToast('Thank you! Your feedback has been submitted.');
+      setFeedbackForm({
+        full_name: '',
+        email: '',
+        rating: 5,
+        message: '',
+      });
+    } catch (err: unknown) {
+      showToast(err instanceof Error ? err.message : 'Failed to submit feedback', 'error');
+    } finally {
+      setIsSubmittingFeedback(false);
     }
   }
 
@@ -259,6 +306,73 @@ export function ServiceBookingClient() {
               className="mt-6 inline-flex h-11 items-center rounded-full bg-[var(--primary)] px-7 text-sm font-semibold text-white transition-colors hover:bg-[var(--primary-hover)] disabled:cursor-not-allowed disabled:opacity-70"
             >
               {isSubmitting ? 'Submitting...' : 'Book Service'}
+            </button>
+          </form>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-[1400px] px-4 py-16 md:px-8">
+        <div className="grid gap-8 lg:grid-cols-3">
+          <div className="lg:col-span-1">
+            <h2 className="text-3xl font-semibold tracking-tight text-neutral-900">Service Feedback</h2>
+            <p className="mt-3 max-w-sm text-sm leading-relaxed text-neutral-600">
+              Tell us how your service experience went so we can keep improving consultation quality and support.
+            </p>
+          </div>
+          <form onSubmit={handleFeedbackSubmit} className="rounded-2xl border border-neutral-200 bg-white p-6 md:p-8 lg:col-span-2">
+            <div className="grid gap-4 sm:grid-cols-2">
+              <label className="space-y-1.5">
+                <span className="text-xs font-semibold uppercase tracking-[0.12em] text-neutral-500">Full Name</span>
+                <input
+                  type="text"
+                  required
+                  value={feedbackForm.full_name}
+                  onChange={(e) => setFeedbackForm((prev) => ({ ...prev, full_name: e.target.value }))}
+                  className="h-11 w-full rounded-none border border-neutral-300 px-3 text-sm outline-none transition-colors focus:border-neutral-900"
+                />
+              </label>
+              <label className="space-y-1.5">
+                <span className="text-xs font-semibold uppercase tracking-[0.12em] text-neutral-500">Email</span>
+                <input
+                  type="email"
+                  required
+                  value={feedbackForm.email}
+                  onChange={(e) => setFeedbackForm((prev) => ({ ...prev, email: e.target.value }))}
+                  className="h-11 w-full rounded-none border border-neutral-300 px-3 text-sm outline-none transition-colors focus:border-neutral-900"
+                />
+              </label>
+            </div>
+            <label className="mt-4 block space-y-1.5">
+              <span className="text-xs font-semibold uppercase tracking-[0.12em] text-neutral-500">Rating</span>
+              <select
+                value={feedbackForm.rating}
+                onChange={(e) => setFeedbackForm((prev) => ({ ...prev, rating: Number(e.target.value) }))}
+                className="h-11 w-full rounded-none border border-neutral-300 bg-white px-3 text-sm outline-none transition-colors focus:border-neutral-900"
+              >
+                {[5, 4, 3, 2, 1].map((rating) => (
+                  <option key={rating} value={rating}>
+                    {rating} star{rating > 1 ? 's' : ''}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="mt-4 block space-y-1.5">
+              <span className="text-xs font-semibold uppercase tracking-[0.12em] text-neutral-500">Feedback</span>
+              <textarea
+                required
+                value={feedbackForm.message}
+                onChange={(e) => setFeedbackForm((prev) => ({ ...prev, message: e.target.value }))}
+                rows={4}
+                placeholder="Share what worked well and what we should improve."
+                className="w-full rounded-none border border-neutral-300 px-3 py-2.5 text-sm outline-none transition-colors focus:border-neutral-900"
+              />
+            </label>
+            <button
+              type="submit"
+              disabled={isSubmittingFeedback}
+              className="mt-6 inline-flex h-11 items-center rounded-full bg-[var(--primary)] px-7 text-sm font-semibold text-white transition-colors hover:bg-[var(--primary-hover)] disabled:cursor-not-allowed disabled:opacity-70"
+            >
+              {isSubmittingFeedback ? 'Submitting...' : 'Submit Feedback'}
             </button>
           </form>
         </div>
