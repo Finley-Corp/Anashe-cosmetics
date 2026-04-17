@@ -1,6 +1,6 @@
 # Anashe Fullstack.
 
-A fullstack skincare and cosmetics e-commerce application built with Next.js (App Router), Supabase, and M-Pesa checkout.
+A fullstack skincare and cosmetics e-commerce application built with Next.js (App Router), Supabase, and direct order management checkout.
 
 ## Tech Stack
 
@@ -10,7 +10,7 @@ A fullstack skincare and cosmetics e-commerce application built with Next.js (Ap
 - `Zustand` for cart state
 - `Zod` for API validation
 - `Resend` for email
-- `M-Pesa Daraja API` for mobile payments
+- `TILIL SMS API` for customer order/booking notifications
 
 ## Features
 
@@ -20,8 +20,8 @@ A fullstack skincare and cosmetics e-commerce application built with Next.js (Ap
 - Admin:
   - Product CRUD (with image upload to Supabase Storage)
   - Category, customer, discount, review, order management pages
-- Payments:
-  - M-Pesa STK push initiation and callback handling
+- Order flow:
+  - Direct order placement and admin fulfillment workflow
 - Security:
   - Route protection via middleware
   - RLS policies in Supabase migrations
@@ -51,7 +51,7 @@ scripts/
 - Node.js `>= 20`
 - npm `>= 10`
 - A Supabase project
-- M-Pesa Daraja credentials (for payment testing)
+- TILIL SMS API credentials (for notifications)
 
 ## Environment Variables
 
@@ -70,12 +70,9 @@ cp .env.local.example .env.local
 
 ### Optional but used by key flows
 
-- `MPESA_CONSUMER_KEY`
-- `MPESA_CONSUMER_SECRET`
-- `MPESA_SHORTCODE`
-- `MPESA_PASSKEY`
-- `MPESA_CALLBACK_URL`
-- `MPESA_ENV`
+- `TILIL_API_URL`
+- `TILIL_API_KEY`
+- `TILIL_SENDER_ID`
 - `RESEND_API_KEY`
 - `CRON_SECRET`
 
@@ -141,7 +138,7 @@ Core route handlers under `src/app/api` include:
 - Admin products: `/api/admin/products`, `/api/admin/products/[id]`
 - Admin uploads: `/api/admin/uploads/product-image`
 - Admin categories/customers/discounts/reviews
-- M-Pesa: `/api/mpesa/stk-push`, `/api/mpesa/callback`
+- Orders: `/api/orders/place`, `/api/orders/[id]/status`
 - Account/profile/address and order status routes
 
 ## Authentication and Access Control
@@ -160,7 +157,7 @@ Core route handlers under `src/app/api` include:
 ## Deployment Notes
 
 - Ensure production environment variables are set in your hosting provider.
-- Configure `MPESA_CALLBACK_URL` to your deployed domain.
+- Configure `TILIL_*` values for live SMS delivery.
 - Validate Supabase RLS policies before going live.
 - For Vercel cron usage, set `CRON_SECRET`.
 

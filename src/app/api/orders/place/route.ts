@@ -1,0 +1,180 @@
+import { NextResponse } from 'next/server';
+import { z } from 'zod';
+import { createClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/service';
+import { generateOrderNumber } from '@/lib/utils';
+import { sendSmsNotification } from '@/lib/sms/tilil';
+
+const schema = z.object({
+  phone: z.string().regex(/^(\+?254|0)[17]\d{8}$/, 'Invalid Kenyan phone number'),
+  cartItems: z.array(
+    z.object({
+      productId: z.string().uuid(),
+      variantId: z.string().uuid().nullable(),
+      quantity: z.number().int().min(1),
+    })
+  ),
+  shippingAddress: z.object({
+    line1: z.string().min(2),
+    line2: z.string().optional().nullable(),
+    city: z.string().min(2),
+    county: z.string().optional().nullable(),
+    country: z.string().optional(),
+  }),
+  couponCode: z.string().optional(),
+});
+
+export async function POST(req: Request) {
+  try {
+    const parsed = schema.safeParse(await req.json());
+    if (!parsed.success) {
+      return NextResponse.json({ error: 'Invalid request', details: parsed.error.flatten() }, { status: 422 });
+    }
+
+    const supabase = await createClient();
+    const service = createServiceClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+    const { phone, cartItems, shippingAddress, couponCode } = parsed.data;
+    if (cartItems.length === 0) {
+      return NextResponse.json({ error: 'Cart is empty' }, { status: 422 });
+    }
+
+    let subtotal = 0;
+    const orderItemsPayload: Array<{
+      product_id: string;
+      variant_id: string | null;
+      product_name: string;
+      product_image: string | null;
+      variant_name: string | null;
+      quantity: number;
+      unit_price: number;
+    }> = [];
+
+    for (const item of cartItems) {
+      const { data: product } = await service
+        .from('products')
+        .select('id,name,price,sale_price,images:product_images(url,is_primary)')
+        .eq('id', item.productId)
+        .single();
+      if (!product) continue;
+
+      const { data: variant } = item.variantId
+        ? await service.from('product_variants').select('id,name,price_modifier').eq('id', item.variantId).maybeSingle()
+        : { data: null };
+
+      const basePrice = Number(product.sale_price ?? product.price);
+      const unitPrice = Number(basePrice + Number(variant?.price_modifier ?? 0));
+      subtotal += unitPrice * item.quantity;
+
+      const primaryImage =
+        product.images?.find((img: { is_primary?: boolean; url: string }) => img.is_primary)?.url ??
+        product.images?.[0]?.url ??
+        null;
+
+      orderItemsPayload.push({
+        product_id: product.id,
+        variant_id: item.variantId ?? null,
+        product_name: product.name,
+        product_image: primaryImage,
+        variant_name: variant?.name ?? null,
+        quantity: item.quantity,
+        unit_price: unitPrice,
+      });
+    }
+
+    if (orderItemsPayload.length === 0) {
+      return NextResponse.json({ error: 'No valid items found in cart' }, { status: 422 });
+    }
+
+    let discount = 0;
+    let shipping = subtotal >= 2000 ? 0 : 250;
+    let couponId: string | null = null;
+
+    if (couponCode) {
+      const { data: coupon } = await service
+        .from('coupons')
+        .select('*')
+        .eq('code', couponCode.toUpperCase())
+        .eq('is_active', true)
+        .maybeSingle();
+      if (coupon) {
+        couponId = coupon.id;
+        if (subtotal >= Number(coupon.min_order_value ?? 0)) {
+          if (coupon.type === 'percentage') {
+            discount = Math.round((subtotal * Number(coupon.value)) / 100);
+          } else if (coupon.type === 'fixed') {
+            discount = Math.min(Number(coupon.value), subtotal);
+          } else if (coupon.type === 'free_shipping') {
+            shipping = 0;
+          }
+        }
+      }
+    }
+
+    const total = Math.max(0, subtotal - discount + shipping);
+    const orderNumber = generateOrderNumber();
+
+    const { data: order, error: orderError } = await service
+      .from('orders')
+      .insert({
+        order_number: orderNumber,
+        user_id: user.id,
+        status: 'processing',
+        subtotal,
+        discount_amount: discount,
+        shipping_amount: shipping,
+        total,
+        coupon_id: couponId,
+        shipping_address: {
+          line1: shippingAddress.line1,
+          line2: shippingAddress.line2 ?? null,
+          city: shippingAddress.city,
+          county: shippingAddress.county ?? null,
+          country: shippingAddress.country ?? 'Kenya',
+        },
+        payment_phone: phone,
+      })
+      .select('id,order_number,total')
+      .single();
+
+    if (orderError || !order) {
+      return NextResponse.json({ error: orderError?.message ?? 'Unable to create order' }, { status: 500 });
+    }
+
+    const { error: itemInsertError } = await service.from('order_items').insert(
+      orderItemsPayload.map((item) => ({
+        ...item,
+        order_id: order.id,
+      }))
+    );
+    if (itemInsertError) {
+      return NextResponse.json({ error: itemInsertError.message }, { status: 500 });
+    }
+
+    // Fire-and-forget customer SMS confirmation (does not block order success)
+    await sendSmsNotification({
+      to: phone,
+      body: `Anashe: Your order ${order.order_number} has been received. Total ${Math.round(
+        Number(order.total)
+      ).toLocaleString('en-KE')} KES. We will contact you shortly.`,
+    });
+
+    return NextResponse.json({
+      success: true,
+      orderId: order.id,
+      orderNumber: order.order_number,
+      total: Number(order.total),
+      message: 'Order placed successfully',
+    });
+  } catch (error) {
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
+

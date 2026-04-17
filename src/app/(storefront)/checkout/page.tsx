@@ -3,12 +3,12 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { CheckCircle, Loader2, Smartphone, MapPin, ShoppingBag, Tag } from 'lucide-react';
+import { CheckCircle, Loader2, MapPin, ShoppingBag, Tag } from 'lucide-react';
 import { useCartStore } from '@/store/cart';
 import { useToast } from '@/components/shared/Toaster';
 import { formatPrice, isValidKenyanPhone } from '@/lib/utils';
 
-type Step = 'address' | 'review' | 'payment' | 'waiting' | 'success';
+type Step = 'address' | 'review' | 'success';
 
 export default function CheckoutPage() {
   const { items, getSubtotal, clearCart } = useCartStore();
@@ -22,8 +22,7 @@ export default function CheckoutPage() {
   const [discount, setDiscount] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
   const [orderId, setOrderId] = useState<string>('');
-  const [receipt, setReceipt] = useState<string>('');
-  const [countdown, setCountdown] = useState(90);
+  const [orderNumber, setOrderNumber] = useState<string>('');
 
   const subtotal = getSubtotal();
   const shipping = subtotal >= 2000 ? 0 : 250;
@@ -41,86 +40,38 @@ export default function CheckoutPage() {
     }
   }
 
-  async function initiatePayment() {
+  async function placeOrder() {
     if (!isValidKenyanPhone(phone)) {
       showToast('Please enter a valid Kenyan phone number (e.g. 0712345678)', 'error');
       return;
     }
     setIsProcessing(true);
-    setStep('waiting');
-
-    let active = true;
-    let count = 90;
-    const timer = setInterval(() => {
-      count--;
-      setCountdown(count);
-      if (count <= 0) {
-        clearInterval(timer);
-        if (active) {
-          setStep('review');
-          setIsProcessing(false);
-          showToast('Payment timed out. Please try again.', 'error');
-        }
-      }
-    }, 1000);
 
     try {
-      const res = await fetch('/api/mpesa/stk-push', {
+      const res = await fetch('/api/orders/place', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           phone,
-          amount: total,
           couponCode: couponCode || undefined,
           shippingAddress: address,
           cartItems: items.map((item) => ({
             productId: item.productId,
             variantId: item.variantId,
             quantity: item.quantity,
-            price: (item.product.sale_price ?? item.product.price) + (item.variant?.price_modifier ?? 0),
           })),
         }),
       });
       const payload = await res.json();
-      if (!res.ok) throw new Error(payload.error || 'Failed to start payment');
+      if (!res.ok) throw new Error(payload.error || 'Failed to place order');
       setOrderId(payload.orderId);
-
-      const poll = setInterval(async () => {
-        try {
-          const statusRes = await fetch(`/api/orders/${payload.orderId}/status`, { cache: 'no-store' });
-          const statusPayload = await statusRes.json();
-          if (!statusRes.ok) return;
-          const status = statusPayload?.data?.status;
-          if (status === 'payment_confirmed') {
-            clearInterval(poll);
-            clearInterval(timer);
-            active = false;
-            setReceipt(statusPayload?.data?.mpesa_receipt ?? '');
-            clearCart();
-            setStep('success');
-            setIsProcessing(false);
-            return;
-          }
-          if (status === 'cancelled' || status === 'refunded') {
-            clearInterval(poll);
-            clearInterval(timer);
-            active = false;
-            setStep('review');
-            setIsProcessing(false);
-            showToast('Payment failed or cancelled.', 'error');
-          }
-        } catch {
-          // keep polling
-        }
-      }, 3000);
-
-      setTimeout(() => clearInterval(poll), 90000);
+      setOrderNumber(payload.orderNumber ?? '');
+      clearCart();
+      setStep('success');
     } catch (err: unknown) {
-      clearInterval(timer);
-      active = false;
-      setStep('payment');
+      showToast(err instanceof Error ? err.message : 'Failed to place order', 'error');
+    } finally {
       setIsProcessing(false);
-      showToast(err instanceof Error ? err.message : 'Failed to initiate payment', 'error');
     }
   }
 
@@ -144,19 +95,19 @@ export default function CheckoutPage() {
       </div>
 
       {/* Step Indicators */}
-      {step !== 'waiting' && step !== 'success' && (
+      {step !== 'success' && (
         <div className="flex items-center gap-2 md:gap-3 mb-8 md:mb-10 overflow-x-auto pb-1">
-          {(['address', 'review', 'payment'] as const).map((s, i) => (
+          {(['address', 'review'] as const).map((s, i) => (
             <div key={s} className="flex items-center gap-2 shrink-0">
               <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-colors ${
-                step === s ? 'bg-[var(--primary)] text-white' : ['address', 'review', 'payment'].indexOf(step) > i ? 'bg-[var(--accent)] text-[var(--primary)]' : 'bg-neutral-100 text-neutral-400'
+                step === s ? 'bg-[var(--primary)] text-white' : ['address', 'review'].indexOf(step) > i ? 'bg-[var(--accent)] text-[var(--primary)]' : 'bg-neutral-100 text-neutral-400'
               }`}>
-                {['address', 'review', 'payment'].indexOf(step) > i ? <CheckCircle className="w-4 h-4" /> : i + 1}
+                {['address', 'review'].indexOf(step) > i ? <CheckCircle className="w-4 h-4" /> : i + 1}
               </div>
               <span className={`text-sm font-medium capitalize ${step === s ? 'text-[var(--text-primary)]' : 'text-neutral-400'}`}>
-                {s === 'address' ? 'Delivery' : s === 'review' ? 'Review' : 'Payment'}
+                {s === 'address' ? 'Delivery' : 'Review'}
               </span>
-              {i < 2 && <div className="w-8 md:w-12 h-px bg-neutral-200" />}
+              {i < 1 && <div className="w-8 md:w-12 h-px bg-neutral-200" />}
             </div>
           ))}
         </div>
@@ -203,8 +154,28 @@ export default function CheckoutPage() {
                   </select>
                 </div>
               </div>
+              <div>
+                <label className="text-xs font-semibold uppercase tracking-wider text-neutral-500 block mb-1.5">Phone Number *</label>
+                <input
+                  type="tel"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="e.g. 0712345678"
+                  className="w-full border border-neutral-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-[var(--primary)] transition-colors"
+                />
+              </div>
               <button
-                onClick={() => { if (!address.line1 || !address.city) { showToast('Please fill in all required fields', 'error'); return; } setStep('review'); }}
+                onClick={() => {
+                  if (!address.line1 || !address.city || !phone) {
+                    showToast('Please fill in all required fields', 'error');
+                    return;
+                  }
+                  if (!isValidKenyanPhone(phone)) {
+                    showToast('Please enter a valid Kenyan phone number (e.g. 0712345678)', 'error');
+                    return;
+                  }
+                  setStep('review');
+                }}
                 className="w-full h-12 bg-[var(--primary)] text-white font-semibold rounded-xl hover:bg-[var(--primary-hover)] transition-colors"
               >
                 Continue to Review
@@ -256,72 +227,15 @@ export default function CheckoutPage() {
 
               <div className="flex gap-3">
                 <button onClick={() => setStep('address')} className="flex-1 h-12 border border-neutral-200 rounded-xl text-sm font-medium hover:bg-neutral-50 transition-colors">Back</button>
-                <button onClick={() => setStep('payment')} className="flex-1 h-12 bg-[var(--primary)] text-white font-semibold rounded-xl hover:bg-[var(--primary-hover)] transition-colors">Continue to Payment</button>
-              </div>
-            </div>
-          )}
-
-          {/* STEP 3: Payment */}
-          {step === 'payment' && (
-            <div className="bg-white border border-neutral-200 rounded-2xl p-6 md:p-7 space-y-5 shadow-[0_10px_30px_-24px_rgba(0,0,0,0.4)]">
-              <h2 className="font-semibold flex items-center gap-2"><Smartphone className="w-4 h-4 text-[var(--primary)]" /> M-Pesa Payment</h2>
-              <div className="bg-[var(--accent)] border border-pink-100 rounded-xl p-4">
-                <p className="text-sm font-medium text-[var(--primary)] mb-1">How it works</p>
-                <ol className="text-xs text-[var(--primary)] space-y-1 list-decimal list-inside">
-                  <li>Enter your M-Pesa registered phone number below</li>
-                  <li>Click &ldquo;Pay Now&rdquo; — you&apos;ll receive an STK Push prompt</li>
-                  <li>Enter your M-Pesa PIN to confirm payment</li>
-                  <li>Your order is confirmed immediately</li>
-                </ol>
-              </div>
-
-              <div>
-                <label className="text-xs font-semibold uppercase tracking-wider text-neutral-500 block mb-1.5">M-Pesa Phone Number *</label>
-                <div className="flex items-center border border-neutral-200 rounded-xl px-4 gap-3 focus-within:border-[var(--primary)] transition-colors">
-                  <span className="text-sm font-medium text-neutral-500 shrink-0">🇰🇪 +254</span>
-                  <input
-                    type="tel"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder="712 345 678"
-                    className="flex-1 py-3 text-sm outline-none"
-                  />
-                </div>
-                <p className="text-xs text-neutral-400 mt-1">Enter the number registered with M-Pesa (e.g. 0712345678)</p>
-              </div>
-
-              <div className="bg-neutral-50 rounded-xl p-4 flex justify-between items-center">
-                <span className="text-sm text-neutral-600">Amount to pay</span>
-                <span className="text-xl font-bold text-[var(--primary)]">{formatPrice(total)}</span>
-              </div>
-
-              <div className="flex gap-3">
-                <button onClick={() => setStep('review')} className="flex-1 h-12 border border-neutral-200 rounded-xl text-sm font-medium hover:bg-neutral-50 transition-colors">Back</button>
                 <button
-                  onClick={initiatePayment}
+                  onClick={placeOrder}
                   disabled={isProcessing}
-                  className="flex-1 h-12 bg-[var(--primary)] text-white font-semibold rounded-xl hover:bg-[var(--primary-hover)] transition-colors flex items-center justify-center gap-2"
+                  className="flex-1 h-12 bg-[var(--primary)] text-white font-semibold rounded-xl hover:bg-[var(--primary-hover)] transition-colors flex items-center justify-center gap-2 disabled:opacity-70"
                 >
-                  {isProcessing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Smartphone className="w-4 h-4" />}
-                  Pay {formatPrice(total)} via M-Pesa
+                  {isProcessing && <Loader2 className="w-4 h-4 animate-spin" />}
+                  Place Order
                 </button>
               </div>
-            </div>
-          )}
-
-          {/* WAITING */}
-          {step === 'waiting' && (
-            <div className="bg-white border border-neutral-200 rounded-2xl p-8 md:p-10 text-center space-y-6 max-w-2xl shadow-[0_10px_30px_-24px_rgba(0,0,0,0.4)]">
-              <div className="w-20 h-20 bg-[var(--accent)] rounded-full flex items-center justify-center mx-auto">
-                <Smartphone className="w-10 h-10 text-[var(--primary)] animate-pulse" />
-              </div>
-              <div>
-                <h2 className="text-xl font-semibold mb-2 font-[family-name:var(--font-display)]">Check your phone!</h2>
-                <p className="text-neutral-500 text-sm">We sent an M-Pesa payment request to <strong>{phone}</strong>. Enter your PIN to complete payment.</p>
-              </div>
-              <div className="text-4xl font-bold text-[var(--primary)]">{countdown}s</div>
-              <p className="text-xs text-neutral-400">The payment request expires in {countdown} seconds</p>
-              <button onClick={() => setStep('payment')} className="text-sm text-neutral-500 hover:text-neutral-700 underline">Cancel and go back</button>
             </div>
           )}
 
@@ -333,9 +247,11 @@ export default function CheckoutPage() {
               </div>
               <div>
                 <h2 className="text-2xl font-semibold mb-2 font-[family-name:var(--font-display)]">Order Confirmed! 🎉</h2>
-                <p className="text-neutral-500 text-sm">Your M-Pesa payment was received. Order <strong>{orderId}</strong> is being processed.</p>
+                <p className="text-neutral-500 text-sm">Your order has been placed successfully and is now being prepared.</p>
               </div>
-              <p className="text-xs text-neutral-400 bg-neutral-50 rounded-xl px-4 py-3">M-Pesa Receipt: <strong>{receipt || 'Pending confirmation'}</strong></p>
+              <p className="text-xs text-neutral-400 bg-neutral-50 rounded-xl px-4 py-3">
+                Order Reference: <strong>{orderNumber || orderId}</strong>
+              </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Link href="/orders" className="h-11 px-6 bg-[var(--primary)] text-white rounded-full text-sm font-semibold flex items-center justify-center hover:bg-[var(--primary-hover)] transition-colors">Track My Order</Link>
                 <Link href="/products" className="h-11 px-6 border border-neutral-200 rounded-full text-sm font-semibold flex items-center justify-center hover:bg-neutral-50 transition-colors">Continue Shopping</Link>
@@ -345,7 +261,7 @@ export default function CheckoutPage() {
         </div>
 
         {/* Order Summary Sidebar */}
-        {step !== 'waiting' && step !== 'success' && (
+        {step !== 'success' && (
           <div className="lg:col-span-1">
             <div className="bg-[var(--accent)] rounded-2xl p-6 sticky top-24 border border-pink-100">
               <h2 className="font-semibold mb-5">Order Summary</h2>

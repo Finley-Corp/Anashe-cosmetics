@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 import { Heart, ShoppingBag } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
 import { ProductCard } from '@/components/storefront/ProductCard';
@@ -11,31 +12,32 @@ export default async function WishlistPage() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+  if (!user) {
+    redirect('/auth/login?redirect=/wishlist');
+  }
 
   let products: Product[] = [];
-  if (user) {
-    const { data: wishlist } = await supabase
-      .from('wishlists')
-      .select('id')
-      .eq('user_id', user.id)
-      .maybeSingle();
+  const { data: wishlist } = await supabase
+    .from('wishlists')
+    .select('id')
+    .eq('user_id', user.id)
+    .maybeSingle();
 
-    if (wishlist?.id) {
-      const { data } = await supabase
-        .from('wishlist_items')
-        .select('product:products(*, images:product_images(*))')
-        .eq('wishlist_id', wishlist.id)
-        .order('added_at', { ascending: false });
+  if (wishlist?.id) {
+    const { data } = await supabase
+      .from('wishlist_items')
+      .select('product:products(*, images:product_images(*))')
+      .eq('wishlist_id', wishlist.id)
+      .order('added_at', { ascending: false });
 
-      type WishlistItemRow = { product: Product | Product[] | null };
-      products = (data ?? [])
-        .map((row) => {
-          const productRelation = (row as WishlistItemRow).product;
-          if (Array.isArray(productRelation)) return productRelation[0] ?? null;
-          return productRelation;
-        })
-        .filter((row): row is Product => Boolean(row));
-    }
+    type WishlistItemRow = { product: Product | Product[] | null };
+    products = (data ?? [])
+      .map((row) => {
+        const productRelation = (row as WishlistItemRow).product;
+        if (Array.isArray(productRelation)) return productRelation[0] ?? null;
+        return productRelation;
+      })
+      .filter((row): row is Product => Boolean(row));
   }
 
   return (

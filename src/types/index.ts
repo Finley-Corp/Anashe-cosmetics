@@ -251,30 +251,6 @@ export interface ApiError {
   code?: string;
 }
 
-// M-Pesa types
-export interface STKPushResponse {
-  MerchantRequestID: string;
-  CheckoutRequestID: string;
-  ResponseCode: string;
-  ResponseDescription: string;
-  CustomerMessage: string;
-}
-
-export interface STKCallbackMetadataItem {
-  Name: string;
-  Value: string | number;
-}
-
-export interface STKCallback {
-  MerchantRequestID: string;
-  CheckoutRequestID: string;
-  ResultCode: number;
-  ResultDesc: string;
-  CallbackMetadata?: {
-    Item: STKCallbackMetadataItem[];
-  };
-}
-
 // Analytics types
 export interface RevenueByDay {
   day: string;

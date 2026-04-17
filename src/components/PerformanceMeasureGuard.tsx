@@ -21,8 +21,7 @@ export function PerformanceMeasureGuard() {
           if (typeof next.end === 'number' && next.end < 0) next.end = 0;
           return original(name, next);
         }
-        // @ts-expect-error - keep signature-compatible passthrough
-        return original(name, startOrOptions, endMark);
+        return original(name, startOrOptions as never, endMark as never);
       } catch {
         return;
       }

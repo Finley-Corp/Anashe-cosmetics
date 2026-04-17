@@ -13,7 +13,7 @@ export async function sendOrderConfirmationEmail(params: {
   if (!resend) return;
 
   const customer = params.customerName?.trim() || 'there';
-  const receiptLine = params.receipt ? `<p><strong>M-Pesa Receipt:</strong> ${params.receipt}</p>` : '';
+  const receiptLine = params.receipt ? `<p><strong>Payment Receipt:</strong> ${params.receipt}</p>` : '';
 
   await resend.emails.send({
     from: 'Anashe <hello@siscom.africa>',

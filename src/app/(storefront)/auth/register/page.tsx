@@ -80,7 +80,7 @@ function RegisterForm() {
               />
             </div>
             <div>
-              <label className="text-xs font-semibold uppercase tracking-wider text-neutral-500 block mb-1.5">Phone (M-Pesa)</label>
+              <label className="text-xs font-semibold uppercase tracking-wider text-neutral-500 block mb-1.5">Phone Number</label>
               <input
                 type="tel"
                 value={phone}

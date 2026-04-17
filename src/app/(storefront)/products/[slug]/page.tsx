@@ -9,7 +9,7 @@ async function getProductBySlug(slug: string): Promise<Product | null> {
   const supabase = createServiceClient();
   const { data, error } = await supabase
     .from('products')
-    .select('*, images:product_images(*), variants:product_variants(*)')
+    .select('*, category:categories(id,name,slug), images:product_images(*), variants:product_variants(*)')
     .eq('slug', slug)
     .eq('is_published', true)
     .single();

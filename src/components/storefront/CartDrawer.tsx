@@ -134,7 +134,7 @@ export function CartDrawer() {
               <span className="text-neutral-600">Subtotal</span>
               <span className="font-semibold">{formatPrice(subtotal)}</span>
             </div>
-            <p className="text-xs text-neutral-400">Shipping calculated at checkout. M-Pesa accepted.</p>
+            <p className="text-xs text-neutral-400">Shipping calculated at checkout. Secure ordering available.</p>
             <div className="grid grid-cols-2 gap-3">
               <Link
                 href="/cart"

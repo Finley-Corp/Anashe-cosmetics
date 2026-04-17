@@ -10,7 +10,7 @@ export function Footer() {
           <div className="col-span-2 md:col-span-1">
             <h3 className="text-2xl font-semibold tracking-tighter mb-4 font-[family-name:var(--font-display)]">ANASHE</h3>
             <p className="text-sm text-neutral-400 leading-relaxed mb-5 max-w-xs">
-              Kenya&apos;s skincare and cosmetics destination. Authentic beauty products, M-Pesa payments, fast delivery across Kenya.
+              Kenya&apos;s skincare and cosmetics destination. Authentic beauty products, secure ordering, fast delivery across Kenya.
             </p>
             <div className="flex gap-3">
               <a
@@ -65,7 +65,7 @@ export function Footer() {
                 { label: 'Help Center', href: '/contact' },
                 { label: 'Shipping & Returns', href: '/about' },
                 { label: 'Order Tracking', href: '/orders' },
-                { label: 'M-Pesa Payments', href: '/about' },
+                { label: 'Order & Delivery', href: '/about' },
                 { label: 'Privacy Policy', href: '/privacy' },
                 { label: 'Terms of Service', href: '/terms' },
               ].map((item) => (
@@ -123,7 +123,7 @@ export function Footer() {
           <div className="flex items-center gap-4 text-xs text-neutral-500">
             <span className="flex items-center gap-1.5">
               <span className="w-6 h-4 bg-neutral-700 rounded flex items-center justify-center text-[10px] font-bold">M</span>
-              M-Pesa Accepted
+              Secure Ordering
             </span>
             <span>•</span>
             <span>Fast Delivery Kenya-wide</span>

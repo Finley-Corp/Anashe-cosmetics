@@ -3,7 +3,7 @@ import { ProductListingClient } from './ProductListingClient';
 
 export const metadata = {
   title: 'All Products',
-  description: 'Browse thousands of premium products with easy M-Pesa checkout. Filter by category, price, and more.',
+  description: 'Browse thousands of premium products with easy order checkout. Filter by category, price, and more.',
 };
 
 export default function ProductsPage({

@@ -40,8 +40,8 @@ export default function ContactPage() {
             ))}
 
             <div className="bg-green-50 rounded-2xl p-5">
-              <p className="text-sm font-semibold text-green-800 mb-1">M-Pesa Payment Issues?</p>
-              <p className="text-xs text-green-700 leading-relaxed">If you have a payment problem, please have your M-Pesa receipt number ready. We&apos;ll resolve it within 2 business hours.</p>
+              <p className="text-sm font-semibold text-green-800 mb-1">Order Issue?</p>
+              <p className="text-xs text-green-700 leading-relaxed">If you have an order problem, please share your order reference number. We&apos;ll resolve it within 2 business hours.</p>
             </div>
           </div>
 
@@ -76,7 +76,7 @@ export default function ContactPage() {
                   <select value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} className="w-full border border-neutral-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-green-500 transition-colors bg-white">
                     <option value="">Select a topic</option>
                     <option>Order Issue</option>
-                    <option>M-Pesa Payment Problem</option>
+                    <option>Order or Checkout Problem</option>
                     <option>Product Enquiry</option>
                     <option>Return / Refund</option>
                     <option>General Enquiry</option>

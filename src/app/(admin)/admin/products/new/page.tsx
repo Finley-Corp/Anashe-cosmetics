@@ -8,10 +8,10 @@ export default async function NewProductPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold font-[family-name:var(--font-display)] text-neutral-900">Add Product</h1>
-        <p className="text-sm text-neutral-500 mt-1">Create a new skincare or cosmetic product.</p>
+        <h1 className="text-2xl font-bold font-[family-name:var(--font-display)] text-white">Add Product</h1>
+        <p className="text-sm text-gray-500 mt-1">Create a new skincare or cosmetic product.</p>
       </div>
-      <div className="bg-white border border-neutral-100 rounded-2xl p-6">
+      <div className="bg-[#1A1D21] border border-white/5 rounded-2xl p-6">
         <ProductForm mode="create" categories={categories ?? []} />
       </div>
     </div>

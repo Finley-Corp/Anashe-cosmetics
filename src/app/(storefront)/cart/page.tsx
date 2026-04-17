@@ -151,7 +151,7 @@ export default function CartPage() {
               <ArrowRight className="w-4 h-4" />
             </Link>
             <p className="text-center text-xs text-neutral-400 mt-3 flex items-center justify-center gap-1">
-              <span className="font-bold text-green-700">M</span> Pay securely via M-Pesa
+              <span className="font-bold text-green-700">S</span> Secure order checkout
             </p>
           </div>
         </div>

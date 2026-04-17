@@ -10,7 +10,7 @@ export function formatPrice(amount: number, currency = 'KES'): string {
 }
 
 export function formatPhone(phone: string): string {
-  // Convert to 254XXXXXXXXX format for M-Pesa
+  // Convert to 254XXXXXXXXX format for Kenyan phone integrations
   const cleaned = phone.replace(/\s+/g, '').replace(/[^0-9+]/g, '');
   if (cleaned.startsWith('+254')) return cleaned.replace('+', '');
   if (cleaned.startsWith('254')) return cleaned;
