@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/service';
 import { formatPrice } from '@/lib/utils';
 
 export const metadata = { title: 'My Orders' };
@@ -17,6 +18,7 @@ const statusColors: Record<string, string> = {
 
 export default async function OrdersPage() {
   const supabase = await createClient();
+  const service = createServiceClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -25,7 +27,7 @@ export default async function OrdersPage() {
     redirect('/auth/login?redirect=/orders');
   }
 
-  const { data: orders } = await supabase
+  const { data: orders } = await service
     .from('orders')
     .select('id,order_number,status,total,created_at')
     .eq('user_id', user.id)

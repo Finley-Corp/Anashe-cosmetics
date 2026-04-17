@@ -1,5 +1,6 @@
-import { notFound, redirect } from 'next/navigation';
+import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/service';
 import { formatPrice } from '@/lib/utils';
 
 export const metadata = { title: 'Order Details' };
@@ -7,6 +8,7 @@ export const metadata = { title: 'Order Details' };
 export default async function OrderDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const supabase = await createClient();
+  const service = createServiceClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -15,7 +17,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
     redirect(`/auth/login?redirect=/orders/${id}`);
   }
 
-  const { data: order } = await supabase
+  const { data: order } = await service
     .from('orders')
     .select('id,order_number,status,total,shipping_address,created_at')
     .eq('id', id)
@@ -23,10 +25,10 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
     .maybeSingle();
 
   if (!order) {
-    notFound();
+    redirect('/orders');
   }
 
-  const { data: items } = await supabase
+  const { data: items } = await service
     .from('order_items')
     .select('id,product_name,variant_name,quantity,unit_price')
     .eq('order_id', order.id);

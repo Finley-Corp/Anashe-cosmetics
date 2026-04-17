@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Package, Heart, User, LogOut, ChevronRight, ShoppingBag } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/service';
 import { formatPrice } from '@/lib/utils';
 import { ProfileDetailsCard } from './ProfileDetailsCard';
 
@@ -17,6 +18,7 @@ const statusColors: Record<string, string> = {
 
 export default async function AccountPage() {
   const supabase = await createClient();
+  const service = createServiceClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -25,7 +27,7 @@ export default async function AccountPage() {
 
   const [{ data: profile }, { data: orders }, { count: wishlistCount }] = await Promise.all([
     supabase.from('profiles').select('full_name,phone').eq('id', user?.id ?? '').maybeSingle(),
-    supabase
+    service
       .from('orders')
       .select('id,order_number,status,total,created_at,items:order_items(count)')
       .eq('user_id', user?.id ?? '')

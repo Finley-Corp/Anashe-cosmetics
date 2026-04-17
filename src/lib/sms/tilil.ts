@@ -6,9 +6,9 @@ type SmsPayload = {
 };
 
 function getTililConfig() {
-  const apiUrl = process.env.TILIL_API_URL;
+  const apiUrl = process.env.SMS_ENDPOINT ?? process.env.TILIL_API_URL;
   const apiKey = process.env.TILIL_API_KEY;
-  const senderId = process.env.TILIL_SENDER_ID;
+  const senderId = process.env.TILIL_SHORTCODE ?? process.env.TILIL_SENDER_ID;
   if (!apiUrl || !apiKey || !senderId) return null;
   return { apiUrl, apiKey, senderId };
 }
