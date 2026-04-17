@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { useToast } from '@/components/shared/Toaster';
+import { useCartStore } from '@/store/cart';
 
 function LoginForm() {
   const [email, setEmail] = useState('');
@@ -15,7 +16,9 @@ function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { add: showToast } = useToast();
-  const redirect = searchParams.get('redirect') ?? '/account';
+  const { getItemCount } = useCartStore();
+  const fallbackRedirect = getItemCount() > 0 ? '/checkout' : '/account';
+  const redirect = searchParams.get('redirect') ?? fallbackRedirect;
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
@@ -92,7 +95,7 @@ function LoginForm() {
 
           <p className="text-center text-sm text-neutral-500 mt-6">
             Don&apos;t have an account?{' '}
-            <Link href={`/auth/register${redirect !== '/account' ? `?redirect=${redirect}` : ''}`} className="text-green-700 hover:text-green-800 font-semibold transition-colors">
+            <Link href={`/auth/register${redirect !== fallbackRedirect ? `?redirect=${redirect}` : ''}`} className="text-green-700 hover:text-green-800 font-semibold transition-colors">
               Create one
             </Link>
           </p>
