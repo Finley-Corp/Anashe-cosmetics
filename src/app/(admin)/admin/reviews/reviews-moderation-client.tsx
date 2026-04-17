@@ -56,8 +56,8 @@ export function ReviewsModerationClient({ initialReviews }: { initialReviews: Ad
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold font-[family-name:var(--font-display)]">Review Moderation</h1>
-          <p className="text-sm text-neutral-500 mt-1">Approve or reject customer reviews before publishing.</p>
+          <h1 className="text-2xl font-bold text-white font-[family-name:var(--font-display)]">Review Moderation</h1>
+          <p className="text-sm text-gray-500 mt-1">Approve or reject customer reviews before publishing.</p>
         </div>
       </div>
 
@@ -67,7 +67,7 @@ export function ReviewsModerationClient({ initialReviews }: { initialReviews: Ad
             setTab('pending');
             void refresh('pending');
           }}
-          className={`px-4 py-2 rounded-full text-xs font-semibold ${tab === 'pending' ? 'bg-neutral-900 text-white' : 'bg-white border border-neutral-200 text-neutral-600'}`}
+          className={`px-4 py-2 rounded-full text-xs font-semibold ${tab === 'pending' ? 'bg-white text-black' : 'bg-transparent border border-white/10 text-gray-400'}`}
         >
           Pending
         </button>
@@ -76,22 +76,22 @@ export function ReviewsModerationClient({ initialReviews }: { initialReviews: Ad
             setTab('approved');
             void refresh('approved');
           }}
-          className={`px-4 py-2 rounded-full text-xs font-semibold ${tab === 'approved' ? 'bg-neutral-900 text-white' : 'bg-white border border-neutral-200 text-neutral-600'}`}
+          className={`px-4 py-2 rounded-full text-xs font-semibold ${tab === 'approved' ? 'bg-white text-black' : 'bg-transparent border border-white/10 text-gray-400'}`}
         >
           Approved
         </button>
       </div>
 
-      <div className="bg-white border border-neutral-100 rounded-2xl overflow-hidden">
+      <div className="bg-[#1A1D21] border border-white/5 rounded-2xl overflow-hidden">
         {loading && (
-          <div className="p-6 text-sm text-neutral-500">Loading reviews...</div>
+          <div className="p-6 text-sm text-gray-500">Loading reviews...</div>
         )}
         {!loading && reviewList.length === 0 && (
-          <div className="p-6 text-sm text-neutral-500">No reviews in this state.</div>
+          <div className="p-6 text-sm text-gray-500">No reviews in this state.</div>
         )}
 
         {!loading && reviewList.length > 0 && (
-          <div className="divide-y divide-neutral-100">
+          <div className="divide-y divide-white/5">
             {reviewList.map((review) => {
               const product = Array.isArray(review.product) ? review.product[0] : review.product;
               const profile = Array.isArray(review.profile) ? review.profile[0] : review.profile;
@@ -100,18 +100,18 @@ export function ReviewsModerationClient({ initialReviews }: { initialReviews: Ad
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="text-sm font-semibold">{profile?.full_name ?? 'Customer'}</span>
-                        <span className="text-xs text-neutral-400">{new Date(review.created_at).toLocaleDateString('en-KE')}</span>
+                        <span className="text-sm font-semibold text-white">{profile?.full_name ?? 'Customer'}</span>
+                        <span className="text-xs text-gray-500">{new Date(review.created_at).toLocaleDateString('en-KE')}</span>
                       </div>
                       <div className="flex items-center gap-1 mb-2">
                         {[...Array(5)].map((_, i) => (
                           <Star key={i} className={`w-3.5 h-3.5 ${i < review.rating ? 'fill-amber-400 text-amber-400' : 'text-neutral-200'}`} />
                         ))}
                       </div>
-                      {review.title && <p className="text-sm font-semibold text-neutral-900">{review.title}</p>}
-                      {review.body && <p className="text-sm text-neutral-600 mt-1">{review.body}</p>}
+                      {review.title && <p className="text-sm font-semibold text-white">{review.title}</p>}
+                      {review.body && <p className="text-sm text-gray-300 mt-1">{review.body}</p>}
                       {product && (
-                        <Link href={`/products/${product.slug}`} className="text-xs text-neutral-700 hover:underline mt-2 inline-block">
+                        <Link href={`/products/${product.slug}`} className="text-xs text-gray-400 hover:text-white hover:underline mt-2 inline-block">
                           View product: {product.name}
                         </Link>
                       )}
@@ -122,7 +122,7 @@ export function ReviewsModerationClient({ initialReviews }: { initialReviews: Ad
                           <button
                             onClick={() => void moderate(review.id, 'approve')}
                             disabled={busyId === review.id}
-                            className="h-9 px-3 rounded-lg bg-neutral-900 text-white text-xs font-semibold disabled:opacity-60 inline-flex items-center gap-1.5"
+                            className="h-9 px-3 rounded-lg bg-white text-black text-xs font-semibold disabled:opacity-60 inline-flex items-center gap-1.5"
                           >
                             {busyId === review.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
                             Approve
@@ -130,7 +130,7 @@ export function ReviewsModerationClient({ initialReviews }: { initialReviews: Ad
                           <button
                             onClick={() => void moderate(review.id, 'reject')}
                             disabled={busyId === review.id}
-                            className="h-9 px-3 rounded-lg border border-red-200 text-red-600 text-xs font-semibold disabled:opacity-60 inline-flex items-center gap-1.5"
+                            className="h-9 px-3 rounded-lg border border-red-500/30 text-red-300 text-xs font-semibold disabled:opacity-60 inline-flex items-center gap-1.5"
                           >
                             <X className="w-3.5 h-3.5" />
                             Reject

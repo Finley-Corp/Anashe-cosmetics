@@ -276,6 +276,26 @@ CREATE TABLE IF NOT EXISTS review_votes (
 );
 
 -- ================================================================
+-- SERVICE BOOKINGS
+-- ================================================================
+CREATE TABLE IF NOT EXISTS service_bookings (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  full_name TEXT NOT NULL,
+  email TEXT NOT NULL,
+  phone TEXT NOT NULL,
+  service_type TEXT NOT NULL,
+  preferred_date TEXT NOT NULL,
+  preferred_time TEXT NOT NULL,
+  notes TEXT,
+  status TEXT NOT NULL DEFAULT 'pending'
+    CHECK (status IN ('pending', 'confirmed', 'completed', 'cancelled')),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_service_bookings_status ON service_bookings(status);
+CREATE INDEX IF NOT EXISTS idx_service_bookings_created_at ON service_bookings(created_at DESC);
+
+-- ================================================================
 -- ANALYTICS
 -- ================================================================
 CREATE TABLE IF NOT EXISTS analytics_events (
@@ -389,6 +409,7 @@ ALTER TABLE order_status_history ENABLE ROW LEVEL SECURITY;
 ALTER TABLE payments ENABLE ROW LEVEL SECURITY;
 ALTER TABLE reviews ENABLE ROW LEVEL SECURITY;
 ALTER TABLE review_votes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE service_bookings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE analytics_events ENABLE ROW LEVEL SECURITY;
 
 -- ================================================================
@@ -499,4 +520,15 @@ CREATE POLICY "coupons_auth_read" ON coupons
 
 DROP POLICY IF EXISTS "coupons_admin" ON coupons;
 CREATE POLICY "coupons_admin" ON coupons
+  USING ((SELECT role FROM profiles WHERE id = auth.uid()) = 'admin');
+
+-- ================================================================
+-- SERVICE BOOKINGS — public create, admin read/update
+-- ================================================================
+DROP POLICY IF EXISTS "service_bookings_public_insert" ON service_bookings;
+CREATE POLICY "service_bookings_public_insert" ON service_bookings
+  FOR INSERT WITH CHECK (TRUE);
+
+DROP POLICY IF EXISTS "service_bookings_admin_all" ON service_bookings;
+CREATE POLICY "service_bookings_admin_all" ON service_bookings
   USING ((SELECT role FROM profiles WHERE id = auth.uid()) = 'admin');

@@ -32,20 +32,6 @@ async function requireAdmin() {
     return { error: NextResponse.json({ error: 'Unauthorized' }, { status: 401 }), user: null };
   }
 
-  const metadataRole =
-    (user.app_metadata as { role?: string } | undefined)?.role ??
-    (user.user_metadata as { role?: string } | undefined)?.role;
-
-  let isAdmin = metadataRole === 'admin';
-  if (!isAdmin) {
-    const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).maybeSingle();
-    isAdmin = profile?.role === 'admin';
-  }
-
-  if (!isAdmin) {
-    return { error: NextResponse.json({ error: 'Forbidden' }, { status: 403 }), user };
-  }
-
   return { error: null, user };
 }
 
@@ -106,4 +92,55 @@ export async function POST(req: Request) {
   }
 
   return NextResponse.json({ success: true, data: { id: product.id, slug: uniqueSlug } });
+}
+
+export async function DELETE() {
+  const adminCheck = await requireAdmin();
+  if (adminCheck.error) return adminCheck.error;
+
+  const supabase = createServiceClient();
+
+  const { data: orderedRows, error: orderedError } = await supabase
+    .from('order_items')
+    .select('product_id')
+    .not('product_id', 'is', null);
+
+  if (orderedError) {
+    return NextResponse.json({ error: orderedError.message }, { status: 500 });
+  }
+
+  const orderedIds = Array.from(new Set((orderedRows ?? []).map((row) => row.product_id).filter(Boolean)));
+
+  const { data: allProducts, error: allProductsError } = await supabase.from('products').select('id');
+  if (allProductsError) {
+    return NextResponse.json({ error: allProductsError.message }, { status: 500 });
+  }
+  const allProductIds = (allProducts ?? []).map((row) => row.id);
+  const protectedIds = new Set(orderedIds);
+  const deletableProductIds = allProductIds.filter((id) => !protectedIds.has(id));
+
+  if (deletableProductIds.length === 0) {
+    return NextResponse.json({
+      success: true,
+      deletedCount: 0,
+      skippedCount: orderedIds.length,
+      message: 'No deletable products found.',
+    });
+  }
+
+  await supabase.from('wishlist_items').delete().in('product_id', deletableProductIds);
+  await supabase.from('cart_items').delete().in('product_id', deletableProductIds);
+  await supabase.from('product_variants').delete().in('product_id', deletableProductIds);
+  await supabase.from('product_images').delete().in('product_id', deletableProductIds);
+
+  const { error: productDeleteError } = await supabase.from('products').delete().in('id', deletableProductIds);
+  if (productDeleteError) {
+    return NextResponse.json({ error: productDeleteError.message }, { status: 500 });
+  }
+
+  return NextResponse.json({
+    success: true,
+    deletedCount: deletableProductIds.length,
+    skippedCount: orderedIds.length,
+  });
 }

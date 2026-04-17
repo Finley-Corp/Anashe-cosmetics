@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Share2, MessageSquare, Globe, Mail, MapPin, Phone } from 'lucide-react';
+import { Camera, MessageCircle, Mail, MapPin, Phone } from 'lucide-react';
 
 export function Footer() {
   return (
@@ -13,14 +13,23 @@ export function Footer() {
               Kenya&apos;s skincare and cosmetics destination. Authentic beauty products, M-Pesa payments, fast delivery across Kenya.
             </p>
             <div className="flex gap-3">
-              <a href="#" className="w-9 h-9 flex items-center justify-center bg-neutral-800 hover:bg-green-700 rounded-full transition-colors">
-                <Share2 className="w-4 h-4" />
+              <a
+                href="https://wa.me/254111330585"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Chat with us on WhatsApp"
+                className="w-9 h-9 flex items-center justify-center bg-neutral-800 hover:bg-green-700 rounded-full transition-colors"
+              >
+                <MessageCircle className="w-4 h-4" />
               </a>
-              <a href="#" className="w-9 h-9 flex items-center justify-center bg-neutral-800 hover:bg-green-700 rounded-full transition-colors">
-                <MessageSquare className="w-4 h-4" />
-              </a>
-              <a href="#" className="w-9 h-9 flex items-center justify-center bg-neutral-800 hover:bg-green-700 rounded-full transition-colors">
-                <Globe className="w-4 h-4" />
+              <a
+                href="https://www.instagram.com/anashe_cosmetics?igsh=bW85ZXh4ODR3dXZj"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Visit our Instagram"
+                className="w-9 h-9 flex items-center justify-center bg-neutral-800 hover:bg-green-700 rounded-full transition-colors"
+              >
+                <Camera className="w-4 h-4" />
               </a>
             </div>
           </div>
@@ -77,7 +86,9 @@ export function Footer() {
               </li>
               <li className="flex items-center gap-2">
                 <Phone className="w-4 h-4 shrink-0 text-green-500" />
-                <span>+254 700 000 000</span>
+                <a href="https://wa.me/254111330585" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
+                  +254 111 330 585 (WhatsApp)
+                </a>
               </li>
               <li className="flex items-center gap-2">
                 <Mail className="w-4 h-4 shrink-0 text-green-500" />

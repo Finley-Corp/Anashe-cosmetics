@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { Plus } from 'lucide-react';
 import { createServiceClient } from '@/lib/supabase/service';
 import { ProductRowActions } from './product-row-actions';
+import { DeleteAllProductsButton } from './delete-all-products-button';
 
 export default async function AdminProductsPage() {
   const supabase = createServiceClient();
@@ -20,31 +21,34 @@ export default async function AdminProductsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold font-[family-name:var(--font-display)]">Products</h1>
-          <p className="text-sm text-neutral-500 mt-1">{products?.length ?? 0} total products</p>
+          <h1 className="text-2xl font-bold text-white font-[family-name:var(--font-display)]">Products</h1>
+          <p className="text-sm text-gray-500 mt-1">{products?.length ?? 0} total products</p>
         </div>
-        <Link
-          href="/admin/products/new"
-          className="flex items-center gap-2 h-10 px-5 bg-neutral-900 text-white text-sm font-semibold rounded-xl hover:bg-neutral-800 transition-colors"
-        >
-          <Plus className="w-4 h-4" /> Add Product
-        </Link>
+        <div className="flex items-center gap-2">
+          <DeleteAllProductsButton />
+          <Link
+            href="/admin/products/new"
+            className="flex items-center gap-2 h-10 px-5 bg-white text-black text-sm font-semibold rounded-xl hover:bg-gray-200 transition-colors"
+          >
+            <Plus className="w-4 h-4" /> Add Product
+          </Link>
+        </div>
       </div>
 
-      <div className="bg-white border border-neutral-100 rounded-2xl overflow-hidden">
+      <div className="bg-[#1A1D21] border border-white/5 rounded-2xl overflow-hidden">
         {/* Table */}
         <div className="overflow-x-auto">
           <table className="w-full min-w-[1100px] text-sm">
             <thead>
-              <tr className="border-b border-neutral-100 bg-neutral-50/50">
+              <tr className="border-b border-white/5 bg-white/[0.02]">
                 {['Product', 'SKU', 'Category', 'Price', 'Stock', 'Status', 'Actions'].map((h) => (
-                  <th key={h} className="text-left px-4 py-3 text-xs font-semibold text-neutral-400 uppercase tracking-wider whitespace-nowrap">{h}</th>
+                  <th key={h} className="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider whitespace-nowrap">{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {(products ?? []).map((product) => (
-                <tr key={product.id} className="border-b border-neutral-50 hover:bg-neutral-50/50 transition-colors">
+                <tr key={product.id} className="border-b border-white/5 hover:bg-white/[0.03] transition-colors">
                   <td className="px-4 py-3 min-w-[320px]">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 bg-neutral-100 rounded-lg overflow-hidden shrink-0">
@@ -56,25 +60,25 @@ export default async function AdminProductsPage() {
                           className="object-cover w-full h-full"
                         />
                       </div>
-                      <p className="font-medium text-neutral-900">{product.name}</p>
+                      <p className="font-medium text-white">{product.name}</p>
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-neutral-500 text-xs font-mono whitespace-nowrap">{product.sku}</td>
-                  <td className="px-4 py-3 text-neutral-600 whitespace-nowrap">
+                  <td className="px-4 py-3 text-gray-500 text-xs font-mono whitespace-nowrap">{product.sku}</td>
+                  <td className="px-4 py-3 text-gray-300 whitespace-nowrap">
                     {(product.category_id ? categoryMap.get(product.category_id) : null) ?? '-'}
                   </td>
-                  <td className="px-4 py-3 font-semibold whitespace-nowrap">KES {product.price.toLocaleString()}</td>
+                  <td className="px-4 py-3 font-semibold text-white whitespace-nowrap">KES {product.price.toLocaleString()}</td>
                   <td className="px-4 py-3">
                     <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
-                      product.stock === 0 ? 'bg-red-50 text-red-600' :
-                      product.stock <= 5 ? 'bg-amber-50 text-amber-700' :
-                      'bg-neutral-100 text-neutral-700'
+                      product.stock === 0 ? 'bg-red-500/15 text-red-300' :
+                      product.stock <= 5 ? 'bg-amber-500/15 text-amber-300' :
+                      'bg-emerald-500/15 text-emerald-300'
                     }`}>
                       {product.stock === 0 ? 'Out of Stock' : `${product.stock} in stock`}
                     </span>
                   </td>
                   <td className="px-4 py-3">
-                    <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${product.is_published ? 'bg-neutral-100 text-neutral-700' : 'bg-neutral-100 text-neutral-500'}`}>
+                    <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${product.is_published ? 'bg-sky-500/15 text-sky-300' : 'bg-white/10 text-gray-400'}`}>
                       {product.is_published ? 'Published' : 'Draft'}
                     </span>
                   </td>

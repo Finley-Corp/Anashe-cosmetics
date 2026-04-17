@@ -33,6 +33,12 @@ export async function POST(req: Request) {
   });
 
   if (error) {
+    if (error.message.includes('service_bookings')) {
+      return NextResponse.json(
+        { error: 'Service booking setup is incomplete. Run the latest Supabase migration/full_setup.sql first.' },
+        { status: 500 }
+      );
+    }
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 

@@ -1,27 +1,20 @@
 import type { Metadata } from 'next';
-import { Delius, Poppins, Roboto } from 'next/font/google';
+import { Inter } from 'next/font/google';
 import './globals.css';
 import { Toaster } from '@/components/shared/Toaster';
+import { PerformanceMeasureGuard } from '@/components/PerformanceMeasureGuard';
 
-const poppins = Poppins({
+const inter = Inter({
   subsets: ['latin'],
-  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
+  weight: ['400', '600', '700'],
   variable: '--font-inter',
   display: 'swap',
 });
 
-const roboto = Roboto({
+const interDisplay = Inter({
   subsets: ['latin'],
-  weight: ['100', '300', '400', '500', '700', '900'],
-  style: ['normal', 'italic'],
+  weight: ['400', '600', '700'],
   variable: '--font-display',
-  display: 'swap',
-});
-
-const delius = Delius({
-  subsets: ['latin'],
-  weight: ['400'],
-  variable: '--font-delius',
   display: 'swap',
 });
 
@@ -48,7 +41,8 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="scroll-smooth">
-      <body className={`${poppins.variable} ${roboto.variable} ${delius.variable} bg-white text-neutral-900 selection:bg-[var(--primary)] selection:text-white relative`}>
+      <body className={`${inter.variable} ${interDisplay.variable} bg-white text-neutral-900 selection:bg-[var(--primary)] selection:text-white relative`}>
+        <PerformanceMeasureGuard />
         {children}
         <Toaster />
       </body>
