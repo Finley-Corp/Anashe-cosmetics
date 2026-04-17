@@ -12,6 +12,35 @@ const updateProfileSchema = z.object({
     .or(z.literal('')),
 });
 
+export async function GET() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const { data: profile, error } = await supabase
+    .from('profiles')
+    .select('full_name,phone')
+    .eq('id', user.id)
+    .maybeSingle();
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  return NextResponse.json({
+    data: {
+      full_name: profile?.full_name ?? null,
+      phone: profile?.phone ?? null,
+      email: user.email ?? null,
+    },
+  });
+}
+
 export async function PATCH(req: Request) {
   const supabase = await createClient();
   const {
