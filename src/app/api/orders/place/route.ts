@@ -227,6 +227,13 @@ export async function POST(req: Request) {
       typeof user.user_metadata?.full_name === 'string' && user.user_metadata.full_name.trim()
         ? user.user_metadata.full_name.trim()
         : null;
+    const normalizedShippingAddress = {
+      line1: shippingAddress.line1,
+      line2: shippingAddress.line2 ?? null,
+      city: shippingAddress.city,
+      county: shippingAddress.county ?? null,
+      country: shippingAddress.country ?? 'Kenya',
+    };
     const ownerOrderSmsBody = buildOwnerOrderSms({
       orderNumber: order.order_number,
       total: Number(order.total),
@@ -238,7 +245,7 @@ export async function POST(req: Request) {
         variant_name: item.variant_name,
         quantity: item.quantity,
       })),
-      shippingAddress,
+      shippingAddress: normalizedShippingAddress,
     });
 
     const [smsResult, , emailResult] = await Promise.all([
