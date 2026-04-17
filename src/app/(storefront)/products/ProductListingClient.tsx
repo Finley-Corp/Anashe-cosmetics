@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { Filter, SlidersHorizontal, X, Search, Heart } from 'lucide-react';
 import type { Product } from '@/types';
-import { formatPrice } from '@/lib/utils';
+import { formatPrice, isSupabaseStorageUrl, resolveProductImageUrl, shouldUnoptimizeImage } from '@/lib/utils';
 import { useCartStore } from '@/store/cart';
 import { useToast } from '@/components/shared/Toaster';
 
@@ -32,6 +32,37 @@ const CATEGORY_OPTIONS = [
 
 interface ProductListingClientProps {
   initialParams: Record<string, string | string[] | undefined>;
+}
+
+function ListingProductImage({ src, alt }: { src: string; alt: string }) {
+  const [failed, setFailed] = useState(false);
+  const resolved = resolveProductImageUrl(src);
+  const effectiveSrc = failed ? '/images/hero-image.jpg' : resolved ?? '/images/hero-image.jpg';
+
+  if (isSupabaseStorageUrl(effectiveSrc)) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={effectiveSrc}
+        alt={alt}
+        className="h-full w-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
+        loading="lazy"
+        onError={() => setFailed(true)}
+      />
+    );
+  }
+
+  return (
+    <Image
+      src={effectiveSrc}
+      alt={alt}
+      width={800}
+      height={1000}
+      className="h-full w-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
+      unoptimized={shouldUnoptimizeImage(effectiveSrc)}
+      onError={() => setFailed(true)}
+    />
+  );
 }
 
 export function ProductListingClient({ initialParams }: ProductListingClientProps) {
@@ -296,12 +327,9 @@ export function ProductListingClient({ initialParams }: ProductListingClientProp
                       </button>
                     </div>
                     <Link href={`/products/${product.slug}`}>
-                      <Image
+                      <ListingProductImage
                         src={product.images?.find((img) => img.is_primary)?.url ?? product.images?.[0]?.url ?? '/images/hero-image.jpg'}
                         alt={product.name}
-                        width={800}
-                        height={1000}
-                        className="h-full w-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
                       />
                     </Link>
                     <div className="absolute inset-x-0 bottom-0 p-3 opacity-100 transition-opacity duration-300 md:p-4 md:opacity-0 md:group-hover:opacity-100">

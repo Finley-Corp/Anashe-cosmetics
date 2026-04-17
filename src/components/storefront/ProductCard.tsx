@@ -1,27 +1,45 @@
 'use client';
 
 import { useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Heart, Plus, Star } from 'lucide-react';
 import { useCartStore } from '@/store/cart';
 import { useToast } from '@/components/shared/Toaster';
-import { formatPrice, getDiscountPercent } from '@/lib/utils';
+import {
+  formatPrice,
+  getDiscountPercent,
+  isSupabaseStorageUrl,
+  resolveProductImageUrl,
+  shouldUnoptimizeImage,
+} from '@/lib/utils';
 import type { Product } from '@/types';
 
 interface ProductCardProps {
   product: Product;
   priority?: boolean;
+  initialWishlisted?: boolean;
 }
 
-export function ProductCard({ product, priority = false }: ProductCardProps) {
-  const [isWishlisted, setIsWishlisted] = useState(false);
+export function ProductCard({ product, priority = false, initialWishlisted = false }: ProductCardProps) {
+  const [isWishlisted, setIsWishlisted] = useState(initialWishlisted);
   const [isAdding, setIsAdding] = useState(false);
+  const [isTogglingWishlist, setIsTogglingWishlist] = useState(false);
+  const [primaryErrored, setPrimaryErrored] = useState(false);
+  const [secondaryErrored, setSecondaryErrored] = useState(false);
   const { addItem } = useCartStore();
   const { add: showToast } = useToast();
+  const router = useRouter();
+  const pathname = usePathname();
 
-  const primaryImage = product.images?.find((i) => i.is_primary)?.url ?? product.images?.[0]?.url;
-  const secondaryImage = product.images?.[1]?.url;
+  const rawPrimaryImage = product.images?.find((i) => i.is_primary)?.url ?? product.images?.[0]?.url;
+  const rawSecondaryImage = product.images?.[1]?.url;
+  const resolvedPrimaryImage = resolveProductImageUrl(rawPrimaryImage);
+  const resolvedSecondaryImage = resolveProductImageUrl(rawSecondaryImage);
+  const primaryImage = primaryErrored ? '/images/hero-image.jpg' : resolvedPrimaryImage ?? '/images/hero-image.jpg';
+  const secondaryImage =
+    secondaryErrored || resolvedSecondaryImage === primaryImage ? null : resolvedSecondaryImage;
   const price = product.sale_price ?? product.price;
   const discountPercent = product.sale_price ? getDiscountPercent(product.price, product.sale_price) : 0;
 
@@ -45,13 +63,39 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
     setTimeout(() => setIsAdding(false), 600);
   }
 
-  function toggleWishlist(e: React.MouseEvent) {
+  async function toggleWishlist(e: React.MouseEvent) {
     e.preventDefault();
-    setIsWishlisted(!isWishlisted);
-    showToast(
-      isWishlisted ? 'Removed from wishlist' : 'Added to wishlist',
-      isWishlisted ? 'info' : 'success'
-    );
+    if (isTogglingWishlist) return;
+    setIsTogglingWishlist(true);
+
+    try {
+      const res = isWishlisted
+        ? await fetch(`/api/wishlist/${product.id}`, { method: 'DELETE' })
+        : await fetch('/api/wishlist', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ product_id: product.id }),
+          });
+
+      const payload = (await res.json().catch(() => ({}))) as { error?: string };
+      if (res.status === 401) {
+        router.push(`/auth/login?redirect=${encodeURIComponent(pathname || '/products')}`);
+        return;
+      }
+      if (!res.ok) {
+        throw new Error(payload.error ?? 'Unable to update wishlist');
+      }
+
+      setIsWishlisted((prev) => !prev);
+      showToast(
+        isWishlisted ? 'Removed from wishlist' : 'Added to wishlist',
+        isWishlisted ? 'info' : 'success'
+      );
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : 'Unable to update wishlist', 'error');
+    } finally {
+      setIsTogglingWishlist(false);
+    }
   }
 
   return (
@@ -59,26 +103,52 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
       <div className="relative aspect-square bg-neutral-100 rounded-xl overflow-hidden mb-4 border border-neutral-100">
         {/* Primary image */}
         {primaryImage ? (
-          <Image
-            src={primaryImage}
-            alt={product.name}
-            fill
-            className={`product-card-img object-cover absolute inset-0 z-10 ${secondaryImage ? 'group-hover:opacity-0 transition-opacity duration-500' : ''}`}
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-            priority={priority}
-          />
+          isSupabaseStorageUrl(primaryImage) ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={primaryImage}
+              alt={product.name}
+              className={`product-card-img object-cover absolute inset-0 z-10 h-full w-full ${secondaryImage ? 'group-hover:opacity-0 transition-opacity duration-500' : ''}`}
+              loading={priority ? 'eager' : 'lazy'}
+              onError={() => setPrimaryErrored(true)}
+            />
+          ) : (
+            <Image
+              src={primaryImage}
+              alt={product.name}
+              fill
+              className={`product-card-img object-cover absolute inset-0 z-10 ${secondaryImage ? 'group-hover:opacity-0 transition-opacity duration-500' : ''}`}
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+              priority={priority}
+              unoptimized={shouldUnoptimizeImage(primaryImage)}
+              onError={() => setPrimaryErrored(true)}
+            />
+          )
         ) : (
           <div className="w-full h-full bg-neutral-200" />
         )}
         {/* Secondary image (hover) */}
         {secondaryImage && (
-          <Image
-            src={secondaryImage}
-            alt={product.name}
-            fill
-            className="product-card-img object-cover absolute inset-0 scale-105"
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-          />
+          isSupabaseStorageUrl(secondaryImage) ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={secondaryImage}
+              alt={product.name}
+              className="product-card-img object-cover absolute inset-0 scale-105 h-full w-full"
+              loading="lazy"
+              onError={() => setSecondaryErrored(true)}
+            />
+          ) : (
+            <Image
+              src={secondaryImage}
+              alt={product.name}
+              fill
+              className="product-card-img object-cover absolute inset-0 scale-105"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+              unoptimized={shouldUnoptimizeImage(secondaryImage)}
+              onError={() => setSecondaryErrored(true)}
+            />
+          )
         )}
 
         {/* Badges */}
@@ -97,6 +167,7 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
         {/* Wishlist */}
         <button
           onClick={toggleWishlist}
+          disabled={isTogglingWishlist}
           className="absolute top-3 right-3 z-20 w-8 h-8 rounded-full bg-white shadow-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:scale-110"
         >
           <Heart

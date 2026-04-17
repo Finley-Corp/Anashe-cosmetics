@@ -10,7 +10,7 @@ export default async function EditProductPage({ params }: { params: Promise<{ id
     supabase.from('categories').select('id,name').order('name', { ascending: true }),
     supabase
       .from('products')
-      .select('id,name,slug,short_description,description,brand,sku,category_id,price,stock,is_published,images:product_images(url,is_primary)')
+      .select('id,name,slug,short_description,description,brand,sku,category_id,price,sale_price,stock,is_published,images:product_images(id,url,is_primary,sort_order)')
       .eq('id', id)
       .maybeSingle(),
   ]);
@@ -19,15 +19,16 @@ export default async function EditProductPage({ params }: { params: Promise<{ id
     notFound();
   }
 
-  const primaryImage = product.images?.find((img) => img.is_primary)?.url ?? product.images?.[0]?.url ?? '';
+  const imagesSorted = (product.images ?? []).slice().sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
+  const primaryImage = imagesSorted.find((img) => img.is_primary)?.url ?? imagesSorted[0]?.url ?? '';
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold font-[family-name:var(--font-display)] text-neutral-900">Edit Product</h1>
-        <p className="text-sm text-neutral-500 mt-1">Update product details and inventory.</p>
+        <h1 className="text-2xl font-bold font-[family-name:var(--font-display)] text-white">Edit Product</h1>
+        <p className="text-sm text-gray-500 mt-1">Update product details and inventory.</p>
       </div>
-      <div className="bg-white border border-neutral-100 rounded-2xl p-6">
+      <div className="bg-[#1A1D21] border border-white/5 rounded-2xl p-6">
         <ProductForm
           mode="edit"
           productId={product.id}
@@ -41,10 +42,15 @@ export default async function EditProductPage({ params }: { params: Promise<{ id
             sku: product.sku ?? '',
             category_id: product.category_id ?? '',
             price: Number(product.price ?? 0),
+            sale_price: product.sale_price == null ? '' : Number(product.sale_price),
             stock: Number(product.stock ?? 0),
-            image_url: primaryImage,
             is_published: Boolean(product.is_published),
           }}
+          initialImages={imagesSorted.map((img, idx) => ({
+            url: img.url,
+            is_primary: Boolean(img.is_primary),
+            sort_order: Number(img.sort_order ?? idx),
+          }))}
         />
       </div>
     </div>

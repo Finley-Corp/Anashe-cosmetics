@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
 import { ChevronRight, Star, Heart, ShoppingBag, Truck, Minus, Plus, CheckCircle, Leaf, Award } from 'lucide-react';
 import { useCartStore } from '@/store/cart';
 import { useToast } from '@/components/shared/Toaster';
@@ -16,25 +17,49 @@ interface ProductDetailClientProps {
 }
 
 export function ProductDetailClient({ product, reviews }: ProductDetailClientProps) {
+  const images = useMemo(
+    () =>
+      [...(product.images ?? [])].sort((a, b) => {
+        if (a.is_primary && !b.is_primary) return -1;
+        if (!a.is_primary && b.is_primary) return 1;
+        return (a.sort_order ?? 0) - (b.sort_order ?? 0);
+      }),
+    [product.images]
+  );
+  const primaryImageIndex = useMemo(() => {
+    const idx = images.findIndex((img) => img.is_primary);
+    return idx >= 0 ? idx : 0;
+  }, [images]);
   const [selectedImage, setSelectedImage] = useState(0);
   const [selectedVariant, setSelectedVariant] = useState(product.variants?.[0] ?? null);
   const [quantity, setQuantity] = useState(1);
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const [isWishlistBusy, setIsWishlistBusy] = useState(false);
   const [rating, setRating] = useState(5);
   const [reviewTitle, setReviewTitle] = useState('');
   const [reviewBody, setReviewBody] = useState('');
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
   const { addItem } = useCartStore();
   const { add: showToast } = useToast();
+  const router = useRouter();
+  const pathname = usePathname();
 
-  const images = product.images ?? [];
-  const primaryImage = images[selectedImage]?.url ?? images[0]?.url;
+  useEffect(() => {
+    setSelectedImage(primaryImageIndex);
+  }, [product.id, primaryImageIndex]);
+
+  const activeImageIndex =
+    selectedImage >= 0 && selectedImage < images.length ? selectedImage : primaryImageIndex;
+  const primaryImage = images[activeImageIndex]?.url ?? images[primaryImageIndex]?.url ?? images[0]?.url;
   const price = (product.sale_price ?? product.price) + (selectedVariant?.price_modifier ?? 0);
   const originalPrice = product.price + (selectedVariant?.price_modifier ?? 0);
   const discountPercent = product.sale_price ? getDiscountPercent(originalPrice, price) : 0;
   const stockStatus = getStockStatus(selectedVariant?.stock ?? product.stock);
   const maxQty = selectedVariant?.stock ?? product.stock;
   const productIngredients = (product as Product & { ingredients?: string }).ingredients;
+
+  const isSupabaseStorageUrl = (url: string) =>
+    url.includes('.supabase.co/storage/v1/object') || url.includes('.supabase.in/storage/v1/object');
 
   function addToCart() {
     if (stockStatus === 'out_of_stock') return;
@@ -88,6 +113,36 @@ export function ProductDetailClient({ product, reviews }: ProductDetailClientPro
     }
   }
 
+  async function toggleWishlist() {
+    if (isWishlistBusy) return;
+    setIsWishlistBusy(true);
+    try {
+      const res = isWishlisted
+        ? await fetch(`/api/wishlist/${product.id}`, { method: 'DELETE' })
+        : await fetch('/api/wishlist', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ product_id: product.id }),
+          });
+
+      const payload = (await res.json().catch(() => ({}))) as { error?: string };
+      if (res.status === 401) {
+        router.push(`/auth/login?redirect=${encodeURIComponent(pathname || `/products/${product.slug}`)}`);
+        return;
+      }
+      if (!res.ok) {
+        throw new Error(payload.error ?? 'Unable to update wishlist');
+      }
+
+      setIsWishlisted((prev) => !prev);
+      showToast(isWishlisted ? 'Removed from wishlist' : 'Added to wishlist', isWishlisted ? 'info' : 'success');
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : 'Unable to update wishlist', 'error');
+    } finally {
+      setIsWishlistBusy(false);
+    }
+  }
+
   const stockBadge = {
     in_stock: <span className="text-xs font-semibold text-[var(--primary)] bg-[var(--accent)] px-2.5 py-1 rounded-full">In Stock</span>,
     low_stock: <span className="text-xs font-semibold text-[var(--primary)] bg-[var(--accent)] px-2.5 py-1 rounded-full">Only {maxQty} left</span>,
@@ -105,40 +160,72 @@ export function ProductDetailClient({ product, reviews }: ProductDetailClientPro
           <Link href="/home" className="hover:text-[var(--primary)] transition-colors">Home</Link>
           <ChevronRight className="w-3 h-3" />
           <Link href="/products" className="hover:text-[var(--primary)] transition-colors">Products</Link>
+          {product.category?.slug ? (
+            <>
+              <ChevronRight className="w-3 h-3" />
+              <Link
+                href={`/categories/${product.category.slug}`}
+                className="hover:text-[var(--primary)] transition-colors"
+              >
+                {product.category.name}
+              </Link>
+            </>
+          ) : null}
           <ChevronRight className="w-3 h-3" />
           <span className="truncate max-w-[220px] text-[var(--text-primary)]">{product.name}</span>
         </nav>
 
         <div className="lg:grid lg:grid-cols-12 lg:gap-12 xl:gap-16">
           <div className="lg:col-span-7 flex flex-col gap-4">
-            <div className="aspect-[4/3] w-full bg-[var(--accent)] rounded-lg overflow-hidden relative group">
+            <div className="aspect-[4/3] w-full bg-white rounded-lg overflow-hidden relative group">
               {primaryImage ? (
-                <Image
-                  src={primaryImage}
-                  alt={product.name}
-                  fill
-                  className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
-                  sizes="(max-width: 1024px) 100vw, 58vw"
-                  priority
-                />
+                isSupabaseStorageUrl(primaryImage) ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={primaryImage}
+                    alt={product.name}
+                    className="absolute inset-0 h-full w-full object-contain object-center transition-transform duration-700 ease-out group-hover:scale-105"
+                    loading="eager"
+                    fetchPriority="high"
+                  />
+                ) : (
+                  <Image
+                    src={primaryImage}
+                    alt={product.name}
+                    fill
+                    className="w-full h-full object-contain object-center transition-transform duration-700 ease-out group-hover:scale-105"
+                    sizes="(max-width: 1024px) 100vw, 58vw"
+                    priority
+                  />
+                )
               ) : (
                 <div className="w-full h-full bg-neutral-200" />
               )}
             </div>
 
             {images.length > 1 && (
-              <div className="grid grid-cols-4 gap-4">
-                {images.slice(0, 4).map((img, i) => (
+              <div className="rounded-xl border border-[var(--accent)] bg-white/60 p-2.5 md:p-3">
+                <div className="flex gap-2.5 overflow-x-auto pb-1 snap-x snap-mandatory md:grid md:grid-cols-6 lg:grid-cols-7 md:gap-3 md:overflow-visible md:pb-0">
+                  {images.map((img, i) => (
                   <button
                     key={img.id}
                     onClick={() => setSelectedImage(i)}
-                    className={`aspect-square rounded-md overflow-hidden transition-opacity ${
-                      selectedImage === i ? 'ring-1 ring-[var(--primary)] opacity-100' : 'opacity-60 hover:opacity-100'
+                    className={`snap-start shrink-0 h-20 w-20 md:h-[84px] md:w-[84px] lg:h-[92px] lg:w-[92px] rounded-lg overflow-hidden border transition-all ${
+                      activeImageIndex === i
+                        ? 'border-[var(--primary)] ring-2 ring-[var(--primary)]/25 opacity-100'
+                        : 'border-neutral-200 opacity-80 hover:opacity-100 hover:border-neutral-300'
                     }`}
+                    aria-label={`View image ${i + 1}`}
                   >
-                    <Image src={img.url} alt={img.alt ?? product.name} width={320} height={320} className="w-full h-full object-cover" />
+                    {isSupabaseStorageUrl(img.url) ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={img.url} alt={img.alt ?? product.name} className="h-full w-full object-cover" loading="lazy" />
+                    ) : (
+                      <Image src={img.url} alt={img.alt ?? product.name} width={320} height={320} className="h-full w-full object-cover" />
+                    )}
                   </button>
-                ))}
+                  ))}
+                </div>
               </div>
             )}
           </div>
@@ -231,10 +318,8 @@ export function ProductDetailClient({ product, reviews }: ProductDetailClientPro
                 </div>
 
                 <button
-                  onClick={() => {
-                    setIsWishlisted(!isWishlisted);
-                    showToast(isWishlisted ? 'Removed from wishlist' : 'Added to wishlist', isWishlisted ? 'info' : 'success');
-                  }}
+                  onClick={toggleWishlist}
+                  disabled={isWishlistBusy}
                   className="w-full h-11 border border-[var(--accent)] rounded-lg text-sm font-medium text-[var(--text-body)] hover:border-[var(--primary)] transition-colors flex items-center justify-center gap-2"
                 >
                   <Heart className={`w-4 h-4 ${isWishlisted ? 'fill-red-500 text-red-500' : ''}`} />

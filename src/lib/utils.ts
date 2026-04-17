@@ -75,3 +75,47 @@ export function getProductPrice(product: { price: number; sale_price: number | n
 export function getDiscountPercent(original: number, sale: number): number {
   return Math.round(((original - sale) / original) * 100);
 }
+
+export function resolveProductImageUrl(url?: string | null): string | null {
+  const value = url?.trim();
+  if (!value) return null;
+
+  if (
+    value.startsWith('http://') ||
+    value.startsWith('https://') ||
+    value.startsWith('blob:') ||
+    value.startsWith('data:')
+  ) {
+    return value;
+  }
+
+  if (value.startsWith('//')) return `https:${value}`;
+
+  // Keep regular app assets untouched (e.g. /images/hero-image.jpg).
+  if (value.startsWith('/images/')) return value;
+
+  const base = process.env.NEXT_PUBLIC_SUPABASE_URL?.replace(/\/+$/, '');
+  if (!base) return value;
+
+  const normalizedPath = value.replace(/^\/+/, '');
+  if (normalizedPath.startsWith('storage/v1/object/public/')) {
+    return `${base}/${normalizedPath}`;
+  }
+
+  // Support object keys saved as "products/..." by mapping to product-images bucket.
+  if (normalizedPath.startsWith('products/')) {
+    return `${base}/storage/v1/object/public/product-images/${normalizedPath}`;
+  }
+
+  return value.startsWith('/') ? `${base}${value}` : `${base}/${value}`;
+}
+
+export function shouldUnoptimizeImage(url?: string | null): boolean {
+  if (!url) return false;
+  return url.startsWith('http://localhost') || url.startsWith('http://127.');
+}
+
+export function isSupabaseStorageUrl(url?: string | null): boolean {
+  if (!url) return false;
+  return url.includes('.supabase.co/storage/v1/object') || url.includes('.supabase.in/storage/v1/object');
+}

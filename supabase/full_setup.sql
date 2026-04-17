@@ -296,6 +296,21 @@ CREATE INDEX IF NOT EXISTS idx_service_bookings_status ON service_bookings(statu
 CREATE INDEX IF NOT EXISTS idx_service_bookings_created_at ON service_bookings(created_at DESC);
 
 -- ================================================================
+-- CUSTOMER CONTACTS (admin-managed CRM list)
+-- ================================================================
+CREATE TABLE IF NOT EXISTS customer_contacts (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  full_name TEXT NOT NULL,
+  email TEXT NOT NULL UNIQUE,
+  phone TEXT NOT NULL,
+  notes TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_customer_contacts_created_at ON customer_contacts(created_at DESC);
+
+-- ================================================================
 -- ANALYTICS
 -- ================================================================
 CREATE TABLE IF NOT EXISTS analytics_events (
@@ -410,6 +425,7 @@ ALTER TABLE payments ENABLE ROW LEVEL SECURITY;
 ALTER TABLE reviews ENABLE ROW LEVEL SECURITY;
 ALTER TABLE review_votes ENABLE ROW LEVEL SECURITY;
 ALTER TABLE service_bookings ENABLE ROW LEVEL SECURITY;
+ALTER TABLE customer_contacts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE analytics_events ENABLE ROW LEVEL SECURITY;
 
 -- ================================================================
@@ -474,11 +490,31 @@ CREATE POLICY "cart_items_own" ON cart_items
 -- WISHLIST — users see own
 -- ================================================================
 DROP POLICY IF EXISTS "wishlist_own" ON wishlists;
-CREATE POLICY "wishlist_own" ON wishlists
+DROP POLICY IF EXISTS "wishlist_own_select" ON wishlists;
+DROP POLICY IF EXISTS "wishlist_own_insert" ON wishlists;
+DROP POLICY IF EXISTS "wishlist_own_delete" ON wishlists;
+CREATE POLICY "wishlist_own_select" ON wishlists
+  FOR SELECT
+  USING (auth.uid() = user_id);
+CREATE POLICY "wishlist_own_insert" ON wishlists
+  FOR INSERT
+  WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "wishlist_own_delete" ON wishlists
+  FOR DELETE
   USING (auth.uid() = user_id);
 
 DROP POLICY IF EXISTS "wishlist_items_own" ON wishlist_items;
-CREATE POLICY "wishlist_items_own" ON wishlist_items
+DROP POLICY IF EXISTS "wishlist_items_own_select" ON wishlist_items;
+DROP POLICY IF EXISTS "wishlist_items_own_insert" ON wishlist_items;
+DROP POLICY IF EXISTS "wishlist_items_own_delete" ON wishlist_items;
+CREATE POLICY "wishlist_items_own_select" ON wishlist_items
+  FOR SELECT
+  USING (wishlist_id IN (SELECT id FROM wishlists WHERE user_id = auth.uid()));
+CREATE POLICY "wishlist_items_own_insert" ON wishlist_items
+  FOR INSERT
+  WITH CHECK (wishlist_id IN (SELECT id FROM wishlists WHERE user_id = auth.uid()));
+CREATE POLICY "wishlist_items_own_delete" ON wishlist_items
+  FOR DELETE
   USING (wishlist_id IN (SELECT id FROM wishlists WHERE user_id = auth.uid()));
 
 -- ================================================================
@@ -488,6 +524,17 @@ DROP POLICY IF EXISTS "orders_own" ON orders;
 CREATE POLICY "orders_own" ON orders
   USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "orders_own_insert" ON orders;
+CREATE POLICY "orders_own_insert" ON orders
+  FOR INSERT
+  WITH CHECK (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "orders_own_update" ON orders;
+CREATE POLICY "orders_own_update" ON orders
+  FOR UPDATE
+  USING (auth.uid() = user_id)
+  WITH CHECK (auth.uid() = user_id);
+
 DROP POLICY IF EXISTS "orders_admin" ON orders;
 CREATE POLICY "orders_admin" ON orders
   USING ((SELECT role FROM profiles WHERE id = auth.uid()) = 'admin');
@@ -495,6 +542,22 @@ CREATE POLICY "orders_admin" ON orders
 DROP POLICY IF EXISTS "order_items_own" ON order_items;
 CREATE POLICY "order_items_own" ON order_items
   USING (order_id IN (SELECT id FROM orders WHERE user_id = auth.uid()));
+
+DROP POLICY IF EXISTS "order_items_own_insert" ON order_items;
+CREATE POLICY "order_items_own_insert" ON order_items
+  FOR INSERT
+  WITH CHECK (order_id IN (SELECT id FROM orders WHERE user_id = auth.uid()));
+
+-- PAYMENTS — users can create/view payments for their orders
+DROP POLICY IF EXISTS "payments_own_select" ON payments;
+CREATE POLICY "payments_own_select" ON payments
+  FOR SELECT
+  USING (order_id IN (SELECT id FROM orders WHERE user_id = auth.uid()));
+
+DROP POLICY IF EXISTS "payments_own_insert" ON payments;
+CREATE POLICY "payments_own_insert" ON payments
+  FOR INSERT
+  WITH CHECK (order_id IN (SELECT id FROM orders WHERE user_id = auth.uid()));
 
 -- ================================================================
 -- REVIEWS — public read approved, authenticated write own
@@ -532,3 +595,12 @@ CREATE POLICY "service_bookings_public_insert" ON service_bookings
 DROP POLICY IF EXISTS "service_bookings_admin_all" ON service_bookings;
 CREATE POLICY "service_bookings_admin_all" ON service_bookings
   USING ((SELECT role FROM profiles WHERE id = auth.uid()) = 'admin');
+
+-- ================================================================
+-- CUSTOMER CONTACTS — admin only
+-- ================================================================
+DROP POLICY IF EXISTS "customer_contacts_admin_all" ON customer_contacts;
+CREATE POLICY "customer_contacts_admin_all" ON customer_contacts
+  FOR ALL
+  USING ((SELECT role FROM profiles WHERE id = auth.uid()) = 'admin')
+  WITH CHECK ((SELECT role FROM profiles WHERE id = auth.uid()) = 'admin');

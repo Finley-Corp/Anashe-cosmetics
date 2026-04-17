@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Plus } from 'lucide-react';
 import { createServiceClient } from '@/lib/supabase/service';
+import { isSupabaseStorageUrl, resolveProductImageUrl, shouldUnoptimizeImage } from '@/lib/utils';
 import { ProductRowActions } from './product-row-actions';
 import { DeleteAllProductsButton } from './delete-all-products-button';
 
@@ -16,6 +17,26 @@ export default async function AdminProductsPage() {
     supabase.from('categories').select('id,name'),
   ]);
   const categoryMap = new Map((categories ?? []).map((category) => [category.id, category.name]));
+
+  function ProductTableImage({ src, alt }: { src: string; alt: string }) {
+    if (isSupabaseStorageUrl(src)) {
+      return (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={src} alt={alt} className="object-cover w-full h-full" loading="lazy" />
+      );
+    }
+
+    return (
+      <Image
+        src={src}
+        alt={alt}
+        width={40}
+        height={40}
+        className="object-cover w-full h-full"
+        unoptimized={shouldUnoptimizeImage(src)}
+      />
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -52,12 +73,13 @@ export default async function AdminProductsPage() {
                   <td className="px-4 py-3 min-w-[320px]">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 bg-neutral-100 rounded-lg overflow-hidden shrink-0">
-                        <Image
-                          src={product.images?.find((i) => i.is_primary)?.url ?? product.images?.[0]?.url ?? 'https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?w=100&q=80'}
+                        <ProductTableImage
+                          src={
+                            resolveProductImageUrl(
+                              product.images?.find((i) => i.is_primary)?.url ?? product.images?.[0]?.url
+                            ) ?? 'https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?w=100&q=80'
+                          }
                           alt={product.name}
-                          width={40}
-                          height={40}
-                          className="object-cover w-full h-full"
                         />
                       </div>
                       <p className="font-medium text-white">{product.name}</p>

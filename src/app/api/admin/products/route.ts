@@ -12,9 +12,19 @@ const createProductSchema = z.object({
   sku: z.string().max(120).optional().nullable(),
   category_id: z.string().uuid().optional().nullable(),
   price: z.coerce.number().min(0),
+  sale_price: z.coerce.number().min(0).optional().nullable(),
   stock: z.coerce.number().int().min(0).default(0),
   is_published: z.coerce.boolean().default(false),
-  image_url: z.string().url().optional().nullable(),
+  images: z
+    .array(
+      z.object({
+        url: z.string().url(),
+        is_primary: z.coerce.boolean().optional().default(false),
+        sort_order: z.coerce.number().int().min(0).max(10000).optional().default(0),
+      })
+    )
+    .optional()
+    .nullable(),
 });
 
 function normalizeText(value?: string | null) {
@@ -75,6 +85,7 @@ export async function POST(req: Request) {
     sku: normalizeText(payload.sku),
     category_id: payload.category_id ?? null,
     price: payload.price,
+    sale_price: payload.sale_price ?? null,
     stock: payload.stock,
     is_published: payload.is_published,
   };
@@ -84,11 +95,31 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: error?.message ?? 'Unable to create product' }, { status: 500 });
   }
 
-  const imageUrl = normalizeText(payload.image_url);
-  if (imageUrl) {
-    await supabase
-      .from('product_images')
-      .insert({ product_id: product.id, url: imageUrl, is_primary: true, sort_order: 0 });
+  const images = payload.images ?? [];
+  if (images.length > 0) {
+    const normalized = images
+      .map((img, idx) => ({
+        url: normalizeText(img.url),
+        is_primary: Boolean(img.is_primary),
+        sort_order: Number.isFinite(img.sort_order) ? img.sort_order : idx,
+      }))
+      .filter((img): img is { url: string; is_primary: boolean; sort_order: number } => Boolean(img.url));
+
+    const hasPrimary = normalized.some((i) => i.is_primary);
+    const withPrimary = hasPrimary
+      ? normalized
+      : normalized.map((i, idx) => ({ ...i, is_primary: idx === 0 }));
+
+    if (withPrimary.length > 0) {
+      await supabase.from('product_images').insert(
+        withPrimary.map((img) => ({
+          product_id: product.id,
+          url: img.url,
+          is_primary: img.is_primary,
+          sort_order: img.sort_order,
+        }))
+      );
+    }
   }
 
   return NextResponse.json({ success: true, data: { id: product.id, slug: uniqueSlug } });
