@@ -1,4 +1,4 @@
-# Anashe Fullstack
+# Anashe Fullstack.
 
 A fullstack skincare and cosmetics e-commerce application built with Next.js (App Router), Supabase, and M-Pesa checkout.
 
