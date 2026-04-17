@@ -27,8 +27,13 @@ export default async function WishlistPage() {
         .eq('wishlist_id', wishlist.id)
         .order('added_at', { ascending: false });
 
+      type WishlistItemRow = { product: Product | Product[] | null };
       products = (data ?? [])
-        .map((row) => row.product as Product | null)
+        .map((row) => {
+          const productRelation = (row as WishlistItemRow).product;
+          if (Array.isArray(productRelation)) return productRelation[0] ?? null;
+          return productRelation;
+        })
         .filter((row): row is Product => Boolean(row));
     }
   }
