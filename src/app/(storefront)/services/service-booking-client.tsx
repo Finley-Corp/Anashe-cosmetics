@@ -4,31 +4,11 @@ import { useState } from 'react';
 import { ArrowRight, CalendarClock, CheckCircle2, Sparkles } from 'lucide-react';
 import { useToast } from '@/components/shared/Toaster';
 
-const SERVICE_OPTIONS = [
-  { value: 'skin-consultation', label: 'Skin Consultation' },
-  { value: 'routine-planning', label: 'Routine Planning Session' },
-  { value: 'product-matching', label: 'Product Matching Session' },
-  { value: 'bridal-beauty-consult', label: 'Bridal Beauty Consultation' },
-];
-
-const SERVICE_CARDS = [
-  {
-    title: 'Skin Consultation',
-    description: 'One-on-one expert assessment for your skin type, concerns, and treatment priorities.',
-  },
-  {
-    title: 'Routine Planning',
-    description: 'A practical AM/PM routine mapped to your budget, skin goals, and lifestyle.',
-  },
-  {
-    title: 'Product Matching',
-    description: 'Targeted product recommendations based on your current regimen and sensitivity profile.',
-  },
-  {
-    title: 'Bridal Beauty Planning',
-    description: 'Timeline-based prep and product strategy for flawless skin ahead of your big day.',
-  },
-];
+type ServiceOption = {
+  value: string;
+  label: string;
+  description?: string | null;
+};
 
 const SERVICE_IMAGES = [
   {
@@ -45,7 +25,7 @@ const SERVICE_IMAGES = [
   },
 ];
 
-export function ServiceBookingClient() {
+export function ServiceBookingClient({ serviceOptions }: { serviceOptions: ServiceOption[] }) {
   const { add: showToast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmittingFeedback, setIsSubmittingFeedback] = useState(false);
@@ -53,7 +33,7 @@ export function ServiceBookingClient() {
     full_name: '',
     email: '',
     phone: '',
-    service_type: SERVICE_OPTIONS[0].value,
+    service_type: serviceOptions[0]?.value ?? '',
     preferred_date: '',
     preferred_time: '',
     notes: '',
@@ -96,7 +76,7 @@ export function ServiceBookingClient() {
         full_name: '',
         email: '',
         phone: '',
-        service_type: SERVICE_OPTIONS[0].value,
+        service_type: serviceOptions[0]?.value ?? '',
         preferred_date: '',
         preferred_time: '',
         notes: '',
@@ -179,15 +159,17 @@ export function ServiceBookingClient() {
           <h2 className="text-3xl font-semibold tracking-tight text-neutral-900 md:text-5xl">What we offer</h2>
         </div>
         <div className="grid grid-cols-1 gap-px overflow-hidden rounded-3xl bg-neutral-200 md:grid-cols-2">
-          {SERVICE_CARDS.map((service) => (
-            <article key={service.title} className="group bg-white p-8 md:p-10">
+          {serviceOptions.map((service) => (
+            <article key={service.value} className="group bg-white p-8 md:p-10">
               <div className="flex items-start justify-between gap-4">
-                <h3 className="text-xl font-semibold text-neutral-900">{service.title}</h3>
+                <h3 className="text-xl font-semibold text-neutral-900">{service.label}</h3>
                 <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--accent)] text-[var(--primary)] transition-colors group-hover:bg-[var(--primary)] group-hover:text-white">
                   <ArrowRight className="h-4 w-4" />
                 </span>
               </div>
-              <p className="mt-5 max-w-md text-sm leading-relaxed text-neutral-500">{service.description}</p>
+              <p className="mt-5 max-w-md text-sm leading-relaxed text-neutral-500">
+                {service.description ?? 'Personalized beauty guidance tailored to your goals and routine.'}
+              </p>
             </article>
           ))}
         </div>
@@ -262,7 +244,7 @@ export function ServiceBookingClient() {
                   onChange={(e) => setForm((prev) => ({ ...prev, service_type: e.target.value }))}
                   className="h-11 w-full rounded-none border border-neutral-300 bg-white px-3 text-sm outline-none transition-colors focus:border-neutral-900"
                 >
-                  {SERVICE_OPTIONS.map((option) => (
+                  {serviceOptions.map((option) => (
                     <option key={option.value} value={option.value}>
                       {option.label}
                     </option>

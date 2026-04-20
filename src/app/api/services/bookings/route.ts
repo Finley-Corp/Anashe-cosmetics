@@ -31,6 +31,19 @@ export async function POST(req: Request) {
     );
   }
 
+  const { data: offeringRows, error: offeringsError } = await admin
+    .from('service_offerings')
+    .select('slug')
+    .eq('is_active', true)
+    .limit(200);
+
+  if (!offeringsError && offeringRows && offeringRows.length > 0) {
+    const allowed = new Set(offeringRows.map((row) => row.slug));
+    if (!allowed.has(payload.service_type)) {
+      return NextResponse.json({ error: 'Please choose a valid service from the list.' }, { status: 422 });
+    }
+  }
+
   const { error } = await admin.from('service_bookings').insert({
     full_name: payload.full_name,
     email: payload.email,
