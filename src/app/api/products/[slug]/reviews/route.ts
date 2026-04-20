@@ -69,10 +69,6 @@ export async function POST(req: Request, { params }: { params: Promise<{ slug: s
     .limit(1)
     .maybeSingle();
 
-  if (!purchasedItem) {
-    return NextResponse.json({ error: 'Only customers who purchased can review this product' }, { status: 403 });
-  }
-
   const { error } = await supabase.from('reviews').insert({
     product_id: product.id,
     user_id: user.id,
