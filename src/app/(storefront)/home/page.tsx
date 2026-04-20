@@ -58,34 +58,28 @@ const FALLBACK_CATEGORIES = [
   { name: 'Natural & Organic', image: '/images/orange%20(2).jpg', href: '/categories/natural-organic' },
 ];
 
-const JOURNAL_POSTS = [
-  {
-    title: 'How to Build a Simple 5-Step Skincare Routine',
-    category: 'Skincare',
-    date: 'Apr 10, 2026',
-    image: '/images/hero-1.jpg',
-    href: '/blog',
-  },
-  {
-    title: 'Best SPF Products for Kenya\'s Sunny Climate',
-    category: 'Sunscreen',
-    date: 'Apr 5, 2026',
-    image: '/images/hero-2.jpg',
-    href: '/blog',
-  },
-  {
-    title: 'How to Choose the Right Foundation Shade Online',
-    category: 'Makeup',
-    date: 'Mar 28, 2026',
-    image: '/images/good-skin-club.jpg',
-    href: '/blog',
-  },
-];
+type JournalPost = {
+  id: string;
+  title: string;
+  category: string;
+  image_url: string | null;
+  published_at: string | null;
+  created_at: string | null;
+};
+
+function formatJournalDate(value: string | null) {
+  if (!value) return '';
+  return new Date(value).toLocaleDateString('en-KE', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  });
+}
 
 export default async function HomePage() {
   const supabase = await createClient();
 
-  const [{ data: featuredProducts }, { data: categories }] = await Promise.all([
+  const [{ data: featuredProducts }, { data: categories }, { data: journalPostsData }] = await Promise.all([
     supabase
       .from('products')
       .select('*, images:product_images(*)')
@@ -99,6 +93,13 @@ export default async function HomePage() {
       .eq('is_active', true)
       .order('sort_order', { ascending: true })
       .limit(6),
+    supabase
+      .from('blog_posts')
+      .select('id,title,category,image_url,published_at,created_at')
+      .eq('is_published', true)
+      .order('published_at', { ascending: false, nullsFirst: false })
+      .order('created_at', { ascending: false })
+      .limit(3),
   ]);
 
   const products = (featuredProducts as Product[] | null) ?? DEMO_PRODUCTS;
@@ -109,6 +110,7 @@ export default async function HomePage() {
         href: `/categories/${c.slug}`,
       }))
     : FALLBACK_CATEGORIES;
+  const journalPosts = (journalPostsData ?? []) as JournalPost[];
 
   return (
     <>
@@ -356,13 +358,19 @@ export default async function HomePage() {
             </Link>
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {JOURNAL_POSTS.map((post, i) => (
-              <article key={post.title} className={`group cursor-pointer reveal delay-${i * 100}`}>
+            {journalPosts.map((post, i) => (
+              <article key={post.id} className={`group cursor-pointer reveal delay-${i * 100}`}>
                 <div className="overflow-hidden rounded-xl mb-5 aspect-[16/10] bg-neutral-100">
-                  <Image src={post.image} alt={post.title} width={800} height={500} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                  <Image
+                    src={post.image_url ?? '/images/hero-1.jpg'}
+                    alt={post.title}
+                    width={800}
+                    height={500}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
                 </div>
                 <div className="flex items-center gap-2 text-[10px] font-bold text-neutral-400 mb-2.5 uppercase tracking-wider">
-                  <span>{post.date}</span>
+                  <span>{formatJournalDate(post.published_at ?? post.created_at)}</span>
                   <span className="w-1 h-1 bg-neutral-300 rounded-full" />
                   <span>{post.category}</span>
                 </div>
@@ -370,6 +378,9 @@ export default async function HomePage() {
               </article>
             ))}
           </div>
+          {journalPosts.length === 0 ? (
+            <p className="text-sm text-neutral-500 mt-6">No journal posts yet.</p>
+          ) : null}
         </div>
       </section>
 
