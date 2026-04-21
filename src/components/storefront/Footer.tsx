@@ -8,7 +8,7 @@ export function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-10 mb-12">
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
-            <h3 className="text-2xl font-semibold tracking-tighter mb-4 font-[family-name:var(--font-display)]">ANASHE</h3>
+            <h3 className="text-2xl font-bold tracking-tight mb-4 font-[family-name:var(--font-display)]">ANASHE</h3>
             <p className="text-sm text-neutral-400 leading-relaxed mb-5 max-w-xs">
               Kenya&apos;s skincare and cosmetics destination. Authentic beauty products, secure ordering, fast delivery across Kenya.
             </p>
