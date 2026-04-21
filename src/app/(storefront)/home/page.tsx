@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { ArrowRight, Truck, ShieldCheck, RefreshCw, Star, ChevronRight } from 'lucide-react';
 import { ProductCard } from '@/components/storefront/ProductCard';
 import { Logos3 } from '@/components/blocks/logos3';
+import { TestimonialsSection } from '@/components/storefront/TestimonialsSection';
 import type { Product } from '@/types';
 import { createClient } from '@/lib/supabase/server';
 
@@ -370,6 +371,8 @@ export default async function HomePage() {
           ) : null}
         </div>
       </section>
+
+      <TestimonialsSection />
 
       {/* FEATURED BRANDS */}
       <section className="py-16 lg:py-20 border-y border-neutral-100 bg-gradient-to-b from-white to-neutral-50/60">

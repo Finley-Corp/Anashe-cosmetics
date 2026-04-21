@@ -1,5 +1,4 @@
 import type { NextConfig } from 'next';
-import { withSentryConfig } from '@sentry/nextjs';
 
 const securityHeaders = [
   { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
@@ -31,15 +30,23 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default withSentryConfig(nextConfig, {
+let withSentryConfig: ((config: NextConfig, options: Record<string, unknown>) => NextConfig) | null = null;
+
+try {
+  // Keep build working even when Sentry package is missing in some deploy contexts.
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  withSentryConfig = require('@sentry/nextjs').withSentryConfig;
+} catch {
+  withSentryConfig = null;
+}
+
+const sentryOptions = {
   org: process.env.SENTRY_ORG,
   project: process.env.SENTRY_PROJECT,
-
   authToken: process.env.SENTRY_AUTH_TOKEN,
-
   widenClientFileUpload: true,
-
   tunnelRoute: '/monitoring',
-
   silent: !process.env.CI,
-});
+};
+
+export default withSentryConfig ? withSentryConfig(nextConfig, sentryOptions) : nextConfig;
