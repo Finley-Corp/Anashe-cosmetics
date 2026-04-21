@@ -73,7 +73,7 @@ export function Navbar() {
           {/* Center logo */}
           <Link
             href="/"
-            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 font-semibold tracking-tighter text-xl text-zinc-900 hover:opacity-80 transition-opacity"
+            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 font-[family-name:var(--font-display)] font-semibold tracking-tighter text-xl text-zinc-900 hover:opacity-80 transition-opacity"
           >
             ANASHE
           </Link>
