@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Camera, MessageCircle, Mail, MapPin, Phone } from 'lucide-react';
+import { Camera, Mail, MapPin, Phone } from 'lucide-react';
 
 export function Footer() {
   return (
@@ -18,9 +18,9 @@ export function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Chat with us on WhatsApp"
-                className="w-9 h-9 flex items-center justify-center bg-neutral-800 hover:bg-green-700 rounded-full transition-colors"
+                className="w-10 h-10 flex items-center justify-center transition-transform hover:scale-105"
               >
-                <MessageCircle className="w-4 h-4" />
+                <img src="/images/social.png" alt="WhatsApp" className="w-8 h-8 object-contain" />
               </a>
               <a
                 href="https://www.instagram.com/anashe_cosmetics?igsh=bW85ZXh4ODR3dXZj"
