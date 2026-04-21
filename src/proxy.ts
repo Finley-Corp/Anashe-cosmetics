@@ -1,7 +1,7 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
 
   const supabase = createServerClient(
@@ -26,19 +26,20 @@ export async function middleware(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser();
 
   const pathname = request.nextUrl.pathname;
+  const adminAppUrl = process.env.NEXT_PUBLIC_ADMIN_URL ?? 'http://localhost:5000';
 
-  // Protect account routes
-  if (pathname.startsWith('/account') || pathname.startsWith('/orders') || pathname.startsWith('/checkout') || pathname.startsWith('/wishlist')) {
-    if (!user) {
-      const url = request.nextUrl.clone();
-      url.pathname = '/auth/login';
-      url.searchParams.set('redirect', pathname);
-      return NextResponse.redirect(url);
+  // Admin dashboard now lives in a separate project/app.
+  if (pathname.startsWith('/admin')) {
+    const target = new URL(`${pathname}${request.nextUrl.search}`, adminAppUrl);
+
+    // Avoid redirect loops when admin URL points to the same origin.
+    if (target.origin !== request.nextUrl.origin) {
+      return NextResponse.redirect(target);
     }
   }
 
-  // Protect admin routes
-  if (pathname.startsWith('/admin')) {
+  // Protect account routes
+  if (pathname.startsWith('/account') || pathname.startsWith('/orders') || pathname.startsWith('/checkout') || pathname.startsWith('/wishlist')) {
     if (!user) {
       const url = request.nextUrl.clone();
       url.pathname = '/auth/login';
@@ -52,6 +53,7 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    // Exclude Sentry tunnel route, Next internals, and static assets
+    '/((?!monitoring|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 };

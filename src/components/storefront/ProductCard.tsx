@@ -40,6 +40,7 @@ export function ProductCard({ product, priority = false, initialWishlisted = fal
   const primaryImage = primaryErrored ? '/images/hero-image.jpg' : resolvedPrimaryImage ?? '/images/hero-image.jpg';
   const secondaryImage =
     secondaryErrored || resolvedSecondaryImage === primaryImage ? null : resolvedSecondaryImage;
+  const normalizedName = product.name.replace(/\s+/g, ' ').trim();
   const price = product.sale_price ?? product.price;
   const discountPercent = product.sale_price ? getDiscountPercent(product.price, product.sale_price) : 0;
 
@@ -195,8 +196,10 @@ export function ProductCard({ product, priority = false, initialWishlisted = fal
       </div>
 
       <div className="flex justify-between items-start gap-2">
-        <div className="min-w-0">
-          <h3 className="text-sm font-semibold text-neutral-900 tracking-tight truncate">{product.name}</h3>
+        <div className="min-w-0 flex-1">
+          <h3 className="text-sm font-semibold text-neutral-900 tracking-tight min-h-10 overflow-hidden [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2]">
+            {normalizedName}
+          </h3>
           {product.brand && (
             <p className="text-xs text-neutral-500 mt-0.5">{product.brand}</p>
           )}
@@ -210,9 +213,9 @@ export function ProductCard({ product, priority = false, initialWishlisted = fal
           )}
         </div>
         <div className="shrink-0 text-right">
-          <span className="text-sm font-bold text-neutral-900">{formatPrice(price)}</span>
+          <span className="text-sm font-bold text-neutral-900 whitespace-nowrap">{formatPrice(price)}</span>
           {product.sale_price && (
-            <p className="text-xs text-neutral-400 line-through">{formatPrice(product.price)}</p>
+            <p className="text-xs text-neutral-400 line-through whitespace-nowrap">{formatPrice(product.price)}</p>
           )}
         </div>
       </div>

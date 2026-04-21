@@ -1,5 +1,6 @@
 import { CalendarClock } from 'lucide-react';
 import { createServiceClient } from '@/lib/supabase/service';
+import { ServiceBookingActions } from './service-booking-actions';
 
 type ServiceBookingRow = {
   id: string;
@@ -53,7 +54,7 @@ export default async function AdminServicesPage() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-white/5 bg-white/[0.02]">
-                {['Client', 'Contact', 'Service', 'Coming Date', 'Status', 'Booked On'].map((heading) => (
+                {['Client', 'Contact', 'Service', 'Coming Date', 'Status', 'Booked On', 'Actions'].map((heading) => (
                   <th key={heading} className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
                     {heading}
                   </th>
@@ -69,6 +70,11 @@ export default async function AdminServicesPage() {
                   <td className="px-4 py-3 text-gray-300">
                     <p>{booking.phone}</p>
                     <p className="text-xs text-gray-500">{booking.email}</p>
+                    <div className="mt-1.5 flex items-center gap-2 text-[11px]">
+                      <a href={`tel:${booking.phone}`} className="text-blue-300 hover:text-blue-200">Call</a>
+                      <span className="text-gray-600">•</span>
+                      <a href={`mailto:${booking.email}`} className="text-blue-300 hover:text-blue-200">Email</a>
+                    </div>
                   </td>
                   <td className="px-4 py-3 text-gray-300 capitalize">{booking.service_type.replace(/-/g, ' ')}</td>
                   <td className="px-4 py-3">
@@ -88,6 +94,9 @@ export default async function AdminServicesPage() {
                   </td>
                   <td className="px-4 py-3 text-xs text-gray-500">
                     {new Date(booking.created_at).toLocaleDateString('en-KE')}
+                  </td>
+                  <td className="px-4 py-3">
+                    <ServiceBookingActions bookingId={booking.id} currentStatus={booking.status} />
                   </td>
                 </tr>
               ))}
