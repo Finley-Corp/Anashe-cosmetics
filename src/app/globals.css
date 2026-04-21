@@ -14,14 +14,16 @@
   --primary: #e33a90;
   --primary-hover: #cc1f7a;
   --accent: #fdf2f8;
-  --font-inter: 'Inter', sans-serif;
-  --font-display: 'Inter', sans-serif;
+  --font-poppins: 'Poppins', sans-serif;
+  --font-display: 'Montserrat Alternates', sans-serif;
+  --font-roboto: 'Roboto', sans-serif;
+  --font-delius: 'Delius', cursive;
 }
 
 body {
   background: var(--canvas);
   color: var(--text-body);
-  font-family: var(--font-inter), 'Inter', sans-serif;
+  font-family: var(--font-poppins), 'Poppins', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
@@ -29,7 +31,7 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
   color: var(--text-primary);
-  font-family: var(--font-display), 'Inter', sans-serif;
+  font-family: var(--font-display), 'Montserrat Alternates', sans-serif;
 }
 
 /* Global brand remap: keep existing utility usage but enforce magenta palette */
@@ -61,32 +63,35 @@ h1, h2, h3, h4, h5, h6 {
 .focus\:border-green-500:focus { border-color: var(--primary) !important; }
 .focus-within\:border-green-500:focus-within { border-color: var(--primary) !important; }
 
-.poppins-thin { font-family: var(--font-inter), "Inter", sans-serif; font-weight: 100; font-style: normal; }
-.poppins-extralight { font-family: var(--font-inter), "Inter", sans-serif; font-weight: 200; font-style: normal; }
-.poppins-light { font-family: var(--font-inter), "Inter", sans-serif; font-weight: 300; font-style: normal; }
-.poppins-regular { font-family: var(--font-inter), "Inter", sans-serif; font-weight: 400; font-style: normal; }
-.poppins-medium { font-family: var(--font-inter), "Inter", sans-serif; font-weight: 500; font-style: normal; }
-.poppins-semibold { font-family: var(--font-inter), "Inter", sans-serif; font-weight: 600; font-style: normal; }
-.poppins-bold { font-family: var(--font-inter), "Inter", sans-serif; font-weight: 700; font-style: normal; }
-.poppins-extrabold { font-family: var(--font-inter), "Inter", sans-serif; font-weight: 800; font-style: normal; }
-.poppins-black { font-family: var(--font-inter), "Inter", sans-serif; font-weight: 900; font-style: normal; }
+.poppins-thin { font-family: var(--font-poppins), "Poppins", sans-serif; font-weight: 100; font-style: normal; }
+.poppins-extralight { font-family: var(--font-poppins), "Poppins", sans-serif; font-weight: 200; font-style: normal; }
+.poppins-light { font-family: var(--font-poppins), "Poppins", sans-serif; font-weight: 300; font-style: normal; }
+.poppins-regular { font-family: var(--font-poppins), "Poppins", sans-serif; font-weight: 400; font-style: normal; }
+.poppins-medium { font-family: var(--font-poppins), "Poppins", sans-serif; font-weight: 500; font-style: normal; }
+.poppins-semibold { font-family: var(--font-poppins), "Poppins", sans-serif; font-weight: 600; font-style: normal; }
+.poppins-bold { font-family: var(--font-poppins), "Poppins", sans-serif; font-weight: 700; font-style: normal; }
+.poppins-extrabold { font-family: var(--font-poppins), "Poppins", sans-serif; font-weight: 800; font-style: normal; }
+.poppins-black { font-family: var(--font-poppins), "Poppins", sans-serif; font-weight: 900; font-style: normal; }
 
-.poppins-thin-italic { font-family: var(--font-inter), "Inter", sans-serif; font-weight: 100; font-style: italic; }
-.poppins-extralight-italic { font-family: var(--font-inter), "Inter", sans-serif; font-weight: 200; font-style: italic; }
-.poppins-light-italic { font-family: var(--font-inter), "Inter", sans-serif; font-weight: 300; font-style: italic; }
-.poppins-regular-italic { font-family: var(--font-inter), "Inter", sans-serif; font-weight: 400; font-style: italic; }
-.poppins-medium-italic { font-family: var(--font-inter), "Inter", sans-serif; font-weight: 500; font-style: italic; }
-.poppins-semibold-italic { font-family: var(--font-inter), "Inter", sans-serif; font-weight: 600; font-style: italic; }
-.poppins-bold-italic { font-family: var(--font-inter), "Inter", sans-serif; font-weight: 700; font-style: italic; }
-.poppins-extrabold-italic { font-family: var(--font-inter), "Inter", sans-serif; font-weight: 800; font-style: italic; }
-.poppins-black-italic { font-family: var(--font-inter), "Inter", sans-serif; font-weight: 900; font-style: italic; }
+.poppins-thin-italic { font-family: var(--font-poppins), "Poppins", sans-serif; font-weight: 100; font-style: italic; }
+.poppins-extralight-italic { font-family: var(--font-poppins), "Poppins", sans-serif; font-weight: 200; font-style: italic; }
+.poppins-light-italic { font-family: var(--font-poppins), "Poppins", sans-serif; font-weight: 300; font-style: italic; }
+.poppins-regular-italic { font-family: var(--font-poppins), "Poppins", sans-serif; font-weight: 400; font-style: italic; }
+.poppins-medium-italic { font-family: var(--font-poppins), "Poppins", sans-serif; font-weight: 500; font-style: italic; }
+.poppins-semibold-italic { font-family: var(--font-poppins), "Poppins", sans-serif; font-weight: 600; font-style: italic; }
+.poppins-bold-italic { font-family: var(--font-poppins), "Poppins", sans-serif; font-weight: 700; font-style: italic; }
+.poppins-extrabold-italic { font-family: var(--font-poppins), "Poppins", sans-serif; font-weight: 800; font-style: italic; }
+.poppins-black-italic { font-family: var(--font-poppins), "Poppins", sans-serif; font-weight: 900; font-style: italic; }
 
-.roboto-thin { font-family: var(--font-display), "Inter", sans-serif; font-weight: 100; font-style: normal; }
-.roboto-light { font-family: var(--font-display), "Inter", sans-serif; font-weight: 300; font-style: normal; }
-.roboto-regular { font-family: var(--font-display), "Inter", sans-serif; font-weight: 400; font-style: normal; }
-.roboto-medium { font-family: var(--font-display), "Inter", sans-serif; font-weight: 500; font-style: normal; }
-.roboto-bold { font-family: var(--font-display), "Inter", sans-serif; font-weight: 700; font-style: normal; }
-.roboto-black { font-family: var(--font-display), "Inter", sans-serif; font-weight: 900; font-style: normal; }
+.roboto-thin { font-family: var(--font-roboto), "Roboto", sans-serif; font-weight: 100; font-style: normal; }
+.roboto-light { font-family: var(--font-roboto), "Roboto", sans-serif; font-weight: 300; font-style: normal; }
+.roboto-regular { font-family: var(--font-roboto), "Roboto", sans-serif; font-weight: 400; font-style: normal; }
+.roboto-medium { font-family: var(--font-roboto), "Roboto", sans-serif; font-weight: 500; font-style: normal; }
+.roboto-bold { font-family: var(--font-roboto), "Roboto", sans-serif; font-weight: 700; font-style: normal; }
+.roboto-black { font-family: var(--font-roboto), "Roboto", sans-serif; font-weight: 900; font-style: normal; }
+
+.delius-regular { font-family: var(--font-delius), "Delius", cursive; font-weight: 400; font-style: normal; }
+.montserrat-alternates-regular { font-family: var(--font-display), "Montserrat Alternates", sans-serif; font-weight: 400; font-style: normal; }
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar { width: 8px; }
@@ -187,3 +192,39 @@ h1, h2, h3, h4, h5, h6 {
   to { transform: translateX(0); opacity: 1; }
 }
 .toast-enter { animation: slideIn 0.3s ease forwards; }
+
+/* Top trust strip marquee */
+@keyframes trust-marquee-left {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.trust-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: trust-marquee-left 24s linear infinite;
+}
+
+.trust-marquee-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+  padding-inline: 1.5rem;
+}
+
+/* Featured brands marquee */
+.brand-marquee-mask {
+  overflow: hidden;
+}
+
+.brand-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: trust-marquee-left 26s linear infinite;
+}
+
+.brand-marquee-item {
+  flex: 0 0 280px;
+  margin-right: 1rem;
+}

@@ -2,61 +2,40 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, Truck, ShieldCheck, RefreshCw, Star, ChevronRight } from 'lucide-react';
 import { ProductCard } from '@/components/storefront/ProductCard';
+import { Logos3 } from '@/components/blocks/logos3';
 import type { Product } from '@/types';
 import { createClient } from '@/lib/supabase/server';
 
-// Demo products for initial render (replace with Supabase query)
-const DEMO_PRODUCTS: Product[] = [
-  {
-    id: '1', name: 'Vitamin C Brightening Serum 30ml', slug: 'vitamin-c-brightening-serum-30ml',
-    price: 2800, sale_price: 2200, stock: 24, is_published: true, is_featured: true,
-    average_rating: 4.7, review_count: 128, tags: ['serum', 'brightening', 'vitamin-c'],
-    category_id: null, description: null, short_description: 'Targets dark spots and uneven tone with stabilized Vitamin C.',
-    sku: 'SER-001', low_stock_threshold: 5, weight_kg: null, brand: 'Anashe Skin',
-    cost_price: null, meta_title: null, meta_description: null,
-    created_at: new Date().toISOString(), updated_at: new Date().toISOString(),
-    images: [{ id: '1', product_id: '1', url: '/images/hero-1.jpg', alt: 'Vitamin C Serum', sort_order: 0, is_primary: true }]
-  },
-  {
-    id: '2', name: 'Hyaluronic Acid Hydrating Serum 30ml', slug: 'hyaluronic-acid-hydrating-serum-30ml',
-    price: 1900, sale_price: null, stock: 15, is_published: true, is_featured: false,
-    average_rating: 4.5, review_count: 64, tags: ['serum', 'hydration', 'hyaluronic-acid'],
-    category_id: null, description: null, short_description: 'Deep hydration serum for dry and sensitive skin.',
-    sku: 'SER-002', low_stock_threshold: 3, weight_kg: null, brand: 'Anashe Skin',
-    cost_price: null, meta_title: null, meta_description: null,
-    created_at: new Date().toISOString(), updated_at: new Date().toISOString(),
-    images: [{ id: '2', product_id: '2', url: '/images/hero-2.jpg', alt: 'Hydrating Serum', sort_order: 0, is_primary: true }]
-  },
-  {
-    id: '3', name: 'SPF 50 Daily Moisturiser 50ml', slug: 'spf-50-daily-moisturiser-50ml',
-    price: 2400, sale_price: null, stock: 50, is_published: true, is_featured: false,
-    average_rating: 4.9, review_count: 203, tags: ['spf', 'moisturiser', 'sunscreen'],
-    category_id: null, description: null, short_description: 'Lightweight SPF 50 moisturiser for daily UV protection.',
-    sku: 'SPF-003', low_stock_threshold: 10, weight_kg: 0.6, brand: 'Anashe Skin',
-    cost_price: null, meta_title: null, meta_description: null,
-    created_at: new Date().toISOString(), updated_at: new Date().toISOString(),
-    images: [{ id: '3', product_id: '3', url: '/images/hero-image.jpg', alt: 'SPF Moisturiser', sort_order: 0, is_primary: true }]
-  },
-  {
-    id: '4', name: 'Skin Glow Liquid Foundation 30ml', slug: 'skin-glow-liquid-foundation-30ml',
-    price: 3500, sale_price: 3200, stock: 8, is_published: true, is_featured: true,
-    average_rating: 4.3, review_count: 41, tags: ['foundation', 'makeup', 'dewy'],
-    category_id: null, description: null, short_description: 'Buildable dewy foundation with natural finish.',
-    sku: 'MKU-004', low_stock_threshold: 5, weight_kg: 0.4, brand: 'Anashe Beauty',
-    cost_price: null, meta_title: null, meta_description: null,
-    created_at: new Date().toISOString(), updated_at: new Date().toISOString(),
-    images: [{ id: '4', product_id: '4', url: '/images/good-skin-club.jpg', alt: 'Liquid Foundation', sort_order: 0, is_primary: true }]
-  },
-];
-
 const FALLBACK_CATEGORIES = [
-  { name: 'Moisturisers & Hydration', image: '/images/black-woman.jpg', href: '/categories/moisturisers' },
-  { name: 'Serums & Treatments', image: '/images/black-woman-2.jpg', href: '/categories/serums-treatments' },
-  { name: 'Cleansers & Toners', image: '/images/black-woman-3.jpg', href: '/categories/cleansers-toners' },
-  { name: 'Sunscreen & SPF', image: '/images/black-woman-4.jpg', href: '/categories/sunscreen-spf' },
-  { name: 'Foundations & Concealer', image: '/images/good-skin-club.jpg', href: '/categories/foundations-concealer' },
+  { name: 'Moisturisers & Hydration', image: '/images/moisturizer%20and%20hydration.jpg', href: '/categories/moisturisers' },
+  { name: 'Serums & Treatments', image: '/images/serum%20%26%20treatment.jpg', href: '/categories/serums-treatments' },
+  { name: 'Cleansers & Toners', image: '/images/cleanser.jpg', href: '/categories/cleansers-toners' },
+  { name: 'Sunscreen & SPF', image: '/images/susnscreen.jpg', href: '/categories/sunscreen-spf' },
+  { name: 'Foundations & Concealer', image: '/images/foundation%20%26%20concealers.jpg', href: '/categories/foundations-concealer' },
   { name: 'Natural & Organic', image: '/images/orange%20(2).jpg', href: '/categories/natural-organic' },
 ];
+
+const CATEGORY_IMAGE_OVERRIDES = [
+  '/images/moisturizer%20and%20hydration.jpg',
+  '/images/serum%20%26%20treatment.jpg',
+  '/images/cleanser.jpg',
+  '/images/susnscreen.jpg',
+  '/images/foundation%20%26%20concealers.jpg',
+];
+
+const demoData = {
+  heading: 'Featured Brands',
+  logos: [
+    { id: 'logo-1', description: 'CeraVe', image: '/logos/cerave.png', className: 'h-[4.4rem] w-auto' },
+    { id: 'logo-2', description: 'Cetaphil', image: '/logos/cetaphil.png', className: 'h-[4.4rem] w-auto' },
+    { id: 'logo-3', description: 'COSRX', image: '/logos/cosrx.png', className: 'h-[4.4rem] w-auto' },
+    { id: 'logo-4', description: 'Eucirin', image: '/logos/eucirin.jpg', className: 'h-[4.4rem] w-auto' },
+    { id: 'logo-5', description: 'LA Girl', image: '/logos/la%20girl.webp', className: 'h-[4.4rem] w-auto' },
+    { id: 'logo-6', description: 'La Roche-Posay', image: '/logos/La-Roche-Posay-Logo.png', className: 'h-[4.4rem] w-auto' },
+    { id: 'logo-7', description: 'Neutrogena', image: '/logos/neutrogena.png', className: 'h-[4.4rem] w-auto scale-110 mix-blend-multiply contrast-125' },
+    { id: 'logo-8', description: 'The Oridinary', image: '/logos/the%20oridinary.jpg', className: 'h-[4.4rem] w-auto' },
+  ],
+};
 
 type JournalPost = {
   id: string;
@@ -102,15 +81,24 @@ export default async function HomePage() {
       .limit(3),
   ]);
 
-  const products = (featuredProducts as Product[] | null) ?? DEMO_PRODUCTS;
+  const products = (featuredProducts as Product[] | null) ?? [];
   const categoryTiles = categories && categories.length > 0
     ? categories.map((c) => ({
         name: c.name,
         image: c.image_url ?? FALLBACK_CATEGORIES[0].image,
         href: `/categories/${c.slug}`,
+      })).map((tile, index) => ({
+        ...tile,
+        image: CATEGORY_IMAGE_OVERRIDES[index] ?? tile.image,
       }))
     : FALLBACK_CATEGORIES;
   const journalPosts = (journalPostsData ?? []) as JournalPost[];
+  const trustItems = [
+    { icon: <Truck className="w-3.5 h-3.5" />, text: 'Free Delivery Over KES 2,000' },
+    { icon: <ShieldCheck className="w-3.5 h-3.5" />, text: 'Secure Order Checkout' },
+    { icon: <RefreshCw className="w-3.5 h-3.5" />, text: '14-Day Easy Returns' },
+    { icon: <Star className="w-3.5 h-3.5" />, text: '5,000+ Happy Customers' },
+  ];
 
   return (
     <>
@@ -156,20 +144,13 @@ export default async function HomePage() {
       </section>
 
       {/* TRUST BAR */}
-      <div className="border-y border-neutral-100 bg-[var(--accent)] py-5">
-        <div className="max-w-[1440px] mx-auto px-4 md:px-6">
-          <div className="flex flex-wrap justify-center gap-6 md:gap-10 text-xs font-semibold text-neutral-400 uppercase tracking-widest">
-            {[
-              { icon: <Truck className="w-3.5 h-3.5" />, text: 'Free Delivery Over KES 2,000' },
-              { icon: <ShieldCheck className="w-3.5 h-3.5" />, text: 'Secure Order Checkout' },
-              { icon: <RefreshCw className="w-3.5 h-3.5" />, text: '14-Day Easy Returns' },
-              { icon: <Star className="w-3.5 h-3.5" />, text: '5,000+ Happy Customers' },
-            ].map(({ icon, text }) => (
-              <span key={text} className="flex items-center gap-2 hover:text-neutral-600 transition-colors">
-                {icon} {text}
-              </span>
-            ))}
-          </div>
+      <div className="border-y border-neutral-100 bg-[var(--accent)] py-5 overflow-hidden">
+        <div className="trust-marquee-track text-xs font-semibold text-neutral-400 uppercase tracking-widest">
+          {[...trustItems, ...trustItems].map(({ icon, text }, index) => (
+            <span key={`${text}-${index}`} className="trust-marquee-item hover:text-neutral-600 transition-colors">
+              {icon} {text}
+            </span>
+          ))}
         </div>
       </div>
 
@@ -221,7 +202,7 @@ export default async function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 h-auto md:h-[580px]">
-            <div className="md:col-span-2 relative group overflow-hidden rounded-2xl bg-neutral-100 h-72 md:h-auto reveal cursor-pointer">
+            <div className="md:col-span-2 relative group overflow-hidden rounded-2xl bg-neutral-100 aspect-[4/3] md:aspect-auto h-auto md:h-auto reveal cursor-pointer">
               <Image
                 src="/images/black-woman.jpg"
                 alt="Skincare collection"
@@ -240,12 +221,12 @@ export default async function HomePage() {
                 <ArrowRight className="w-5 h-5" />
               </Link>
             </div>
-            <div className="grid grid-rows-2 gap-6 h-72 md:h-auto">
+            <div className="grid grid-cols-1 md:grid-rows-2 gap-6 h-auto md:h-auto">
               {[
                 { title: 'Makeup Must-Haves', img: '/images/black-woman-3.jpg' },
                 { title: 'Natural Skincare', img: '/images/orange%20(2).jpg' },
               ].map((item, i) => (
-                <div key={item.title} className={`relative group overflow-hidden rounded-xl bg-neutral-100 reveal delay-${(i + 1) * 100}`}>
+                <div key={item.title} className={`relative group overflow-hidden rounded-xl bg-neutral-100 aspect-[16/9] md:aspect-auto reveal delay-${(i + 1) * 100}`}>
                   <Image
                     src={item.img}
                     alt={item.title}
@@ -285,13 +266,19 @@ export default async function HomePage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
-            {products.map((product, i) => (
-              <div key={product.id} className={`reveal delay-${Math.min(i, 3) * 75}`}>
-                <ProductCard product={product} priority={i < 2} />
-              </div>
-            ))}
-          </div>
+          {products.length > 0 ? (
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+              {products.map((product, i) => (
+                <div key={product.id} className={`reveal delay-${Math.min(i, 3) * 75}`}>
+                  <ProductCard product={product} priority={i < 2} />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="rounded-2xl border border-dashed border-neutral-300 bg-white px-6 py-12 text-center">
+              <p className="text-sm text-neutral-500">No featured products available yet.</p>
+            </div>
+          )}
 
           <div className="text-center mt-14">
             <Link
@@ -381,6 +368,13 @@ export default async function HomePage() {
           {journalPosts.length === 0 ? (
             <p className="text-sm text-neutral-500 mt-6">No journal posts yet.</p>
           ) : null}
+        </div>
+      </section>
+
+      {/* FEATURED BRANDS */}
+      <section className="py-16 lg:py-20 border-y border-neutral-100 bg-gradient-to-b from-white to-neutral-50/60">
+        <div className="max-w-[1440px] mx-auto px-4 md:px-6 reveal">
+          <Logos3 {...demoData} />
         </div>
       </section>
 
