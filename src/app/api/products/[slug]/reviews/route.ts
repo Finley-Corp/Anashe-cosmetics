@@ -69,12 +69,16 @@ export async function POST(req: Request, { params }: { params: Promise<{ slug: s
     .limit(1)
     .maybeSingle();
 
+  const orderId = purchasedItem
+    ? (Array.isArray(purchasedItem.order)
+      ? purchasedItem.order[0]?.id
+      : (purchasedItem.order as { id?: string } | null)?.id) ?? null
+    : null;
+
   const { error } = await supabase.from('reviews').insert({
     product_id: product.id,
     user_id: user.id,
-    order_id: Array.isArray(purchasedItem.order)
-      ? purchasedItem.order[0]?.id
-      : (purchasedItem.order as { id?: string } | null)?.id ?? null,
+    order_id: orderId,
     rating: parsed.data.rating,
     title: parsed.data.title ?? null,
     body: parsed.data.body ?? null,

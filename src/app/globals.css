@@ -228,3 +228,27 @@ h1, h2, h3, h4, h5, h6 {
   flex: 0 0 280px;
   margin-right: 1rem;
 }
+
+/* Testimonials columns marquee */
+@keyframes testimonials-column-up {
+  from { transform: translateY(0); }
+  to { transform: translateY(-50%); }
+}
+
+@keyframes testimonials-column-down {
+  from { transform: translateY(-50%); }
+  to { transform: translateY(0); }
+}
+
+.testimonials-column-track {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+  animation: testimonials-column-up 18s linear infinite;
+  will-change: transform;
+}
+
+.testimonials-column-track-reverse {
+  animation-name: testimonials-column-down;
+}
