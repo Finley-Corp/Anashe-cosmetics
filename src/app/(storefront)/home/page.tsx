@@ -4,6 +4,7 @@ import { ArrowRight, Truck, ShieldCheck, RefreshCw, Star, ChevronRight } from 'l
 import { ProductCard } from '@/components/storefront/ProductCard';
 import { Logos3 } from '@/components/blocks/logos3';
 import { TestimonialsSection } from '@/components/storefront/TestimonialsSection';
+import type { TestimonialItem } from '@/components/storefront/TestimonialsSection';
 import type { Product } from '@/types';
 import { createClient } from '@/lib/supabase/server';
 
@@ -47,6 +48,13 @@ type JournalPost = {
   created_at: string | null;
 };
 
+type HomeTestimonialRow = {
+  full_name: string;
+  role: string | null;
+  message: string;
+  avatar_url: string | null;
+};
+
 function formatJournalDate(value: string | null) {
   if (!value) return '';
   return new Date(value).toLocaleDateString('en-KE', {
@@ -59,7 +67,7 @@ function formatJournalDate(value: string | null) {
 export default async function HomePage() {
   const supabase = await createClient();
 
-  const [{ data: featuredProducts }, { data: categories }, { data: journalPostsData }] = await Promise.all([
+  const [{ data: featuredProducts }, { data: categories }, { data: journalPostsData }, { data: testimonialsData }] = await Promise.all([
     supabase
       .from('products')
       .select('*, images:product_images(*)')
@@ -80,6 +88,12 @@ export default async function HomePage() {
       .order('published_at', { ascending: false, nullsFirst: false })
       .order('created_at', { ascending: false })
       .limit(3),
+    supabase
+      .from('testimonials_feedback')
+      .select('full_name,role,message,avatar_url')
+      .eq('is_approved', true)
+      .order('created_at', { ascending: false })
+      .limit(9),
   ]);
 
   const products = (featuredProducts as Product[] | null) ?? [];
@@ -94,6 +108,12 @@ export default async function HomePage() {
       }))
     : FALLBACK_CATEGORIES;
   const journalPosts = (journalPostsData ?? []) as JournalPost[];
+  const homepageTestimonials: TestimonialItem[] = ((testimonialsData ?? []) as HomeTestimonialRow[]).map((item) => ({
+    text: item.message,
+    image: item.avatar_url ?? `https://ui-avatars.com/api/?name=${encodeURIComponent(item.full_name)}&background=16a34a&color=fff`,
+    name: item.full_name,
+    role: item.role ?? 'Anashe Customer',
+  }));
   const trustItems = [
     { icon: <Truck className="w-3.5 h-3.5" />, text: 'Free Delivery Over KES 2,000' },
     { icon: <ShieldCheck className="w-3.5 h-3.5" />, text: 'Secure Order Checkout' },
@@ -347,23 +367,25 @@ export default async function HomePage() {
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {journalPosts.map((post, i) => (
-              <article key={post.id} className={`group cursor-pointer reveal delay-${i * 100}`}>
-                <div className="overflow-hidden rounded-xl mb-5 aspect-[16/10] bg-neutral-100">
-                  <Image
-                    src={post.image_url ?? '/images/hero-1.jpg'}
-                    alt={post.title}
-                    width={800}
-                    height={500}
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
-                </div>
-                <div className="flex items-center gap-2 text-[10px] font-bold text-neutral-400 mb-2.5 uppercase tracking-wider">
-                  <span>{formatJournalDate(post.published_at ?? post.created_at)}</span>
-                  <span className="w-1 h-1 bg-neutral-300 rounded-full" />
-                  <span>{post.category}</span>
-                </div>
-                <h3 className="text-lg font-medium tracking-tight mb-2 group-hover:underline decoration-1 underline-offset-4 font-[family-name:var(--font-display)]">{post.title}</h3>
-              </article>
+              <Link key={post.id} href={`/blog/${post.id}`} className={`group reveal delay-${i * 100}`}>
+                <article className="cursor-pointer">
+                  <div className="overflow-hidden rounded-xl mb-5 aspect-[16/10] bg-neutral-100">
+                    <Image
+                      src={post.image_url ?? '/images/hero-1.jpg'}
+                      alt={post.title}
+                      width={800}
+                      height={500}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                  </div>
+                  <div className="flex items-center gap-2 text-[10px] font-bold text-neutral-400 mb-2.5 uppercase tracking-wider">
+                    <span>{formatJournalDate(post.published_at ?? post.created_at)}</span>
+                    <span className="w-1 h-1 bg-neutral-300 rounded-full" />
+                    <span>{post.category}</span>
+                  </div>
+                  <h3 className="text-lg font-medium tracking-tight mb-2 group-hover:underline decoration-1 underline-offset-4 font-[family-name:var(--font-display)]">{post.title}</h3>
+                </article>
+              </Link>
             ))}
           </div>
           {journalPosts.length === 0 ? (
@@ -372,7 +394,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <TestimonialsSection />
+      <TestimonialsSection testimonials={homepageTestimonials} />
 
       {/* FEATURED BRANDS */}
       <section className="py-16 lg:py-20 border-y border-neutral-100 bg-gradient-to-b from-white to-neutral-50/60">
