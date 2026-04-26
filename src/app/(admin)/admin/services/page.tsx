@@ -67,13 +67,24 @@ export default async function AdminServicesPage() {
                   <td className="px-4 py-3">
                     <p className="font-semibold text-white">{booking.full_name}</p>
                   </td>
-                  <td className="px-4 py-3 text-gray-300">
-                    <p>{booking.phone}</p>
-                    <p className="text-xs text-gray-500">{booking.email}</p>
-                    <div className="mt-1.5 flex items-center gap-2 text-[11px]">
-                      <a href={`tel:${booking.phone}`} className="text-blue-300 hover:text-blue-200">Call</a>
-                      <span className="text-gray-600">•</span>
-                      <a href={`mailto:${booking.email}`} className="text-blue-300 hover:text-blue-200">Email</a>
+                  <td className="px-4 py-3">
+                    <div className="min-w-[240px] rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2.5">
+                      <p className="text-sm font-medium text-gray-200">{booking.phone}</p>
+                      <p className="mt-0.5 truncate text-xs text-gray-400">{booking.email}</p>
+                      <div className="mt-2 flex items-center gap-2 text-[11px] font-semibold">
+                        <a
+                          href={`tel:${booking.phone}`}
+                          className="rounded-full border border-blue-400/30 bg-blue-400/10 px-2.5 py-1 text-blue-200 transition-colors hover:bg-blue-400/20"
+                        >
+                          Call
+                        </a>
+                        <a
+                          href={`mailto:${booking.email}`}
+                          className="rounded-full border border-violet-400/30 bg-violet-400/10 px-2.5 py-1 text-violet-200 transition-colors hover:bg-violet-400/20"
+                        >
+                          Email
+                        </a>
+                      </div>
                     </div>
                   </td>
                   <td className="px-4 py-3 text-gray-300 capitalize">{booking.service_type.replace(/-/g, ' ')}</td>

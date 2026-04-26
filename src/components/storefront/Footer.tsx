@@ -63,6 +63,7 @@ export function Footer() {
             <ul className="space-y-3 text-sm text-neutral-400">
               {[
                 { label: 'Help Center', href: '/contact' },
+                { label: 'Share Feedback', href: '/feedback' },
                 { label: 'Shipping & Returns', href: '/about' },
                 { label: 'Order Tracking', href: '/orders' },
                 { label: 'Order & Delivery', href: '/about' },
