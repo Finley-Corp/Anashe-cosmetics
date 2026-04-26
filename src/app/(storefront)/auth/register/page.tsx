@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Eye, EyeOff, Mail } from 'lucide-react';
@@ -106,7 +106,7 @@ function Pupil({ forceLookX, forceLookY }: { forceLookX?: number; forceLookY?: n
   );
 }
 
-export default function RegisterPage() {
+function RegisterContent() {
   const [isLoading, setIsLoading] = useState(false);
   const [isFormLoading, setIsFormLoading] = useState(false);
   const [fullName, setFullName] = useState('');
@@ -617,5 +617,13 @@ export default function RegisterPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-background" />}>
+      <RegisterContent />
+    </Suspense>
   );
 }
