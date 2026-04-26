@@ -329,7 +329,7 @@ export default function CheckoutPage() {
             <button
               onClick={placeOrder}
               disabled={isProcessing}
-              className="w-full h-12 bg-black text-white text-xs tracking-[0.18em] uppercase font-semibold hover:bg-neutral-800 transition-colors flex items-center justify-center gap-2 disabled:opacity-70"
+              className="w-full h-12 bg-pink-600 text-white text-xs tracking-[0.18em] uppercase font-semibold hover:bg-pink-700 transition-colors flex items-center justify-center gap-2 disabled:opacity-70"
             >
               {isProcessing && <Loader2 className="w-4 h-4 animate-spin" />}
               Place Order
