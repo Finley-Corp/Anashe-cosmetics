@@ -2,46 +2,32 @@
 
 import { useState, Suspense } from 'react';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { Eye, EyeOff, Loader2 } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
+import { Loader2 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';
 import { useToast } from '@/components/shared/Toaster';
 
 function RegisterForm() {
-  const [fullName, setFullName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
   const searchParams = useSearchParams();
   const { add: showToast } = useToast();
   const redirect = searchParams.get('redirect') ?? '/account';
 
-  async function handleRegister(e: React.FormEvent) {
-    e.preventDefault();
-    if (password.length < 6) {
-      showToast('Password must be at least 6 characters', 'error');
-      return;
-    }
+  async function handleGoogleRegister() {
     setIsLoading(true);
     try {
       const supabase = createClient();
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
+      const callbackUrl = new URL('/auth/callback', window.location.origin);
+      callbackUrl.searchParams.set('next', redirect);
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
         options: {
-          data: { full_name: fullName, phone },
+          redirectTo: callbackUrl.toString(),
         },
       });
       if (error) throw error;
-      showToast('Account created! Welcome to Anashe.');
-      router.push(redirect);
-      router.refresh();
     } catch (err: unknown) {
-      showToast(err instanceof Error ? err.message : 'Registration failed', 'error');
-    } finally {
+      showToast(err instanceof Error ? err.message : 'Google sign-up failed', 'error');
       setIsLoading(false);
     }
   }
@@ -52,83 +38,29 @@ function RegisterForm() {
         <div className="text-center mb-8">
           <Link href="/home" className="text-2xl font-bold tracking-tighter font-[family-name:var(--font-display)]">ANASHE</Link>
           <h1 className="text-xl font-semibold mt-6 mb-2">Create your account</h1>
-          <p className="text-sm text-neutral-500">Join thousands of Kenyans shopping smarter</p>
+          <p className="text-sm text-neutral-500">Customer accounts are created with Google only</p>
         </div>
 
         <div className="bg-white border border-neutral-100 rounded-2xl p-8 shadow-sm">
-          <form onSubmit={handleRegister} className="space-y-4">
-            <div>
-              <label className="text-xs font-semibold uppercase tracking-wider text-neutral-500 block mb-1.5">Full Name</label>
-              <input
-                type="text"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                required
-                placeholder="Wanjiku Kamau"
-                className="w-full border border-neutral-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-green-500 transition-colors"
-              />
-            </div>
-            <div>
-              <label className="text-xs font-semibold uppercase tracking-wider text-neutral-500 block mb-1.5">Email</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                placeholder="you@example.com"
-                className="w-full border border-neutral-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-green-500 transition-colors"
-              />
-            </div>
-            <div>
-              <label className="text-xs font-semibold uppercase tracking-wider text-neutral-500 block mb-1.5">Phone Number</label>
-              <input
-                type="tel"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="0712 345 678"
-                className="w-full border border-neutral-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-green-500 transition-colors"
-              />
-            </div>
-            <div>
-              <label className="text-xs font-semibold uppercase tracking-wider text-neutral-500 block mb-1.5">Password</label>
-              <div className="relative">
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  placeholder="Min. 6 characters"
-                  className="w-full border border-neutral-200 rounded-xl px-4 py-3 pr-12 text-sm outline-none focus:border-green-500 transition-colors"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-700"
-                >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
-              </div>
-            </div>
+          <button
+            type="button"
+            onClick={handleGoogleRegister}
+            disabled={isLoading}
+            className="w-full h-12 bg-green-700 hover:bg-green-800 text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2 disabled:opacity-70"
+          >
+            {isLoading && <Loader2 className="w-4 h-4 animate-spin" />}
+            Continue with Google
+          </button>
 
-            <p className="text-xs text-neutral-400">
-              By creating an account, you agree to our{' '}
-              <Link href="/terms" className="text-green-700 hover:underline">Terms of Service</Link>{' '}
-              and{' '}
-              <Link href="/privacy" className="text-green-700 hover:underline">Privacy Policy</Link>.
-            </p>
-
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full h-12 bg-green-700 hover:bg-green-800 text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2 disabled:opacity-70"
-            >
-              {isLoading && <Loader2 className="w-4 h-4 animate-spin" />}
-              Create Account
-            </button>
-          </form>
+          <p className="text-xs text-neutral-400 mt-4">
+            By continuing, you agree to our{' '}
+            <Link href="/terms" className="text-green-700 hover:underline">Terms of Service</Link>{' '}
+            and{' '}
+            <Link href="/privacy" className="text-green-700 hover:underline">Privacy Policy</Link>.
+          </p>
 
           <p className="text-center text-sm text-neutral-500 mt-6">
-            Already have an account?{' '}
+            Already use Google with Anashe?{' '}
             <Link href={`/auth/login${redirect !== '/account' ? `?redirect=${redirect}` : ''}`} className="text-green-700 hover:text-green-800 font-semibold transition-colors">
               Sign in
             </Link>

@@ -1,6 +1,13 @@
 import { TestimonialsColumn } from '@/components/ui/testimonials-columns-1';
 
-const testimonials = [
+export type TestimonialItem = {
+  text: string;
+  image: string;
+  name: string;
+  role: string;
+};
+
+const fallbackTestimonials: TestimonialItem[] = [
   {
     text: 'I found genuine CeraVe and La Roche-Posay in one checkout. My order arrived quickly in Nairobi and the products were exactly as listed.',
     image: 'https://randomuser.me/api/portraits/women/11.jpg',
@@ -57,13 +64,13 @@ const testimonials = [
   },
 ];
 
-const firstColumn = testimonials.slice(0, 3);
-const secondColumn = testimonials.slice(3, 6);
-const thirdColumn = testimonials.slice(6, 9);
-
-export function TestimonialsSection() {
+export function TestimonialsSection({ testimonials = fallbackTestimonials }: { testimonials?: TestimonialItem[] }) {
+  const source = testimonials.length > 0 ? testimonials : fallbackTestimonials;
+  const firstColumn = source.slice(0, 3);
+  const secondColumn = source.slice(3, 6);
+  const thirdColumn = source.slice(6, 9);
   return (
-    <section className="bg-white py-20 lg:py-24 border-t border-neutral-100">
+    <section id="testimonials" className="bg-white py-20 lg:py-24 border-t border-neutral-100">
       <div className="max-w-[1440px] mx-auto px-4 md:px-6">
         <div className="flex flex-col items-center justify-center max-w-[640px] mx-auto reveal">
           <div className="flex justify-center">

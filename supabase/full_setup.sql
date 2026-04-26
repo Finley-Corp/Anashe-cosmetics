@@ -1,3 +1,107 @@
+  FOR DELETE
+  USING (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "wishlist_items_own" ON wishlist_items;
+DROP POLICY IF EXISTS "wishlist_items_own_select" ON wishlist_items;
+DROP POLICY IF EXISTS "wishlist_items_own_insert" ON wishlist_items;
+DROP POLICY IF EXISTS "wishlist_items_own_delete" ON wishlist_items;
+CREATE POLICY "wishlist_items_own_select" ON wishlist_items
+  FOR SELECT
+  USING (wishlist_id IN (SELECT id FROM wishlists WHERE user_id = auth.uid()));
+CREATE POLICY "wishlist_items_own_insert" ON wishlist_items
+  FOR INSERT
+  WITH CHECK (wishlist_id IN (SELECT id FROM wishlists WHERE user_id = auth.uid()));
+CREATE POLICY "wishlist_items_own_delete" ON wishlist_items
+  FOR DELETE
+  USING (wishlist_id IN (SELECT id FROM wishlists WHERE user_id = auth.uid()));
+
+-- ================================================================
+-- ORDERS — users see own, admins see all
+-- ================================================================
+DROP POLICY IF EXISTS "orders_own" ON orders;
+CREATE POLICY "orders_own" ON orders
+  USING (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "orders_own_insert" ON orders;
+CREATE POLICY "orders_own_insert" ON orders
+  FOR INSERT
+  WITH CHECK (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "orders_own_update" ON orders;
+CREATE POLICY "orders_own_update" ON orders
+  FOR UPDATE
+  USING (auth.uid() = user_id)
+  WITH CHECK (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "orders_admin" ON orders;
+CREATE POLICY "orders_admin" ON orders
+  USING ((SELECT role FROM profiles WHERE id = auth.uid()) = 'admin');
+
+DROP POLICY IF EXISTS "order_items_own" ON order_items;
+CREATE POLICY "order_items_own" ON order_items
+  USING (order_id IN (SELECT id FROM orders WHERE user_id = auth.uid()));
+
+DROP POLICY IF EXISTS "order_items_own_insert" ON order_items;
+CREATE POLICY "order_items_own_insert" ON order_items
+  FOR INSERT
+  WITH CHECK (order_id IN (SELECT id FROM orders WHERE user_id = auth.uid()));
+
+-- PAYMENTS — users can create/view payments for their orders
+DROP POLICY IF EXISTS "payments_own_select" ON payments;
+CREATE POLICY "payments_own_select" ON payments
+  FOR SELECT
+  USING (order_id IN (SELECT id FROM orders WHERE user_id = auth.uid()));
+
+DROP POLICY IF EXISTS "payments_own_insert" ON payments;
+CREATE POLICY "payments_own_insert" ON payments
+  FOR INSERT
+  WITH CHECK (order_id IN (SELECT id FROM orders WHERE user_id = auth.uid()));
+
+-- ================================================================
+-- REVIEWS — public read approved, authenticated write own
+-- ================================================================
+DROP POLICY IF EXISTS "reviews_public_read" ON reviews;
+CREATE POLICY "reviews_public_read" ON reviews
+  FOR SELECT USING (is_approved = TRUE);
+
+DROP POLICY IF EXISTS "reviews_own_write" ON reviews;
+CREATE POLICY "reviews_own_write" ON reviews
+  USING (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "reviews_admin" ON reviews;
+CREATE POLICY "reviews_admin" ON reviews
+  USING ((SELECT role FROM profiles WHERE id = auth.uid()) = 'admin');
+
+-- ================================================================
+-- COUPONS — authenticated read active
+-- ================================================================
+DROP POLICY IF EXISTS "coupons_auth_read" ON coupons;
+CREATE POLICY "coupons_auth_read" ON coupons
+  FOR SELECT USING (is_active = TRUE AND auth.uid() IS NOT NULL);
+
+DROP POLICY IF EXISTS "coupons_admin" ON coupons;
+CREATE POLICY "coupons_admin" ON coupons
+  USING ((SELECT role FROM profiles WHERE id = auth.uid()) = 'admin');
+
+-- ================================================================
+-- SERVICE BOOKINGS — public create, admin read/update
+-- ================================================================
+DROP POLICY IF EXISTS "service_bookings_public_insert" ON service_bookings;
+CREATE POLICY "service_bookings_public_insert" ON service_bookings
+  FOR INSERT WITH CHECK (TRUE);
+
+DROP POLICY IF EXISTS "service_bookings_admin_all" ON service_bookings;
+CREATE POLICY "service_bookings_admin_all" ON service_bookings
+  USING ((SELECT role FROM profiles WHERE id = auth.uid()) = 'admin');
+
+-- ================================================================
+-- CUSTOMER CONTACTS — admin only
+-- ================================================================
+DROP POLICY IF EXISTS "customer_contacts_admin_all" ON customer_contacts;
+CREATE POLICY "customer_contacts_admin_all" ON customer_contacts
+  FOR ALL
+  USING ((SELECT role FROM profiles WHERE id = auth.uid()) = 'admin')
+  WITH CHECK ((SELECT role FROM profiles WHERE id = auth.uid()) = 'admin');
 -- ================================================================
 -- Anashe Skincare & Cosmetics — Initial Schema
 -- Run this in Supabase SQL Editor:
@@ -500,107 +604,3 @@ CREATE POLICY "wishlist_own_insert" ON wishlists
   FOR INSERT
   WITH CHECK (auth.uid() = user_id);
 CREATE POLICY "wishlist_own_delete" ON wishlists
-  FOR DELETE
-  USING (auth.uid() = user_id);
-
-DROP POLICY IF EXISTS "wishlist_items_own" ON wishlist_items;
-DROP POLICY IF EXISTS "wishlist_items_own_select" ON wishlist_items;
-DROP POLICY IF EXISTS "wishlist_items_own_insert" ON wishlist_items;
-DROP POLICY IF EXISTS "wishlist_items_own_delete" ON wishlist_items;
-CREATE POLICY "wishlist_items_own_select" ON wishlist_items
-  FOR SELECT
-  USING (wishlist_id IN (SELECT id FROM wishlists WHERE user_id = auth.uid()));
-CREATE POLICY "wishlist_items_own_insert" ON wishlist_items
-  FOR INSERT
-  WITH CHECK (wishlist_id IN (SELECT id FROM wishlists WHERE user_id = auth.uid()));
-CREATE POLICY "wishlist_items_own_delete" ON wishlist_items
-  FOR DELETE
-  USING (wishlist_id IN (SELECT id FROM wishlists WHERE user_id = auth.uid()));
-
--- ================================================================
--- ORDERS — users see own, admins see all
--- ================================================================
-DROP POLICY IF EXISTS "orders_own" ON orders;
-CREATE POLICY "orders_own" ON orders
-  USING (auth.uid() = user_id);
-
-DROP POLICY IF EXISTS "orders_own_insert" ON orders;
-CREATE POLICY "orders_own_insert" ON orders
-  FOR INSERT
-  WITH CHECK (auth.uid() = user_id);
-
-DROP POLICY IF EXISTS "orders_own_update" ON orders;
-CREATE POLICY "orders_own_update" ON orders
-  FOR UPDATE
-  USING (auth.uid() = user_id)
-  WITH CHECK (auth.uid() = user_id);
-
-DROP POLICY IF EXISTS "orders_admin" ON orders;
-CREATE POLICY "orders_admin" ON orders
-  USING ((SELECT role FROM profiles WHERE id = auth.uid()) = 'admin');
-
-DROP POLICY IF EXISTS "order_items_own" ON order_items;
-CREATE POLICY "order_items_own" ON order_items
-  USING (order_id IN (SELECT id FROM orders WHERE user_id = auth.uid()));
-
-DROP POLICY IF EXISTS "order_items_own_insert" ON order_items;
-CREATE POLICY "order_items_own_insert" ON order_items
-  FOR INSERT
-  WITH CHECK (order_id IN (SELECT id FROM orders WHERE user_id = auth.uid()));
-
--- PAYMENTS — users can create/view payments for their orders
-DROP POLICY IF EXISTS "payments_own_select" ON payments;
-CREATE POLICY "payments_own_select" ON payments
-  FOR SELECT
-  USING (order_id IN (SELECT id FROM orders WHERE user_id = auth.uid()));
-
-DROP POLICY IF EXISTS "payments_own_insert" ON payments;
-CREATE POLICY "payments_own_insert" ON payments
-  FOR INSERT
-  WITH CHECK (order_id IN (SELECT id FROM orders WHERE user_id = auth.uid()));
-
--- ================================================================
--- REVIEWS — public read approved, authenticated write own
--- ================================================================
-DROP POLICY IF EXISTS "reviews_public_read" ON reviews;
-CREATE POLICY "reviews_public_read" ON reviews
-  FOR SELECT USING (is_approved = TRUE);
-
-DROP POLICY IF EXISTS "reviews_own_write" ON reviews;
-CREATE POLICY "reviews_own_write" ON reviews
-  USING (auth.uid() = user_id);
-
-DROP POLICY IF EXISTS "reviews_admin" ON reviews;
-CREATE POLICY "reviews_admin" ON reviews
-  USING ((SELECT role FROM profiles WHERE id = auth.uid()) = 'admin');
-
--- ================================================================
--- COUPONS — authenticated read active
--- ================================================================
-DROP POLICY IF EXISTS "coupons_auth_read" ON coupons;
-CREATE POLICY "coupons_auth_read" ON coupons
-  FOR SELECT USING (is_active = TRUE AND auth.uid() IS NOT NULL);
-
-DROP POLICY IF EXISTS "coupons_admin" ON coupons;
-CREATE POLICY "coupons_admin" ON coupons
-  USING ((SELECT role FROM profiles WHERE id = auth.uid()) = 'admin');
-
--- ================================================================
--- SERVICE BOOKINGS — public create, admin read/update
--- ================================================================
-DROP POLICY IF EXISTS "service_bookings_public_insert" ON service_bookings;
-CREATE POLICY "service_bookings_public_insert" ON service_bookings
-  FOR INSERT WITH CHECK (TRUE);
-
-DROP POLICY IF EXISTS "service_bookings_admin_all" ON service_bookings;
-CREATE POLICY "service_bookings_admin_all" ON service_bookings
-  USING ((SELECT role FROM profiles WHERE id = auth.uid()) = 'admin');
-
--- ================================================================
--- CUSTOMER CONTACTS — admin only
--- ================================================================
-DROP POLICY IF EXISTS "customer_contacts_admin_all" ON customer_contacts;
-CREATE POLICY "customer_contacts_admin_all" ON customer_contacts
-  FOR ALL
-  USING ((SELECT role FROM profiles WHERE id = auth.uid()) = 'admin')
-  WITH CHECK ((SELECT role FROM profiles WHERE id = auth.uid()) = 'admin');

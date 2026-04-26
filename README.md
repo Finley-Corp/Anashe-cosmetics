@@ -18,8 +18,8 @@ A fullstack skincare and cosmetics e-commerce application built with Next.js (Ap
   - Product listing, product detail, categories, search suggestions
   - Cart, checkout, orders, account pages, wishlist
 - Admin:
-  - Product CRUD (with image upload to Supabase Storage)
-  - Category, customer, discount, review, order management pages
+  - Admin dashboard is split into the separate `anashe-admin` project
+  - Uses the same Supabase credentials/auth users as storefront
 - Order flow:
   - Direct order placement and admin fulfillment workflow
 - Security:
@@ -32,7 +32,7 @@ A fullstack skincare and cosmetics e-commerce application built with Next.js (Ap
 src/
   app/
     (storefront)/...         # Customer-facing pages
-    (admin)/admin/...        # Admin dashboard pages
+    (admin)/admin/...        # Legacy in-app admin pages (redirected to standalone admin app)
     api/...                  # Route handlers
   components/                # Reusable UI components
   lib/                       # Utilities, Supabase clients, helpers
@@ -67,6 +67,7 @@ cp .env.local.example .env.local
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY` (or `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`)
 - `SUPABASE_SERVICE_ROLE_KEY`
 - `NEXT_PUBLIC_APP_URL`
+- `NEXT_PUBLIC_ADMIN_URL` (default: `http://localhost:5000`)
 
 ### Optional but used by key flows
 
@@ -160,6 +161,10 @@ Core route handlers under `src/app/api` include:
 - Configure `TILIL_*` values for live SMS delivery.
 - Validate Supabase RLS policies before going live.
 - For Vercel cron usage, set `CRON_SECRET`.
+- The project includes an automatic DB keepalive cron:
+  - Route: `/api/cron/keep-db-active`
+  - Schedule: every 5 minutes (configured in `vercel.json`)
+  - Vercel sends `Authorization: Bearer <CRON_SECRET>` when `CRON_SECRET` is set.
 
 ## Troubleshooting
 

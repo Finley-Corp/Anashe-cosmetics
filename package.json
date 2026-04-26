@@ -6,11 +6,13 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db:keepalive": "node scripts/keep-db-active.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
     "@iconify/react": "^6.0.2",
+    "@sentry/nextjs": "^10.49.0",
     "@supabase/ssr": "^0.10.2",
     "@supabase/supabase-js": "^2.103.0",
     "@types/pg": "^8.20.0",
