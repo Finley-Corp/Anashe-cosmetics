@@ -25,9 +25,9 @@ export default function ContactPage() {
           {/* Contact Info */}
           <div className="space-y-8">
             {[
-              { icon: <Phone className="w-5 h-5" />, title: 'Phone / WhatsApp', value: '+254 700 000 000', sub: 'Mon–Sat, 8am–8pm EAT' },
+              { icon: <Phone className="w-5 h-5" />, title: 'Phone / WhatsApp', value: '+254 111 330 585', sub: 'Mon–Sat, 8am–8pm EAT' },
               { icon: <Mail className="w-5 h-5" />, title: 'Email', value: 'hello@anashe.co.ke', sub: 'We reply within 24 hours' },
-              { icon: <MapPin className="w-5 h-5" />, title: 'Location', value: 'Nairobi, Kenya', sub: 'Deliveries nationwide' },
+              { icon: <MapPin className="w-5 h-5" />, title: 'Location', value: 'Kitengela OBC Mall', sub: 'Visit us in-store or order online' },
             ].map(({ icon, title, value, sub }) => (
               <div key={title} className="flex items-start gap-4">
                 <div className="w-11 h-11 bg-green-50 rounded-xl flex items-center justify-center text-green-700 shrink-0">{icon}</div>
@@ -42,6 +42,18 @@ export default function ContactPage() {
             <div className="bg-green-50 rounded-2xl p-5">
               <p className="text-sm font-semibold text-green-800 mb-1">Order Issue?</p>
               <p className="text-xs text-green-700 leading-relaxed">If you have an order problem, please share your order reference number. We&apos;ll resolve it within 2 business hours.</p>
+            </div>
+
+            <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-white">
+              <iframe
+                title="Anashe location map - Kitengela OBC Mall"
+                src="https://www.google.com/maps?q=Kitengela+OBC+Mall&output=embed"
+                width="100%"
+                height="280"
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                className="w-full border-0"
+              />
             </div>
           </div>
 
