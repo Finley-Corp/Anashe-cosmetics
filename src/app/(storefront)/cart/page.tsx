@@ -97,26 +97,23 @@ export default function CartPage() {
   }
 
   return (
-    <div className="mx-auto max-w-[1440px] px-4 py-8 md:px-6 md:py-10">
-      <div className="mb-8 flex items-center justify-between border-b border-neutral-200 pb-4 md:mb-8 md:border-none md:pb-0">
-        <h1 className="text-[38px] uppercase tracking-[0.08em] font-[family-name:var(--font-display)] leading-none md:text-2xl md:normal-case md:tracking-normal md:font-semibold">
+    <div className="mx-auto max-w-[1440px] px-4 py-8 md:px-6 md:py-12">
+      <div className="mb-8 flex items-center justify-between border-b border-neutral-200 pb-4 md:mb-10">
+        <h1 className="text-[30px] uppercase tracking-[0.06em] font-[family-name:var(--font-display)] leading-none md:text-[42px] md:tracking-[0.03em]">
           Your Cart
         </h1>
-        <button onClick={clearCart} className="text-xs uppercase tracking-[0.12em] text-neutral-400 transition-colors hover:text-neutral-700 md:text-sm md:normal-case md:tracking-normal">
+        <button onClick={clearCart} className="text-xs uppercase tracking-[0.12em] text-neutral-400 transition-colors hover:text-neutral-700 md:text-sm md:tracking-[0.08em]">
           Clear all
         </button>
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-10">
+      <div className="grid gap-10 md:grid-cols-[1fr_340px] md:items-start lg:grid-cols-[1fr_360px]">
         {/* Items */}
-        <div className="lg:col-span-2 space-y-4">
+        <div className="space-y-4">
           {items.map((item) => {
             const price = (item.product.sale_price ?? item.product.price) + (item.variant?.price_modifier ?? 0);
             return (
-              <div
-                key={`${item.productId}-${item.variantId}`}
-                className="flex gap-4 border-b border-neutral-200 pb-6 last:border-b-0 lg:rounded-2xl lg:border lg:border-neutral-100 lg:bg-white lg:p-4"
-              >
+              <div key={`${item.productId}-${item.variantId}`} className="flex gap-4 border-b border-neutral-200 pb-6 last:border-b-0 md:gap-5 md:pb-8">
                 <div className="h-24 w-24 shrink-0 overflow-hidden bg-neutral-100 lg:rounded-xl">
                   <CartProductImage image={item.product.image} name={item.product.name} />
                 </div>
@@ -125,11 +122,11 @@ export default function CartPage() {
                     <div>
                       <Link
                         href={`/products/${item.product.slug}`}
-                        className="text-[28px] uppercase tracking-[0.05em] font-[family-name:var(--font-display)] leading-tight transition-colors hover:text-neutral-600 md:text-sm md:normal-case md:tracking-normal md:font-semibold md:hover:text-green-700"
+                        className="text-[20px] uppercase tracking-[0.04em] font-[family-name:var(--font-display)] leading-tight transition-colors hover:text-neutral-600 md:text-lg md:tracking-[0.02em]"
                       >
                         {item.product.name}
                       </Link>
-                      <p className="mt-1 text-sm text-neutral-500 uppercase tracking-[0.08em] md:mt-0.5 md:text-xs md:normal-case md:tracking-normal">
+                      <p className="mt-1 text-xs text-neutral-500 uppercase tracking-[0.06em] md:mt-1 md:text-sm md:tracking-[0.04em]">
                         Size: {item.variant?.name ?? 'L'}
                       </p>
                     </div>
@@ -138,20 +135,20 @@ export default function CartPage() {
                     </button>
                   </div>
                   <div className="mt-4 flex items-center justify-between">
-                    <div className="flex items-center gap-1 border border-neutral-200 px-2 py-1 md:rounded-lg md:px-0 md:py-0">
+                    <div className="flex items-center gap-1 border border-neutral-200 px-2 py-1 md:px-3">
                       <button onClick={() => updateQuantity(item.productId, item.variantId, item.quantity - 1)} className="flex h-8 w-8 items-center justify-center text-neutral-500 hover:text-neutral-900">
                         <Minus className="w-3 h-3" />
                       </button>
-                      <span className="w-8 text-center text-lg font-medium md:text-sm md:font-semibold">{item.quantity}</span>
+                      <span className="w-8 text-center text-base font-medium md:text-sm">{item.quantity}</span>
                       <button onClick={() => updateQuantity(item.productId, item.variantId, item.quantity + 1)} className="flex h-8 w-8 items-center justify-center text-neutral-500 hover:text-neutral-900">
                         <Plus className="w-3 h-3" />
                       </button>
                     </div>
                     <div className="text-right">
-                      <span className="text-[34px] tracking-[0.03em] font-[family-name:var(--font-display)] text-neutral-900 md:text-base md:tracking-normal md:font-bold">
+                      <span className="text-[22px] tracking-[0.02em] font-[family-name:var(--font-display)] text-neutral-900 md:text-xl md:tracking-[0.02em]">
                         {formatPrice(price * item.quantity)}
                       </span>
-                      {item.quantity > 1 && <p className="text-xs text-neutral-400">{formatPrice(price)} each</p>}
+                      {item.quantity > 1 && <p className="text-xs text-neutral-400 md:text-sm">{formatPrice(price)} each</p>}
                     </div>
                   </div>
                 </div>
@@ -165,9 +162,9 @@ export default function CartPage() {
         </div>
 
         {/* Summary */}
-        <div className="lg:col-span-1">
-          <div className="sticky top-24 border border-neutral-200 bg-neutral-50/40 p-6">
-            <h2 className="mb-6 text-[34px] uppercase tracking-[0.08em] font-[family-name:var(--font-display)] md:text-lg md:tracking-normal md:font-semibold md:normal-case">
+        <div className="md:col-start-2 md:row-start-1">
+          <div className="sticky top-24 border border-neutral-200 bg-neutral-50/40 p-6 md:p-7">
+            <h2 className="mb-6 text-[26px] uppercase tracking-[0.06em] font-[family-name:var(--font-display)] md:text-2xl md:tracking-[0.03em]">
               Order Summary
             </h2>
 
@@ -185,14 +182,14 @@ export default function CartPage() {
                     className="flex-1 py-2 text-sm outline-none bg-transparent"
                   />
                 </div>
-                <button onClick={applyCoupon} className="px-4 py-2 bg-neutral-900 text-white text-xs font-bold rounded-lg hover:bg-green-700 transition-colors">Apply</button>
+                <button onClick={applyCoupon} className="px-4 py-2 bg-pink-600 text-white text-xs font-bold rounded-lg transition-colors hover:bg-pink-700">Apply</button>
               </div>
             </div>
 
-            <div className="mb-6 space-y-4 text-sm">
+            <div className="mb-6 space-y-4 text-sm md:space-y-3">
               <div className="flex justify-between">
-                <span className="text-[32px] tracking-[0.04em] text-neutral-500 font-[family-name:var(--font-display)] md:text-sm md:tracking-normal md:font-normal">Subtotal</span>
-                <span className="text-[32px] tracking-[0.04em] font-[family-name:var(--font-display)] md:text-sm md:tracking-normal md:font-medium">{formatPrice(subtotal)}</span>
+                <span className="text-[20px] tracking-[0.02em] text-neutral-500 font-[family-name:var(--font-display)] md:text-sm md:tracking-[0.03em]">Subtotal</span>
+                <span className="text-[20px] tracking-[0.02em] font-[family-name:var(--font-display)] md:text-sm md:tracking-[0.03em]">{formatPrice(subtotal)}</span>
               </div>
               {discount > 0 && (
                 <div className="flex justify-between text-green-700">
@@ -207,9 +204,9 @@ export default function CartPage() {
                 </div>
               )}
               <div className="flex justify-between">
-                <span className="text-[32px] tracking-[0.04em] text-neutral-500 font-[family-name:var(--font-display)] md:text-sm md:tracking-normal md:font-normal">Shipping</span>
-                <span className="text-[32px] tracking-[0.04em] font-[family-name:var(--font-display)] text-neutral-800 md:text-sm md:tracking-normal md:font-medium">
-                  <span className="hidden md:inline">{shipping === 0 ? 'FREE' : formatPrice(shipping)}</span>
+                <span className="text-[20px] tracking-[0.02em] text-neutral-500 font-[family-name:var(--font-display)] md:text-sm md:tracking-[0.03em]">Shipping</span>
+                <span className="text-[20px] tracking-[0.02em] font-[family-name:var(--font-display)] text-neutral-800 md:text-sm md:tracking-[0.03em]">
+                  <span className="hidden md:inline">Calculated at checkout</span>
                   <span className="md:hidden">Calculated at checkout</span>
                 </span>
               </div>
@@ -217,20 +214,20 @@ export default function CartPage() {
                 <p className="text-xs text-neutral-400">Add {formatPrice(2000 - subtotal)} more for free shipping</p>
               )}
               <div className="flex justify-between border-t border-neutral-200 pt-4 text-base font-bold">
-                <span className="text-[34px] uppercase tracking-[0.08em] font-[family-name:var(--font-display)] md:text-base md:normal-case md:tracking-normal">Total</span>
-                <span className="text-[34px] tracking-[0.04em] font-[family-name:var(--font-display)] md:text-base md:tracking-normal">{formatPrice(total)}</span>
+                <span className="text-[24px] uppercase tracking-[0.06em] font-[family-name:var(--font-display)] md:text-xl md:tracking-[0.03em]">Total</span>
+                <span className="text-[24px] tracking-[0.03em] font-[family-name:var(--font-display)] md:text-xl md:tracking-[0.03em]">{formatPrice(total)}</span>
               </div>
             </div>
 
             <Link
               href="/checkout"
-              className="flex h-12 w-full items-center justify-center gap-2 bg-neutral-900 text-[11px] font-semibold uppercase tracking-[0.2em] text-white transition-colors hover:bg-neutral-800 md:rounded-xl md:bg-green-700 md:text-sm md:normal-case md:tracking-normal md:hover:bg-green-800"
+              className="flex h-12 w-full items-center justify-center gap-2 bg-pink-600 text-[11px] font-semibold uppercase tracking-[0.2em] text-white transition-colors hover:bg-pink-700 md:h-12 md:rounded-none md:text-xs md:tracking-[0.2em]"
             >
               Proceed to checkout
               <ArrowRight className="w-4 h-4" />
             </Link>
-            <p className="mt-4 text-center text-sm text-neutral-500 md:mt-3 md:text-xs md:text-neutral-400 flex items-center justify-center gap-1">
-              mnada.shop
+            <p className="mt-4 flex items-center justify-center gap-1 text-sm text-neutral-500 md:text-base md:text-neutral-500">
+              anashe beauty
             </p>
           </div>
         </div>
