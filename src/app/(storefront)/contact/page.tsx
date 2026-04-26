@@ -25,7 +25,7 @@ export default function ContactPage() {
           {/* Contact Info */}
           <div className="space-y-8">
             {[
-              { icon: <Phone className="w-5 h-5" />, title: 'Phone / WhatsApp', value: '+254 700 000 000', sub: 'Mon–Sat, 8am–8pm EAT' },
+              { icon: <Phone className="w-5 h-5" />, title: 'Phone / WhatsApp', value: '+254 111 330 585', sub: 'Mon–Sat, 8am–8pm EAT' },
               { icon: <Mail className="w-5 h-5" />, title: 'Email', value: 'hello@anashe.co.ke', sub: 'We reply within 24 hours' },
               { icon: <MapPin className="w-5 h-5" />, title: 'Location', value: 'Kitengela OBC Mall', sub: 'Visit us in-store or order online' },
             ].map(({ icon, title, value, sub }) => (
