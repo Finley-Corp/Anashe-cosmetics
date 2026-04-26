@@ -10,7 +10,6 @@ import { SearchBar } from './SearchBar';
 
 const NAV_LINKS = [
   { label: 'Shop', href: '/products' },
-  { label: 'Brands', href: '/brands' },
   { label: 'Services', href: '/services' },
   { label: 'Journal', href: '/blog' },
   { label: 'About', href: '/about' },
@@ -102,9 +101,24 @@ export function Navbar() {
             >
               <User className="w-[18px] h-[18px]" />
             </Link>
+            <Link
+              href="/cart"
+              className="relative text-zinc-500 hover:text-zinc-900 transition-colors lg:hidden"
+              aria-label="Cart"
+            >
+              <ShoppingBag className="w-[18px] h-[18px]" />
+              {isHydrated && itemCount > 0 && (
+                <>
+                  <span className="absolute -top-2 -right-2 min-w-[16px] h-4 px-1 rounded-full bg-[var(--primary)] text-white text-[10px] leading-4 font-semibold flex items-center justify-center">
+                    {itemCount > 99 ? '99+' : itemCount}
+                  </span>
+                  <span className="sr-only">{itemCount} items in cart</span>
+                </>
+              )}
+            </Link>
             <button
               onClick={toggleCart}
-              className="relative text-zinc-500 hover:text-zinc-900 transition-colors"
+              className="relative hidden text-zinc-500 hover:text-zinc-900 transition-colors lg:inline-flex"
               aria-label="Cart"
             >
               <ShoppingBag className="w-[18px] h-[18px]" />
@@ -194,7 +208,9 @@ export function Navbar() {
         ) : null}
       </nav>
 
-      <CartDrawer />
+      <div className="hidden lg:block">
+        <CartDrawer />
+      </div>
     </>
   );
 }
