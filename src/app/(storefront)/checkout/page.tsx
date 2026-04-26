@@ -227,7 +227,12 @@ export default function CheckoutPage() {
             Order Reference: <strong>{orderNumber || orderId}</strong>
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <Link href="/orders" className="h-11 px-6 bg-[var(--primary)] text-white rounded-full text-sm font-semibold flex items-center justify-center hover:bg-[var(--primary-hover)] transition-colors">Track My Order</Link>
+            <Link
+              href={orderId ? `/orders/${orderId}` : '/orders'}
+              className="h-11 px-6 bg-[var(--primary)] text-white rounded-full text-sm font-semibold flex items-center justify-center hover:bg-[var(--primary-hover)] transition-colors"
+            >
+              Track My Order
+            </Link>
             <Link href="/products" className="h-11 px-6 border border-neutral-200 rounded-full text-sm font-semibold flex items-center justify-center hover:bg-neutral-50 transition-colors">Continue Shopping</Link>
           </div>
         </div>
