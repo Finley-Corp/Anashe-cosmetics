@@ -101,7 +101,19 @@ export function ProductListingClient({ initialParams }: ProductListingClientProp
         image: primaryImage,
       },
     });
-    showToast(`${product.name} added to cart`);
+    if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+      showToast('Added to bag', 'success', {
+        kind: 'cart',
+        cart: {
+          productName: product.name,
+          image: primaryImage,
+          quantity: 1,
+          unitPrice: product.sale_price ?? product.price,
+        },
+      });
+    } else {
+      showToast(`${product.name} added to cart`);
+    }
     setTimeout(() => setAddingProductId((current) => (current === product.id ? null : current)), 500);
   }
 
