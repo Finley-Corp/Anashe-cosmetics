@@ -97,7 +97,7 @@ export default function CartPage() {
   }
 
   return (
-    <div className="mx-auto max-w-[1440px] px-4 py-8 md:px-6 md:py-12">
+    <div className="mx-auto max-w-[1440px] overflow-x-hidden px-4 py-8 md:px-6 md:py-12">
       <div className="mb-8 flex items-center justify-between border-b border-neutral-200 pb-4 md:mb-10">
         <h1 className="text-[30px] uppercase tracking-[0.06em] font-[family-name:var(--font-display)] leading-none md:text-[42px] md:tracking-[0.03em]">
           Your Cart
@@ -107,9 +107,9 @@ export default function CartPage() {
         </button>
       </div>
 
-      <div className="grid gap-10 md:grid-cols-[1fr_340px] md:items-start lg:grid-cols-[1fr_360px]">
+      <div className="grid min-w-0 gap-10 md:grid-cols-[1fr_340px] md:items-start lg:grid-cols-[1fr_360px]">
         {/* Items */}
-        <div className="space-y-4">
+        <div className="min-w-0 space-y-4">
           {items.map((item) => {
             const price = (item.product.sale_price ?? item.product.price) + (item.variant?.price_modifier ?? 0);
             return (
@@ -122,7 +122,7 @@ export default function CartPage() {
                     <div>
                       <Link
                         href={`/products/${item.product.slug}`}
-                        className="text-[20px] uppercase tracking-[0.04em] font-[family-name:var(--font-display)] leading-tight transition-colors hover:text-neutral-600 md:text-lg md:tracking-[0.02em]"
+                        className="break-words text-[20px] uppercase tracking-[0.04em] font-[family-name:var(--font-display)] leading-tight transition-colors hover:text-neutral-600 md:text-lg md:tracking-[0.02em]"
                       >
                         {item.product.name}
                       </Link>
@@ -162,8 +162,8 @@ export default function CartPage() {
         </div>
 
         {/* Summary */}
-        <div className="md:col-start-2 md:row-start-1">
-          <div className="sticky top-24 border border-neutral-200 bg-neutral-50/40 p-6 md:p-7">
+        <div className="min-w-0 md:col-start-2 md:row-start-1">
+          <div className="sticky top-24 max-w-full overflow-hidden border border-neutral-200 bg-neutral-50/40 p-6 md:p-7">
             <h2 className="mb-6 text-[26px] uppercase tracking-[0.06em] font-[family-name:var(--font-display)] md:text-2xl md:tracking-[0.03em]">
               Order Summary
             </h2>
@@ -203,9 +203,9 @@ export default function CartPage() {
                   <span>-{formatPrice(shippingDiscount)}</span>
                 </div>
               )}
-              <div className="flex justify-between">
+              <div className="flex justify-between gap-3">
                 <span className="text-[20px] tracking-[0.02em] text-neutral-500 font-[family-name:var(--font-display)] md:text-sm md:tracking-[0.03em]">Shipping</span>
-                <span className="text-[20px] tracking-[0.02em] font-[family-name:var(--font-display)] text-neutral-800 md:text-sm md:tracking-[0.03em]">
+                <span className="max-w-[170px] text-right text-[20px] tracking-[0.02em] font-[family-name:var(--font-display)] text-neutral-800 md:max-w-[180px] md:text-sm md:tracking-[0.03em]">
                   <span className="hidden md:inline">Calculated at checkout</span>
                   <span className="md:hidden">Calculated at checkout</span>
                 </span>
