@@ -10,6 +10,7 @@ import { SearchBar } from './SearchBar';
 
 const NAV_LINKS = [
   { label: 'Shop', href: '/products' },
+  { label: 'Brands', href: '/brands' },
   { label: 'Services', href: '/services' },
   { label: 'Journal', href: '/blog' },
   { label: 'About', href: '/about' },

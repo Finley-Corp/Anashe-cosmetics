@@ -1,5 +1,6 @@
 import { Navbar } from '@/components/storefront/Navbar';
 import { Footer } from '@/components/storefront/Footer';
+import { EngagementPopups } from '@/components/storefront/EngagementPopups';
 import { RevealObserver } from '@/components/storefront/RevealObserver';
 
 export default function StorefrontLayout({ children }: { children: React.ReactNode }) {
@@ -19,6 +20,7 @@ export default function StorefrontLayout({ children }: { children: React.ReactNo
       >
         <img src="/images/social.png" alt="WhatsApp" className="h-14 w-14 object-contain" />
       </a>
+      <EngagementPopups />
       <RevealObserver />
     </>
   );
