@@ -4,7 +4,6 @@ import { ArrowRight, Truck, ShieldCheck, RefreshCw, Star, ChevronRight } from 'l
 import { ProductCard } from '@/components/storefront/ProductCard';
 import { Logos3 } from '@/components/blocks/logos3';
 import { TestimonialsSection } from '@/components/storefront/TestimonialsSection';
-import type { TestimonialItem } from '@/components/storefront/TestimonialsSection';
 import type { Product } from '@/types';
 import { createClient } from '@/lib/supabase/server';
 
@@ -54,6 +53,10 @@ type HomeTestimonialRow = {
   message: string;
   avatar_url: string | null;
 };
+
+type HomeTestimonialItem = NonNullable<
+  Parameters<typeof TestimonialsSection>[0]['testimonials']
+>[number];
 
 function formatJournalDate(value: string | null) {
   if (!value) return '';
@@ -108,7 +111,7 @@ export default async function HomePage() {
       }))
     : FALLBACK_CATEGORIES;
   const journalPosts = (journalPostsData ?? []) as JournalPost[];
-  const homepageTestimonials: TestimonialItem[] = ((testimonialsData ?? []) as HomeTestimonialRow[]).map((item) => ({
+  const homepageTestimonials: HomeTestimonialItem[] = ((testimonialsData ?? []) as HomeTestimonialRow[]).map((item) => ({
     text: item.message,
     image: item.avatar_url ?? `https://ui-avatars.com/api/?name=${encodeURIComponent(item.full_name)}&background=16a34a&color=fff`,
     name: item.full_name,
