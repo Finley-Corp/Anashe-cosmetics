@@ -75,7 +75,6 @@ cp .env.local.example .env.local
 - `TILIL_API_KEY`
 - `TILIL_SENDER_ID`
 - `RESEND_API_KEY`
-- `CRON_SECRET`
 
 > Never commit real secrets. Keep `.env.local` private.
 
@@ -160,11 +159,6 @@ Core route handlers under `src/app/api` include:
 - Ensure production environment variables are set in your hosting provider.
 - Configure `TILIL_*` values for live SMS delivery.
 - Validate Supabase RLS policies before going live.
-- For Vercel cron usage, set `CRON_SECRET`.
-- The project includes an automatic DB keepalive cron:
-  - Route: `/api/cron/keep-db-active`
-  - Schedule: every 5 minutes (configured in `vercel.json`)
-  - Vercel sends `Authorization: Bearer <CRON_SECRET>` when `CRON_SECRET` is set.
 
 ## Troubleshooting
 
