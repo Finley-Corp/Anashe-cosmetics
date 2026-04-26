@@ -61,7 +61,19 @@ export function ProductCard({ product, priority = false, initialWishlisted = fal
         image: primaryImage,
       },
     });
-    showToast(`${product.name} added to cart`);
+    if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+      showToast('Added to bag', 'success', {
+        kind: 'cart',
+        cart: {
+          productName: product.name,
+          image: primaryImage,
+          quantity: 1,
+          unitPrice: product.sale_price ?? product.price,
+        },
+      });
+    } else {
+      showToast(`${product.name} added to cart`);
+    }
     setTimeout(() => setIsAdding(false), 600);
   }
 

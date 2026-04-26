@@ -82,7 +82,20 @@ export function ProductDetailClient({ product, reviews }: ProductDetailClientPro
         price_modifier: selectedVariant.price_modifier,
       } : undefined,
     });
-    showToast(`${product.name} added to cart`);
+    if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+      showToast('Added to bag', 'success', {
+        kind: 'cart',
+        cart: {
+          productName: product.name,
+          image: primaryImg,
+          quantity,
+          variantName: selectedVariant?.name,
+          unitPrice: price,
+        },
+      });
+    } else {
+      showToast(`${product.name} added to cart`);
+    }
   }
 
   async function submitReview(e: React.FormEvent) {
