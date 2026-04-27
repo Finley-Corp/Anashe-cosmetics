@@ -252,3 +252,14 @@ h1, h2, h3, h4, h5, h6 {
 .testimonials-column-track-reverse {
   animation-name: testimonials-column-down;
 }
+
+/* Mobile orbit animation for services hero cards */
+@keyframes mobile-orbit-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes mobile-orbit-counter {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(-360deg); }
+}
