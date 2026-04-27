@@ -59,12 +59,13 @@ export function ImageCarouselHero({
   }, [images.length]);
 
   useEffect(() => {
+    if (isMobile) return;
     const interval = window.setInterval(() => {
       setRotatingCards((prev) => prev.map((value) => (value + 0.5) % 360));
     }, 50);
 
     return () => window.clearInterval(interval);
-  }, []);
+  }, [isMobile]);
 
   useEffect(() => {
     const measure = () => {
@@ -98,9 +99,18 @@ export function ImageCarouselHero({
           onMouseMove={handleMouseMove}
           style={{ perspective: '1000px' }}
         >
-          <div className="absolute inset-0 flex items-center justify-center">
+          <div
+            className={cn(
+              'absolute inset-0 flex items-center justify-center',
+              isMobile ? 'animate-[mobile-orbit-spin_20s_linear_infinite]' : ''
+            )}
+          >
             {images.map((image, index) => {
-              const angle = (rotatingCards[index] ?? 0) * (Math.PI / 180);
+              const angle = (
+                isMobile
+                  ? index * (360 / Math.max(images.length, 1))
+                  : (rotatingCards[index] ?? 0)
+              ) * (Math.PI / 180);
               const radius = isMobile
                 ? Math.min(118, Math.max(70, carouselWidth * 0.22))
                 : Math.min(210, Math.max(130, carouselWidth * 0.18));
@@ -112,7 +122,10 @@ export function ImageCarouselHero({
               return (
                 <div
                   key={image.id}
-                  className="absolute h-28 w-24 transition-all duration-300 sm:h-48 sm:w-40"
+                  className={cn(
+                    'absolute h-28 w-24 transition-transform duration-300 sm:h-48 sm:w-40',
+                    isMobile ? 'animate-[mobile-orbit-counter_20s_linear_infinite]' : ''
+                  )}
                   style={{
                     transform: `
                       translate(${x}px, ${y}px)
