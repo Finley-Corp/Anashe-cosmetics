@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/service';
 
 const actionSchema = z.object({
   action: z.enum(['approve', 'reject']),
@@ -36,8 +37,9 @@ async function requireAdmin() {
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const adminCheck = await requireAdmin();
   if (adminCheck.error) return adminCheck.error;
-  const { supabase } = adminCheck;
-  if (!supabase) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  if (!adminCheck.supabase) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+  const db = createServiceClient();
 
   const body = await req.json();
   const parsed = actionSchema.safeParse(body);
@@ -48,12 +50,12 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   const { id } = await params;
 
   if (parsed.data.action === 'approve') {
-    const { error } = await supabase.from('reviews').update({ is_approved: true }).eq('id', id);
+    const { error } = await db.from('reviews').update({ is_approved: true }).eq('id', id);
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
     return NextResponse.json({ success: true });
   }
 
-  const { error } = await supabase.from('reviews').delete().eq('id', id);
+  const { error } = await db.from('reviews').delete().eq('id', id);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ success: true });
 }
