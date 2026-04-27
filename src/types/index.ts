@@ -164,6 +164,8 @@ export interface Order {
   checkout_request_id: string | null;
   mpesa_receipt: string | null;
   payment_phone: string | null;
+  shipping_rider_name?: string | null;
+  shipping_rider_phone?: string | null;
   created_at: string;
   updated_at: string;
   // Joined
