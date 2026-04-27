@@ -102,7 +102,7 @@ export function ImageCarouselHero({
           <div
             className={cn(
               'absolute inset-0 flex items-center justify-center',
-              isMobile ? 'animate-[mobile-orbit-spin_20s_linear_infinite]' : ''
+              isMobile ? 'mobile-orbit-spin' : ''
             )}
           >
             {images.map((image, index) => {
@@ -122,10 +122,7 @@ export function ImageCarouselHero({
               return (
                 <div
                   key={image.id}
-                  className={cn(
-                    'absolute h-28 w-24 transition-transform duration-300 sm:h-48 sm:w-40',
-                    isMobile ? 'animate-[mobile-orbit-counter_20s_linear_infinite]' : ''
-                  )}
+                  className="absolute h-28 w-24 transition-transform duration-300 sm:h-48 sm:w-40"
                   style={{
                     transform: `
                       translate(${x}px, ${y}px)
@@ -139,7 +136,8 @@ export function ImageCarouselHero({
                   <div
                     className={cn(
                       'group relative h-full w-full cursor-pointer overflow-hidden rounded-2xl shadow-2xl transition-all duration-300',
-                      'hover:scale-110 hover:shadow-[0_24px_45px_-18px_rgba(0,0,0,0.45)]'
+                      'hover:scale-110 hover:shadow-[0_24px_45px_-18px_rgba(0,0,0,0.45)]',
+                      isMobile ? 'mobile-orbit-counter' : ''
                     )}
                   >
                     <Image
