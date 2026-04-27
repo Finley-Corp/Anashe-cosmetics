@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';
+import { createServiceClient } from '@/lib/supabase/service';
 
 const createReviewSchema = z.object({
   rating: z.number().int().min(1).max(5),
@@ -10,7 +11,7 @@ const createReviewSchema = z.object({
 
 export async function GET(_: Request, { params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const supabase = await createClient();
+  const supabase = createServiceClient();
 
   const { data: product } = await supabase
     .from('products')
@@ -40,6 +41,7 @@ export async function GET(_: Request, { params }: { params: Promise<{ slug: stri
 export async function POST(req: Request, { params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const supabase = await createClient();
+  const serviceSupabase = createServiceClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -54,13 +56,13 @@ export async function POST(req: Request, { params }: { params: Promise<{ slug: s
     return NextResponse.json({ error: 'Invalid payload', details: parsed.error.flatten() }, { status: 422 });
   }
 
-  const { data: product } = await supabase.from('products').select('id').eq('slug', slug).single();
+  const { data: product } = await serviceSupabase.from('products').select('id').eq('slug', slug).single();
   if (!product) {
     return NextResponse.json({ error: 'Product not found' }, { status: 404 });
   }
 
   // Verified purchase check
-  const { data: purchasedItem } = await supabase
+  const { data: purchasedItem, error: purchasedItemError } = await serviceSupabase
     .from('order_items')
     .select('id, order:orders!inner(id, user_id, status)')
     .eq('product_id', product.id)
@@ -69,13 +71,17 @@ export async function POST(req: Request, { params }: { params: Promise<{ slug: s
     .limit(1)
     .maybeSingle();
 
+  if (purchasedItemError) {
+    return NextResponse.json({ error: purchasedItemError.message }, { status: 500 });
+  }
+
   const orderId = purchasedItem
     ? (Array.isArray(purchasedItem.order)
       ? purchasedItem.order[0]?.id
       : (purchasedItem.order as { id?: string } | null)?.id) ?? null
     : null;
 
-  const { error } = await supabase.from('reviews').insert({
+  const { error } = await serviceSupabase.from('reviews').insert({
     product_id: product.id,
     user_id: user.id,
     order_id: orderId,
