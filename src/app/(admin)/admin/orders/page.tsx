@@ -16,7 +16,9 @@ export default async function AdminOrdersPage() {
   const supabase = createServiceClient();
   const { data: orders } = await supabase
     .from('orders')
-    .select('id,order_number,user_id,total,status,created_at,payment_phone,items:order_items(count)')
+    .select(
+      'id,order_number,user_id,total,status,created_at,payment_phone,mpesa_receipt,shipping_rider_name,shipping_rider_phone,items:order_items(count)'
+    )
     .order('created_at', { ascending: false })
     .limit(100);
 
@@ -61,7 +63,13 @@ export default async function AdminOrdersPage() {
                     </span>
                   </td>
                   <td className="px-4 py-3">
-                    <OrderStatusActions orderId={order.id} currentStatus={order.status} />
+                    <OrderStatusActions
+                      orderId={order.id}
+                      currentStatus={order.status}
+                      mpesaReceipt={order.mpesa_receipt}
+                      shippingRiderName={order.shipping_rider_name}
+                      shippingRiderPhone={order.shipping_rider_phone}
+                    />
                   </td>
                       </>
                     );
