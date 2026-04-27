@@ -34,34 +34,73 @@ interface ProductListingClientProps {
   initialParams: Record<string, string | string[] | undefined>;
 }
 
-function ListingProductImage({ src, alt }: { src: string; alt: string }) {
-  const [failed, setFailed] = useState(false);
-  const resolved = resolveProductImageUrl(src);
-  const effectiveSrc = failed ? '/images/hero-image.jpg' : resolved ?? '/images/hero-image.jpg';
-
-  if (isSupabaseStorageUrl(effectiveSrc)) {
-    return (
-      // eslint-disable-next-line @next/next/no-img-element
-      <img
-        src={effectiveSrc}
-        alt={alt}
-        className="h-full w-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
-        loading="lazy"
-        onError={() => setFailed(true)}
-      />
-    );
-  }
+function ListingProductImage({
+  primarySrc,
+  secondarySrc,
+  alt,
+}: {
+  primarySrc?: string | null;
+  secondarySrc?: string | null;
+  alt: string;
+}) {
+  const [primaryFailed, setPrimaryFailed] = useState(false);
+  const [secondaryFailed, setSecondaryFailed] = useState(false);
+  const resolvedPrimary = resolveProductImageUrl(primarySrc);
+  const resolvedSecondary = resolveProductImageUrl(secondarySrc);
+  const primaryImage = primaryFailed ? '/images/hero-image.jpg' : resolvedPrimary ?? '/images/hero-image.jpg';
+  const secondaryImage =
+    secondaryFailed || !resolvedSecondary || resolvedSecondary === primaryImage ? null : resolvedSecondary;
 
   return (
-    <Image
-      src={effectiveSrc}
-      alt={alt}
-      width={800}
-      height={1000}
-      className="h-full w-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
-      unoptimized={shouldUnoptimizeImage(effectiveSrc)}
-      onError={() => setFailed(true)}
-    />
+    <>
+      {isSupabaseStorageUrl(primaryImage) ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={primaryImage}
+          alt={alt}
+          className={`absolute inset-0 h-full w-full object-cover object-center transition-transform duration-700 ${
+            secondaryImage ? 'group-hover:-translate-x-full' : 'group-hover:scale-105'
+          }`}
+          loading="lazy"
+          onError={() => setPrimaryFailed(true)}
+        />
+      ) : (
+        <Image
+          src={primaryImage}
+          alt={alt}
+          width={800}
+          height={1000}
+          className={`h-full w-full object-cover object-center transition-transform duration-700 ${
+            secondaryImage ? 'group-hover:-translate-x-full' : 'group-hover:scale-105'
+          }`}
+          unoptimized={shouldUnoptimizeImage(primaryImage)}
+          onError={() => setPrimaryFailed(true)}
+        />
+      )}
+
+      {secondaryImage
+        ? isSupabaseStorageUrl(secondaryImage) ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={secondaryImage}
+            alt={alt}
+            className="absolute inset-0 h-full w-full object-cover object-center translate-x-full transition-transform duration-700 group-hover:translate-x-0"
+            loading="lazy"
+            onError={() => setSecondaryFailed(true)}
+          />
+        ) : (
+          <Image
+            src={secondaryImage}
+            alt={alt}
+            width={800}
+            height={1000}
+            className="absolute inset-0 h-full w-full object-cover object-center translate-x-full transition-transform duration-700 group-hover:translate-x-0"
+            unoptimized={shouldUnoptimizeImage(secondaryImage)}
+            onError={() => setSecondaryFailed(true)}
+          />
+        )
+        : null}
+    </>
   );
 }
 
@@ -339,10 +378,17 @@ export function ProductListingClient({ initialParams }: ProductListingClientProp
                       </button>
                     </div>
                     <Link href={`/products/${product.slug}`}>
+                      {(() => {
+                        const primary = product.images?.find((img) => img.is_primary)?.url ?? product.images?.[0]?.url ?? null;
+                        const secondary = product.images?.find((img) => img.url && img.url !== primary)?.url ?? null;
+                        return (
                       <ListingProductImage
-                        src={product.images?.find((img) => img.is_primary)?.url ?? product.images?.[0]?.url ?? '/images/hero-image.jpg'}
+                        primarySrc={primary}
+                        secondarySrc={secondary}
                         alt={product.name}
                       />
+                        );
+                      })()}
                     </Link>
                     <div className="absolute inset-x-0 bottom-0 p-3 opacity-100 transition-opacity duration-300 md:p-4 md:opacity-0 md:group-hover:opacity-100">
                       <button

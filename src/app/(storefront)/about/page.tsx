@@ -100,16 +100,16 @@ export default function AboutPage() {
         <div className="mt-12 grid gap-4 md:grid-cols-2">
           <div className="relative h-[420px] overflow-hidden rounded-3xl bg-neutral-100">
             <Image
-              src="https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=1400&q=80"
-              alt="Anashe team"
+              src="https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?w=1400&q=80"
+              alt="Anashe skincare consultation"
               fill
               className="object-cover"
             />
           </div>
           <div className="relative h-[420px] overflow-hidden rounded-3xl bg-neutral-100">
             <Image
-              src="https://images.unsplash.com/photo-1571781926291-c477ebfd024b?w=1400&q=80"
-              alt="Skincare products"
+              src="https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=1400&q=80"
+              alt="Curated skincare products"
               fill
               className="object-cover"
             />

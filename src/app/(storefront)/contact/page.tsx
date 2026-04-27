@@ -6,10 +6,31 @@ import { Mail, Phone, MapPin, Send } from 'lucide-react';
 export default function ContactPage() {
   const [form, setForm] = useState({ name: '', email: '', phone: '', subject: '', message: '' });
   const [sent, setSent] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setSent(true);
+    setSubmitting(true);
+    setError(null);
+
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
+      const payload = (await res.json().catch(() => ({}))) as { error?: string };
+      if (!res.ok) {
+        throw new Error(payload.error ?? 'Failed to send message');
+      }
+      setSent(true);
+      setForm({ name: '', email: '', phone: '', subject: '', message: '' });
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to send message');
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -98,9 +119,10 @@ export default function ContactPage() {
                   <label className="text-xs font-semibold uppercase tracking-wider text-neutral-500 block mb-1.5">Message *</label>
                   <textarea required rows={5} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} className="w-full border border-neutral-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-green-500 transition-colors resize-none" />
                 </div>
-                <button type="submit" className="w-full h-11 bg-green-700 hover:bg-green-800 text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2 text-sm">
-                  <Send className="w-4 h-4" /> Send Message
+                <button type="submit" disabled={submitting} className="w-full h-11 bg-green-700 hover:bg-green-800 disabled:opacity-70 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2 text-sm">
+                  <Send className="w-4 h-4" /> {submitting ? 'Sending...' : 'Send Message'}
                 </button>
+                {error ? <p className="text-xs text-red-500">{error}</p> : null}
               </form>
             )}
           </div>

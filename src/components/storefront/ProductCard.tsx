@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -26,6 +26,8 @@ export function ProductCard({ product, priority = false, initialWishlisted = fal
   const [isWishlisted, setIsWishlisted] = useState(initialWishlisted);
   const [isAdding, setIsAdding] = useState(false);
   const [isTogglingWishlist, setIsTogglingWishlist] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const [carouselIndex, setCarouselIndex] = useState(0);
   const [primaryErrored, setPrimaryErrored] = useState(false);
   const [secondaryErrored, setSecondaryErrored] = useState(false);
   const { addItem } = useCartStore();
@@ -43,6 +45,17 @@ export function ProductCard({ product, priority = false, initialWishlisted = fal
   const normalizedName = product.name.replace(/\s+/g, ' ').trim();
   const price = product.sale_price ?? product.price;
   const discountPercent = product.sale_price ? getDiscountPercent(product.price, product.sale_price) : 0;
+
+  useEffect(() => {
+    if (!isHovered || !secondaryImage) {
+      setCarouselIndex(0);
+      return;
+    }
+    const timer = window.setInterval(() => {
+      setCarouselIndex((prev) => (prev === 0 ? 1 : 0));
+    }, 1800);
+    return () => window.clearInterval(timer);
+  }, [isHovered, secondaryImage]);
 
   async function handleAddToCart(e: React.MouseEvent) {
     e.preventDefault();
@@ -114,7 +127,12 @@ export function ProductCard({ product, priority = false, initialWishlisted = fal
   }
 
   return (
-    <Link href={`/products/${product.slug}`} className="group product-card block">
+    <Link
+      href={`/products/${product.slug}`}
+      className="group product-card block"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       <div className="relative aspect-square bg-neutral-100 rounded-xl overflow-hidden mb-4 border border-neutral-100">
         {/* Primary image */}
         {primaryImage ? (
@@ -123,7 +141,9 @@ export function ProductCard({ product, priority = false, initialWishlisted = fal
             <img
               src={primaryImage}
               alt={product.name}
-              className={`product-card-img object-cover absolute inset-0 z-10 h-full w-full ${secondaryImage ? 'group-hover:opacity-0 transition-opacity duration-500' : ''}`}
+              className={`product-card-img object-cover absolute inset-0 z-10 h-full w-full transition-transform duration-700 ease-in-out ${
+                secondaryImage && carouselIndex === 1 ? '-translate-x-full' : 'translate-x-0'
+              }`}
               loading={priority ? 'eager' : 'lazy'}
               onError={() => setPrimaryErrored(true)}
             />
@@ -132,7 +152,9 @@ export function ProductCard({ product, priority = false, initialWishlisted = fal
               src={primaryImage}
               alt={product.name}
               fill
-              className={`product-card-img object-cover absolute inset-0 z-10 ${secondaryImage ? 'group-hover:opacity-0 transition-opacity duration-500' : ''}`}
+              className={`product-card-img object-cover absolute inset-0 z-10 transition-transform duration-700 ease-in-out ${
+                secondaryImage && carouselIndex === 1 ? '-translate-x-full' : 'translate-x-0'
+              }`}
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
               priority={priority}
               unoptimized={shouldUnoptimizeImage(primaryImage)}
@@ -149,7 +171,9 @@ export function ProductCard({ product, priority = false, initialWishlisted = fal
             <img
               src={secondaryImage}
               alt={product.name}
-              className="product-card-img object-cover absolute inset-0 scale-105 h-full w-full"
+              className={`product-card-img object-cover absolute inset-0 h-full w-full transition-transform duration-700 ease-in-out ${
+                carouselIndex === 1 ? 'translate-x-0' : 'translate-x-full'
+              }`}
               loading="lazy"
               onError={() => setSecondaryErrored(true)}
             />
@@ -158,7 +182,9 @@ export function ProductCard({ product, priority = false, initialWishlisted = fal
               src={secondaryImage}
               alt={product.name}
               fill
-              className="product-card-img object-cover absolute inset-0 scale-105"
+              className={`product-card-img object-cover absolute inset-0 transition-transform duration-700 ease-in-out ${
+                carouselIndex === 1 ? 'translate-x-0' : 'translate-x-full'
+              }`}
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
               unoptimized={shouldUnoptimizeImage(secondaryImage)}
               onError={() => setSecondaryErrored(true)}

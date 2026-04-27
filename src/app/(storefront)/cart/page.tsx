@@ -171,18 +171,23 @@ export default function CartPage() {
             {/* Coupon */}
             <div className="mb-6 hidden md:block">
               <label className="text-xs font-semibold uppercase tracking-wider text-neutral-500 block mb-2">Coupon Code</label>
-              <div className="flex gap-2">
-                <div className="flex-1 flex items-center border border-neutral-200 bg-white rounded-lg px-3 gap-2">
+              <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-2">
+                <div className="min-w-0 flex items-center gap-2 rounded-lg border border-neutral-200 bg-white px-3">
                   <Tag className="w-3.5 h-3.5 text-neutral-400" />
                   <input
                     type="text"
                     placeholder="WELCOME10"
                     value={couponCode}
                     onChange={(e) => setCouponCode(e.target.value)}
-                    className="flex-1 py-2 text-sm outline-none bg-transparent"
+                    className="min-w-0 flex-1 bg-transparent py-2 text-sm outline-none"
                   />
                 </div>
-                <button onClick={applyCoupon} className="px-4 py-2 bg-pink-600 text-white text-xs font-bold rounded-lg transition-colors hover:bg-pink-700">Apply</button>
+                <button
+                  onClick={applyCoupon}
+                  className="shrink-0 rounded-lg bg-pink-600 px-4 py-2 text-xs font-bold text-white transition-colors hover:bg-pink-700"
+                >
+                  Apply
+                </button>
               </div>
             </div>
 
