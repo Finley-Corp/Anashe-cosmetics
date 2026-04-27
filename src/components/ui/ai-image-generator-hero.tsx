@@ -1,7 +1,7 @@
 'use client';
 
 import type React from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -50,6 +50,9 @@ export function ImageCarouselHero({
 }: ImageCarouselHeroProps) {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [rotatingCards, setRotatingCards] = useState<number[]>([]);
+  const [carouselWidth, setCarouselWidth] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+  const carouselRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setRotatingCards(images.map((_, i) => i * (360 / Math.max(images.length, 1))));
@@ -61,6 +64,16 @@ export function ImageCarouselHero({
     }, 50);
 
     return () => window.clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const measure = () => {
+      setCarouselWidth(carouselRef.current?.clientWidth ?? window.innerWidth);
+      setIsMobile(window.innerWidth < 640);
+    };
+    measure();
+    window.addEventListener('resize', measure);
+    return () => window.removeEventListener('resize', measure);
   }, []);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -80,6 +93,7 @@ export function ImageCarouselHero({
 
       <div className="relative z-10 mx-auto flex min-h-[85vh] max-w-[1400px] flex-col items-center justify-center px-4 py-14 sm:px-6 md:px-8 lg:py-16">
         <div
+          ref={carouselRef}
           className="relative mb-12 h-96 w-full max-w-6xl sm:mb-16 sm:h-[500px]"
           onMouseMove={handleMouseMove}
           style={{ perspective: '1000px' }}
@@ -87,16 +101,18 @@ export function ImageCarouselHero({
           <div className="absolute inset-0 flex items-center justify-center">
             {images.map((image, index) => {
               const angle = (rotatingCards[index] ?? 0) * (Math.PI / 180);
-              const radius = 180;
+              const radius = isMobile
+                ? Math.min(118, Math.max(70, carouselWidth * 0.22))
+                : Math.min(210, Math.max(130, carouselWidth * 0.18));
               const x = Math.cos(angle) * radius;
               const y = Math.sin(angle) * radius;
-              const perspectiveX = (mousePosition.x - 0.5) * 20;
-              const perspectiveY = (mousePosition.y - 0.5) * 20;
+              const perspectiveX = isMobile ? 0 : (mousePosition.x - 0.5) * 20;
+              const perspectiveY = isMobile ? 0 : (mousePosition.y - 0.5) * 20;
 
               return (
                 <div
                   key={image.id}
-                  className="absolute h-40 w-32 transition-all duration-300 sm:h-48 sm:w-40"
+                  className="absolute h-28 w-24 transition-all duration-300 sm:h-48 sm:w-40"
                   style={{
                     transform: `
                       translate(${x}px, ${y}px)
