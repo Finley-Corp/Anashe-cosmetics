@@ -13,7 +13,8 @@ const nextConfig: NextConfig = {
     qualities: [75, 82, 84, 86],
     remotePatterns: [
       { protocol: 'https', hostname: 'images.unsplash.com' },
-      { protocol: 'https', hostname: '*.supabase.co' },
+      { protocol: 'https', hostname: 'tkdqamzaqarmfoxxtypw.supabase.co' },
+      { protocol: 'https', hostname: '**.supabase.co' },
       { protocol: 'https', hostname: 'ik.imagekit.io' },
     ],
   },
