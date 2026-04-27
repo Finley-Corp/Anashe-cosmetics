@@ -311,6 +311,8 @@ CREATE TABLE IF NOT EXISTS orders (
   checkout_request_id TEXT,
   mpesa_receipt TEXT,
   payment_phone TEXT,
+  shipping_rider_name TEXT,
+  shipping_rider_phone TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
