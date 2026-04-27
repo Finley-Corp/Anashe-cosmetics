@@ -220,8 +220,11 @@ export default function CheckoutPage() {
             <CheckCircle className="w-12 h-12 text-[var(--primary)]" />
           </div>
           <div>
-            <h2 className="text-2xl font-semibold mb-2 font-[family-name:var(--font-display)]">Order Confirmed! 🎉</h2>
-            <p className="text-neutral-500 text-sm">Your order has been placed successfully and is now being prepared.</p>
+            <h2 className="text-2xl font-semibold mb-2 font-[family-name:var(--font-display)]">Order placed! 🎉</h2>
+            <p className="text-neutral-500 text-sm">
+              Pay via M-Pesa if you have not already. We will confirm payment after verifying your transaction, then your
+              order moves to processing.
+            </p>
           </div>
           <p className="text-xs text-neutral-400 bg-neutral-50 rounded-xl px-4 py-3">
             Order Reference: <strong>{orderNumber || orderId}</strong>
