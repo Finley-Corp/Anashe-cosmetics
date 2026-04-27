@@ -182,7 +182,7 @@ export async function POST(req: Request) {
       .insert({
         order_number: orderNumber,
         user_id: user.id,
-        status: 'processing',
+        status: 'pending_payment',
         subtotal,
         discount_amount: discount,
         shipping_amount: shipping,
@@ -251,7 +251,7 @@ export async function POST(req: Request) {
     const [smsResult, , emailResult] = await Promise.all([
       sendSmsNotification({
         to: phone,
-        body: `Anashe: Your order ${order.order_number} has been placed. Total KES ${Math.round(Number(order.total)).toLocaleString('en-KE')}. We will contact you shortly.`,
+        body: `Anashe: Your order ${order.order_number} has been placed. Total KES ${Math.round(Number(order.total)).toLocaleString('en-KE')}. Complete M-Pesa payment; we will confirm once verified.`,
       }),
       ownerPhone
         ? sendSmsNotification({
